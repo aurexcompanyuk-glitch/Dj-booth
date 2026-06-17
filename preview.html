@@ -3,206 +3,180 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>FlowMaster Plumbing — Expert Service, Every Time</title>
-  <meta name="description" content="Professional plumbing services. Fast response, honest pricing, guaranteed work. Available 24/7 for emergencies." />
+  <title>FlowMaster Pro — Expert Plumbing</title>
+
+  <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;500;600;700&family=Poppins:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
-  <style>/* ============================================================
-   FlowMaster Pro — Plumbing Website Styles
-   Design System: Home Services palette + Poppins/Open Sans
-   ============================================================ */
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800;900&family=Open+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
 
-/* ---------- CSS Variables ---------- */
+  <!-- GSAP + ScrollTrigger + SplitText -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollToPlugin.min.js"></script>
+
+  <!-- Lenis smooth scroll -->
+  <script src="https://cdn.jsdelivr.net/npm/@studio-freight/lenis@1.0.42/dist/lenis.min.js"></script>
+
+  <!-- Three.js -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
+  <style>/* ═══════════════════════════════════════════════════
+   FlowMaster Pro — Full Cinematic CSS
+   ═══════════════════════════════════════════════════ */
+
 :root {
-  --primary: #1E40AF;
-  --primary-dark: #1E3A8A;
-  --primary-light: #3B82F6;
-  --accent: #EA580C;
-  --accent-light: #FB923C;
-  --bg: #EFF6FF;
-  --bg-white: #FFFFFF;
-  --text: #1E3A8A;
-  --text-dark: #0F172A;
-  --text-muted: #64748B;
-  --border: #BFDBFE;
-  --muted: #E9EEF6;
-  --shadow-sm: 0 1px 3px rgba(30,64,175,0.08);
-  --shadow-md: 0 4px 20px rgba(30,64,175,0.12);
-  --shadow-lg: 0 8px 40px rgba(30,64,175,0.18);
-  --shadow-xl: 0 20px 60px rgba(30,64,175,0.22);
-  --radius: 12px;
-  --radius-lg: 20px;
-  --radius-xl: 32px;
-  --transition: 0.3s cubic-bezier(0.4,0,0.2,1);
+  --blue: #1E40AF;
+  --blue-dark: #1E3A8A;
+  --blue-light: #3B82F6;
+  --orange: #EA580C;
+  --orange-light: #FB923C;
+  --black: #06090F;
+  --white: #FFFFFF;
+  --grey: #64748B;
+  --border: rgba(255,255,255,0.08);
   --font-head: 'Poppins', sans-serif;
   --font-body: 'Open Sans', sans-serif;
 }
 
-/* ---------- Reset ---------- */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-html { scroll-behavior: smooth; font-size: 16px; }
+html { font-size: 16px; }
 body {
   font-family: var(--font-body);
-  color: var(--text-dark);
-  background: var(--bg-white);
+  background: var(--black);
+  color: var(--white);
   overflow-x: hidden;
-  line-height: 1.6;
+  cursor: none;
 }
-img { display: block; max-width: 100%; }
 a { text-decoration: none; color: inherit; }
 ul { list-style: none; }
-button { cursor: pointer; border: none; background: none; font-family: inherit; }
+button { cursor: none; border: none; background: none; font-family: inherit; }
+img { display: block; max-width: 100%; }
 
-/* ---------- Utilities ---------- */
-.container {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 0 24px;
-}
+/* ── Scrollbar ── */
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: var(--black); }
+::-webkit-scrollbar-thumb { background: var(--orange); border-radius: 2px; }
+
+/* ── Container ── */
+.container { max-width: 1200px; margin: 0 auto; padding: 0 32px; }
+
+/* ── Accent ── */
+.accent { color: var(--orange); }
+em { font-style: normal; color: var(--orange); }
+
+/* ── Section tag ── */
 .section-tag {
   display: inline-block;
   font-family: var(--font-head);
-  font-size: 0.75rem;
-  font-weight: 600;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: var(--accent);
-  background: rgba(234,88,12,0.08);
-  border: 1px solid rgba(234,88,12,0.2);
-  padding: 4px 14px;
-  border-radius: 100px;
-  margin-bottom: 16px;
-}
-.section-header {
-  text-align: center;
-  max-width: 680px;
-  margin: 0 auto 64px;
-}
-.section-header h2 {
-  font-family: var(--font-head);
-  font-size: clamp(1.75rem, 3.5vw, 2.75rem);
+  font-size: 0.6875rem;
   font-weight: 700;
-  color: var(--text-dark);
-  line-height: 1.2;
-  margin-bottom: 16px;
-}
-.section-header p {
-  font-size: 1.0625rem;
-  color: var(--text-muted);
-  line-height: 1.7;
-}
-.gradient-text {
-  background: linear-gradient(135deg, #60A5FA 0%, var(--accent-light) 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--orange);
+  border: 1px solid rgba(234,88,12,0.35);
+  padding: 5px 14px;
+  border-radius: 100px;
+  margin-bottom: 20px;
 }
 
-/* ---------- Reveal Animation ---------- */
-.reveal {
-  opacity: 0;
-  transform: translateY(32px);
-  transition: opacity 0.7s ease, transform 0.7s ease;
-  transition-delay: var(--delay, 0ms);
+/* ═══════════════════════════════════════════════════
+   CURSOR
+   ═══════════════════════════════════════════════════ */
+.cursor {
+  width: 8px; height: 8px;
+  background: var(--orange);
+  border-radius: 50%;
+  position: fixed;
+  top: 0; left: 0;
+  pointer-events: none;
+  z-index: 9999;
+  transform: translate(-50%, -50%);
+  transition: transform 0.1s ease;
+  mix-blend-mode: difference;
 }
-.reveal.visible {
-  opacity: 1;
-  transform: translateY(0);
+.cursor-follower {
+  width: 32px; height: 32px;
+  border: 1.5px solid rgba(234,88,12,0.5);
+  border-radius: 50%;
+  position: fixed;
+  top: 0; left: 0;
+  pointer-events: none;
+  z-index: 9998;
+  transform: translate(-50%, -50%);
+  transition: transform 0.15s ease, width 0.3s ease, height 0.3s ease, border-color 0.3s;
 }
+.cursor.expand { transform: translate(-50%,-50%) scale(3); }
+.cursor-follower.expand { width: 60px; height: 60px; border-color: var(--orange); }
 
-/* ---------- Buttons ---------- */
-.btn-primary {
-  display: inline-flex;
+/* ═══════════════════════════════════════════════════
+   LOADER
+   ═══════════════════════════════════════════════════ */
+.loader {
+  position: fixed; inset: 0;
+  background: var(--black);
+  z-index: 10000;
+  display: flex;
   align-items: center;
-  gap: 8px;
-  background: var(--accent);
-  color: #fff;
+  justify-content: center;
+  flex-direction: column;
+}
+.loader-inner { text-align: center; }
+.loader-pipe { width: 80px; height: 80px; margin: 0 auto 20px; }
+.pipe-path {
+  stroke-dasharray: 200;
+  stroke-dashoffset: 200;
+  animation: drawPipe 1.5s ease-in-out infinite;
+}
+@keyframes drawPipe {
+  0% { stroke-dashoffset: 200; }
+  50% { stroke-dashoffset: 0; }
+  100% { stroke-dashoffset: -200; }
+}
+.loader-count {
   font-family: var(--font-head);
-  font-weight: 600;
-  font-size: 0.9375rem;
-  padding: 14px 28px;
-  border-radius: var(--radius);
-  border: 2px solid var(--accent);
-  transition: var(--transition);
-  position: relative;
+  font-size: 4rem;
+  font-weight: 800;
+  color: var(--white);
+  line-height: 1;
+  margin-bottom: 20px;
+}
+.loader-bar {
+  width: 200px;
+  height: 2px;
+  background: rgba(255,255,255,0.1);
+  border-radius: 2px;
+  margin: 0 auto;
   overflow: hidden;
 }
-.btn-primary::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: rgba(255,255,255,0.15);
-  transform: translateX(-110%) skewX(-20deg);
-  transition: transform 0.5s ease;
+.loader-fill {
+  height: 100%;
+  width: 0%;
+  background: var(--orange);
+  border-radius: 2px;
+  transition: width 0.05s linear;
 }
-.btn-primary:hover::before { transform: translateX(110%) skewX(-20deg); }
-.btn-primary:hover {
-  background: #c2450a;
-  border-color: #c2450a;
-  transform: translateY(-2px);
-  box-shadow: 0 8px 25px rgba(234,88,12,0.35);
-}
-.btn-ghost {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  color: rgba(255,255,255,0.9);
-  font-family: var(--font-head);
-  font-weight: 600;
-  font-size: 0.9375rem;
-  padding: 14px 28px;
-  border-radius: var(--radius);
-  border: 2px solid rgba(255,255,255,0.35);
-  transition: var(--transition);
-  backdrop-filter: blur(4px);
-}
-.btn-ghost:hover {
-  background: rgba(255,255,255,0.12);
-  border-color: rgba(255,255,255,0.6);
-  transform: translateY(-2px);
-}
-.btn-ghost-white {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  color: #fff;
-  font-family: var(--font-head);
-  font-weight: 600;
-  font-size: 0.9375rem;
-  padding: 14px 28px;
-  border-radius: var(--radius);
-  border: 2px solid rgba(255,255,255,0.6);
-  transition: var(--transition);
-}
-.btn-ghost-white:hover {
-  background: rgba(255,255,255,0.15);
-  transform: translateY(-2px);
-}
-.btn-lg { padding: 18px 36px; font-size: 1.0625rem; }
-.btn-full { width: 100%; justify-content: center; }
 
-/* ==========================================================
-   NAVBAR
-   ========================================================== */
+/* ═══════════════════════════════════════════════════
+   NAV
+   ═══════════════════════════════════════════════════ */
 #navbar {
   position: fixed;
   top: 0; left: 0; right: 0;
   z-index: 1000;
-  background: transparent;
-  transition: background 0.4s ease, box-shadow 0.4s ease, padding 0.4s ease;
-  padding: 20px 0;
+  padding: 24px 0;
+  transition: padding 0.4s ease, background 0.4s ease;
 }
 #navbar.scrolled {
-  background: rgba(255,255,255,0.97);
-  backdrop-filter: blur(16px);
-  box-shadow: 0 2px 20px rgba(30,64,175,0.1);
-  padding: 12px 0;
+  padding: 14px 0;
+  background: rgba(6,9,15,0.92);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--border);
 }
 .nav-inner {
   max-width: 1200px;
   margin: 0 auto;
-  padding: 0 24px;
+  padding: 0 32px;
   display: flex;
   align-items: center;
   gap: 40px;
@@ -211,947 +185,908 @@ button { cursor: pointer; border: none; background: none; font-family: inherit; 
   display: flex;
   align-items: center;
   gap: 10px;
-  text-decoration: none;
   flex-shrink: 0;
 }
-.logo-icon { font-size: 1.5rem; animation: wobble 3s infinite; }
+.logo-drop { font-size: 1.5rem; }
 .logo-text {
   font-family: var(--font-head);
   font-size: 1.25rem;
-  font-weight: 700;
-  color: #fff;
-  transition: color 0.4s;
+  font-weight: 800;
+  color: var(--white);
 }
-#navbar.scrolled .logo-text { color: var(--text-dark); }
-.logo-accent { color: var(--accent); }
 .nav-links {
   display: flex;
-  gap: 8px;
+  gap: 4px;
   margin-left: auto;
 }
 .nav-links a {
   font-family: var(--font-head);
   font-size: 0.875rem;
   font-weight: 500;
-  color: rgba(255,255,255,0.9);
-  padding: 8px 14px;
+  color: rgba(255,255,255,0.65);
+  padding: 8px 16px;
   border-radius: 8px;
-  transition: var(--transition);
+  transition: color 0.2s, background 0.2s;
+  position: relative;
+  overflow: hidden;
 }
-#navbar.scrolled .nav-links a { color: var(--text-dark); }
-.nav-links a:hover {
-  background: rgba(255,255,255,0.15);
-  color: #fff;
+.nav-links a::after {
+  content: attr(data-hover);
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--white);
+  font-weight: 600;
+  transform: translateY(100%);
+  transition: transform 0.3s cubic-bezier(0.4,0,0.2,1);
 }
-#navbar.scrolled .nav-links a:hover {
-  background: var(--bg);
-  color: var(--primary);
-}
+.nav-links a span { display: block; transition: transform 0.3s cubic-bezier(0.4,0,0.2,1); }
+.nav-links a:hover { background: rgba(255,255,255,0.06); color: var(--white); }
 .nav-cta {
   font-family: var(--font-head);
   font-size: 0.875rem;
-  font-weight: 600;
-  color: #fff;
-  background: var(--accent);
-  padding: 10px 20px;
-  border-radius: var(--radius);
-  transition: var(--transition);
-  white-space: nowrap;
+  font-weight: 700;
+  color: var(--white);
+  background: var(--orange);
+  padding: 10px 22px;
+  border-radius: 10px;
   flex-shrink: 0;
+  transition: background 0.2s, transform 0.2s;
 }
-.nav-cta:hover {
-  background: #c2450a;
-  transform: translateY(-1px);
-}
-.hamburger {
-  display: none;
-  flex-direction: column;
-  gap: 5px;
-  padding: 8px;
-  margin-left: auto;
-}
-.hamburger span {
-  display: block;
-  width: 22px;
-  height: 2px;
-  background: #fff;
-  border-radius: 2px;
-  transition: var(--transition);
-}
-#navbar.scrolled .hamburger span { background: var(--text-dark); }
+.nav-cta:hover { background: #c2450a; }
+.hamburger { display: none; flex-direction: column; gap: 5px; padding: 8px; margin-left: auto; }
+.hamburger span { display: block; width: 22px; height: 2px; background: var(--white); border-radius: 2px; transition: 0.3s; }
 .mobile-menu {
   display: none;
   flex-direction: column;
-  background: var(--bg-white);
-  padding: 16px 24px 24px;
+  background: rgba(6,9,15,0.97);
+  padding: 16px 32px 28px;
   border-top: 1px solid var(--border);
-  box-shadow: 0 8px 24px rgba(0,0,0,0.1);
 }
 .mobile-menu a {
   font-family: var(--font-head);
   font-size: 1rem;
   font-weight: 500;
-  color: var(--text-dark);
-  padding: 12px 0;
+  color: rgba(255,255,255,0.75);
+  padding: 14px 0;
   border-bottom: 1px solid var(--border);
   transition: color 0.2s;
 }
-.mobile-menu a:last-child { border-bottom: none; }
-.mobile-menu a:hover { color: var(--primary); }
+.mobile-menu a:hover { color: var(--white); }
+.mobile-menu.open { display: flex; }
 .mobile-cta {
-  margin-top: 8px;
-  background: var(--accent);
-  color: #fff !important;
+  margin-top: 12px;
+  background: var(--orange);
+  color: var(--white) !important;
   padding: 14px !important;
-  border-radius: var(--radius);
+  border-radius: 10px;
   text-align: center;
   border-bottom: none !important;
 }
-.mobile-menu.open { display: flex; }
 
-@keyframes wobble {
-  0%,100% { transform: rotate(0deg); }
-  25% { transform: rotate(-10deg); }
-  75% { transform: rotate(10deg); }
-}
-
-/* ==========================================================
-   HERO
-   ========================================================== */
-.hero {
-  min-height: 100vh;
-  background: linear-gradient(135deg, var(--primary-dark) 0%, #1d4ed8 50%, var(--primary-light) 100%);
-  display: flex;
+/* ═══════════════════════════════════════════════════
+   BUTTONS
+   ═══════════════════════════════════════════════════ */
+.btn-primary {
+  display: inline-flex;
   align-items: center;
+  gap: 10px;
+  background: var(--orange);
+  color: var(--white);
+  font-family: var(--font-head);
+  font-weight: 700;
+  font-size: 0.9375rem;
+  padding: 16px 32px;
+  border-radius: 12px;
+  border: none;
   position: relative;
   overflow: hidden;
-  padding: 120px 24px 80px;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
-.hero-bg {
+.btn-primary .btn-bg {
   position: absolute;
   inset: 0;
-  pointer-events: none;
+  background: linear-gradient(135deg, #c2450a, var(--orange));
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+.btn-primary:hover .btn-bg { opacity: 1; }
+.btn-primary:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 30px rgba(234,88,12,0.4);
+}
+.btn-primary .btn-label { position: relative; z-index: 1; }
+.btn-primary svg { position: relative; z-index: 1; transition: transform 0.3s; }
+.btn-primary:hover svg { transform: translateX(4px); }
+.btn-ghost {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  color: rgba(255,255,255,0.8);
+  font-family: var(--font-head);
+  font-weight: 600;
+  font-size: 0.9375rem;
+  padding: 16px 32px;
+  border-radius: 12px;
+  border: 1.5px solid rgba(255,255,255,0.2);
+  transition: border-color 0.3s, background 0.3s, transform 0.3s;
+}
+.btn-ghost:hover {
+  border-color: rgba(255,255,255,0.5);
+  background: rgba(255,255,255,0.06);
+  transform: translateY(-3px);
+}
+.btn-arrow { display: inline-block; animation: bounce 2s infinite; }
+@keyframes bounce { 0%,100%{transform:translateY(0)}50%{transform:translateY(4px)} }
+
+/* ═══════════════════════════════════════════════════
+   HERO
+   ═══════════════════════════════════════════════════ */
+.hero {
+  position: relative;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   overflow: hidden;
+  background: var(--black);
 }
-.water-drop {
+#heroCanvas {
   position: absolute;
-  border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
-  background: rgba(255,255,255,0.04);
-  animation: floatDrop 8s infinite ease-in-out;
+  inset: 0;
+  width: 100%;
+  height: 100%;
 }
-.d1 { width: 300px; height: 350px; top: -80px; right: 10%; animation-delay: 0s; }
-.d2 { width: 200px; height: 240px; top: 30%; right: 5%; animation-delay: -3s; }
-.d3 { width: 150px; height: 180px; bottom: 10%; right: 20%; animation-delay: -5s; }
-@keyframes floatDrop {
-  0%,100% { transform: translateY(0) rotate(0deg); }
-  50% { transform: translateY(-30px) rotate(5deg); }
-}
-.pipe-line {
+.hero-noise {
   position: absolute;
-  background: rgba(255,255,255,0.04);
-  border-radius: 4px;
-}
-.pl1 { width: 3px; height: 60%; top: 0; left: 15%; animation: pipeFlow 4s infinite linear; }
-.pl2 { width: 3px; height: 40%; top: 20%; left: 25%; animation: pipeFlow 6s infinite linear reverse; }
-@keyframes pipeFlow {
-  0% { transform: scaleY(0); transform-origin: top; }
-  50% { transform: scaleY(1); transform-origin: top; }
-  100% { transform: scaleY(0); transform-origin: bottom; }
-}
-.bubble {
-  position: absolute;
-  border-radius: 50%;
-  background: rgba(255,255,255,0.07);
-  animation: rise linear infinite;
-}
-.b1 { width: 12px; height: 12px; left: 8%; bottom: -20px; animation-duration: 7s; animation-delay: 0s; }
-.b2 { width: 8px; height: 8px; left: 18%; bottom: -20px; animation-duration: 9s; animation-delay: -2s; }
-.b3 { width: 16px; height: 16px; left: 35%; bottom: -20px; animation-duration: 6s; animation-delay: -4s; }
-.b4 { width: 6px; height: 6px; left: 55%; bottom: -20px; animation-duration: 11s; animation-delay: -1s; }
-.b5 { width: 10px; height: 10px; left: 72%; bottom: -20px; animation-duration: 8s; animation-delay: -6s; }
-@keyframes rise {
-  0% { transform: translateY(0) translateX(0); opacity: 0; }
-  10% { opacity: 1; }
-  90% { opacity: 0.4; }
-  100% { transform: translateY(-110vh) translateX(30px); opacity: 0; }
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 1;
 }
 .hero-content {
   position: relative;
   z-index: 2;
-  max-width: 800px;
-  margin: 0 auto;
   text-align: center;
-  color: #fff;
+  max-width: 900px;
+  padding: 0 32px;
 }
-.hero-badge {
+.hero-eyebrow {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
-  background: rgba(255,255,255,0.12);
-  border: 1px solid rgba(255,255,255,0.25);
-  backdrop-filter: blur(8px);
-  color: #fff;
+  gap: 10px;
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.12);
+  padding: 8px 20px;
+  border-radius: 100px;
+  margin-bottom: 32px;
+  opacity: 0;
+  transform: translateY(20px);
+}
+.eyebrow-dot {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: var(--orange);
+  animation: pulse 2s infinite;
+}
+@keyframes pulse { 0%,100%{box-shadow:0 0 0 0 rgba(234,88,12,0.5)} 50%{box-shadow:0 0 0 8px rgba(234,88,12,0)} }
+.eyebrow-text {
   font-family: var(--font-head);
   font-size: 0.8125rem;
   font-weight: 600;
-  padding: 8px 18px;
-  border-radius: 100px;
-  margin-bottom: 28px;
-  animation: pulse-badge 2.5s infinite;
-}
-@keyframes pulse-badge {
-  0%,100% { box-shadow: 0 0 0 0 rgba(255,255,255,0.2); }
-  50% { box-shadow: 0 0 0 8px rgba(255,255,255,0); }
+  color: rgba(255,255,255,0.8);
+  letter-spacing: 0.06em;
 }
 .hero-title {
   font-family: var(--font-head);
-  font-size: clamp(2.5rem, 7vw, 5rem);
+  font-size: clamp(3rem, 8vw, 6.5rem);
   font-weight: 900;
-  line-height: 1.1;
-  margin-bottom: 24px;
-  letter-spacing: -0.02em;
+  line-height: 1.05;
+  letter-spacing: -0.03em;
+  margin-bottom: 28px;
+  color: var(--white);
 }
+.hero-title .line {
+  display: block;
+  overflow: hidden;
+}
+.hero-title .word {
+  display: inline-block;
+  transform: translateY(110%);
+}
+.accent-line { color: var(--orange); }
 .hero-sub {
-  font-size: clamp(1rem, 2vw, 1.25rem);
-  color: rgba(255,255,255,0.85);
-  max-width: 560px;
-  margin: 0 auto 40px;
+  font-size: clamp(1rem, 1.8vw, 1.1875rem);
+  color: rgba(255,255,255,0.6);
   line-height: 1.7;
+  margin-bottom: 44px;
+  opacity: 0;
+  transform: translateY(20px);
 }
 .hero-actions {
   display: flex;
   gap: 16px;
   justify-content: center;
   flex-wrap: wrap;
-  margin-bottom: 60px;
+  margin-bottom: 64px;
+  opacity: 0;
+  transform: translateY(20px);
 }
 .hero-stats {
-  display: flex;
+  display: inline-flex;
   gap: 0;
-  justify-content: center;
-  align-items: center;
-  flex-wrap: wrap;
-  background: rgba(255,255,255,0.1);
-  backdrop-filter: blur(12px);
-  border: 1px solid rgba(255,255,255,0.15);
-  border-radius: var(--radius-lg);
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 16px;
   padding: 24px 40px;
-  gap: 0;
+  opacity: 0;
+  transform: translateY(20px);
 }
-.stat {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 0 32px;
-}
-.stat-num {
+.hero-stat { display: flex; flex-direction: column; align-items: center; padding: 0 28px; }
+.hs-num {
   font-family: var(--font-head);
   font-size: 2rem;
   font-weight: 800;
-  color: #fff;
+  color: var(--white);
   line-height: 1;
 }
-.stat-suffix {
-  font-family: var(--font-head);
-  font-size: 1.25rem;
-  font-weight: 700;
-  color: var(--accent-light);
-}
-.stat-label {
-  font-size: 0.75rem;
-  color: rgba(255,255,255,0.7);
-  margin-top: 4px;
-  white-space: nowrap;
-}
-.stat-divider {
-  width: 1px;
-  height: 40px;
-  background: rgba(255,255,255,0.2);
-}
-.hero-scroll-indicator {
+.hs-suffix { font-family: var(--font-head); font-size: 1.25rem; font-weight: 700; color: var(--orange); }
+.hs-label { font-size: 0.75rem; color: rgba(255,255,255,0.5); margin-top: 4px; white-space: nowrap; }
+.hs-divider { width: 1px; background: rgba(255,255,255,0.1); align-self: stretch; }
+.hero-scroll-hint {
   position: absolute;
-  bottom: 32px;
+  bottom: 40px;
   left: 50%;
   transform: translateX(-50%);
   display: flex;
   flex-direction: column;
   align-items: center;
+  gap: 12px;
+  z-index: 2;
+  opacity: 0;
 }
-.scroll-dot {
-  width: 24px;
-  height: 40px;
-  border: 2px solid rgba(255,255,255,0.4);
-  border-radius: 12px;
-  position: relative;
+.scroll-line {
+  width: 1px;
+  height: 60px;
+  background: linear-gradient(to bottom, transparent, rgba(255,255,255,0.4));
+  animation: scrollLine 2s ease-in-out infinite;
 }
-.scroll-dot::before {
-  content: '';
-  position: absolute;
-  top: 6px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 4px;
-  height: 8px;
-  background: rgba(255,255,255,0.7);
-  border-radius: 2px;
-  animation: scrollPulse 2s infinite;
-}
-@keyframes scrollPulse {
-  0% { opacity: 1; transform: translateX(-50%) translateY(0); }
-  100% { opacity: 0; transform: translateX(-50%) translateY(14px); }
+@keyframes scrollLine { 0%{transform:scaleY(0);transform-origin:top}50%{transform:scaleY(1);transform-origin:top}100%{transform:scaleY(0);transform-origin:bottom} }
+.hero-scroll-hint span {
+  font-family: var(--font-head);
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.4);
 }
 
-/* ==========================================================
-   TRUST BAR
-   ========================================================== */
-.trust-bar {
-  background: var(--primary-dark);
-  padding: 20px 24px;
+/* ═══════════════════════════════════════════════════
+   MARQUEE
+   ═══════════════════════════════════════════════════ */
+.marquee-section {
+  background: var(--orange);
+  padding: 16px 0;
   overflow: hidden;
 }
-.trust-inner {
-  max-width: 1200px;
-  margin: 0 auto;
-  display: flex;
-  gap: 40px;
-  justify-content: center;
-  flex-wrap: wrap;
-}
-.trust-item {
+.marquee-track { width: 100%; overflow: hidden; }
+.marquee-inner {
   display: flex;
   align-items: center;
-  gap: 10px;
-  color: rgba(255,255,255,0.9);
+  gap: 32px;
+  white-space: nowrap;
+  width: max-content;
+  animation: marquee 20s linear infinite;
+}
+.marquee-inner span {
   font-family: var(--font-head);
   font-size: 0.875rem;
-  font-weight: 600;
-  white-space: nowrap;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  color: var(--white);
+  text-transform: uppercase;
 }
-.ti-icon { font-size: 1.125rem; }
+.marquee-inner .dot { color: rgba(255,255,255,0.5); font-size: 0.5rem; }
+@keyframes marquee { 0%{transform:translateX(0)} 100%{transform:translateX(-50%)} }
 
-/* ==========================================================
-   SERVICES
-   ========================================================== */
-.services {
-  padding: 100px 0;
-  background: var(--bg);
+/* ═══════════════════════════════════════════════════
+   SERVICES — HORIZONTAL SCROLL
+   ═══════════════════════════════════════════════════ */
+.services { position: relative; background: var(--black); }
+.services-sticky {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  overflow: hidden;
+  padding: 60px 0 40px;
 }
-.services-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-  gap: 28px;
+.services-header {
+  padding: 0 80px;
+  margin-bottom: 48px;
+  flex-shrink: 0;
 }
-.service-card {
-  background: var(--bg-white);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-lg);
-  padding: 36px 32px;
+.services-header h2 {
+  font-family: var(--font-head);
+  font-size: clamp(2rem, 4vw, 3.5rem);
+  font-weight: 800;
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+}
+.services-track-wrap {
+  overflow: hidden;
+  flex: 1;
+  display: flex;
+  align-items: center;
+}
+.services-track {
+  display: flex;
+  gap: 24px;
+  padding: 20px 80px;
+  will-change: transform;
+}
+.svc-card {
+  min-width: 320px;
+  max-width: 320px;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.07);
+  border-radius: 20px;
+  padding: 36px 30px;
   position: relative;
   overflow: hidden;
-  transition: transform 0.4s ease, box-shadow 0.4s ease, border-color 0.4s ease;
-  cursor: default;
+  flex-shrink: 0;
+  transition: border-color 0.3s, background 0.3s;
 }
-.service-card:hover {
-  transform: translateY(-8px);
-  box-shadow: var(--shadow-xl);
-  border-color: var(--primary-light);
+.svc-card:hover {
+  border-color: rgba(234,88,12,0.4);
+  background: rgba(234,88,12,0.04);
 }
-.service-card.featured {
-  border-color: var(--primary);
-  background: linear-gradient(135deg, #fff 0%, #EFF6FF 100%);
+.svc-card.featured {
+  border-color: var(--orange);
+  background: rgba(234,88,12,0.06);
 }
-.sc-badge {
+.svc-badge {
   position: absolute;
   top: 20px;
   right: 20px;
-  background: var(--accent);
-  color: #fff;
+  background: var(--orange);
+  color: var(--white);
   font-family: var(--font-head);
-  font-size: 0.6875rem;
+  font-size: 0.625rem;
   font-weight: 700;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.1em;
   text-transform: uppercase;
   padding: 4px 12px;
   border-radius: 100px;
 }
-.sc-icon {
-  font-size: 2.5rem;
-  margin-bottom: 20px;
-  display: block;
-  transition: transform 0.3s ease;
+.svc-num {
+  font-family: var(--font-head);
+  font-size: 0.6875rem;
+  font-weight: 700;
+  color: var(--orange);
+  letter-spacing: 0.15em;
+  margin-bottom: 16px;
 }
-.service-card:hover .sc-icon { transform: scale(1.15) rotate(-5deg); }
-.service-card h3 {
+.svc-icon { font-size: 2.25rem; margin-bottom: 16px; display: block; transition: transform 0.3s; }
+.svc-card:hover .svc-icon { transform: scale(1.15) rotate(-5deg); }
+.svc-card h3 {
   font-family: var(--font-head);
   font-size: 1.25rem;
   font-weight: 700;
-  color: var(--text-dark);
+  color: var(--white);
   margin-bottom: 12px;
 }
-.service-card p {
-  color: var(--text-muted);
-  font-size: 0.9375rem;
+.svc-card p {
+  font-size: 0.9rem;
+  color: rgba(255,255,255,0.5);
   line-height: 1.65;
   margin-bottom: 20px;
 }
-.sc-list {
-  margin-bottom: 24px;
-}
-.sc-list li {
-  font-size: 0.875rem;
-  color: var(--text-muted);
-  padding: 6px 0;
-  border-bottom: 1px solid var(--muted);
+.svc-card ul { margin-bottom: 24px; display: flex; flex-direction: column; gap: 8px; }
+.svc-card li {
+  font-size: 0.8125rem;
+  color: rgba(255,255,255,0.45);
   display: flex;
   align-items: center;
   gap: 8px;
 }
-.sc-list li::before {
-  content: '✓';
-  color: var(--primary-light);
-  font-weight: 700;
-  font-size: 0.875rem;
+.svc-card li::before {
+  content: '';
+  width: 4px; height: 4px;
+  border-radius: 50%;
+  background: var(--orange);
+  flex-shrink: 0;
 }
-.sc-link {
+.svc-link {
   font-family: var(--font-head);
   font-size: 0.875rem;
   font-weight: 600;
-  color: var(--primary);
-  transition: gap 0.2s, color 0.2s;
+  color: var(--orange);
   display: inline-flex;
   align-items: center;
   gap: 6px;
+  transition: gap 0.2s;
 }
-.sc-link:hover { color: var(--accent); gap: 10px; }
-.sc-glow {
+.svc-link:hover { gap: 12px; }
+.svc-bg-shape {
   position: absolute;
-  bottom: -40px;
-  right: -40px;
-  width: 140px;
-  height: 140px;
+  bottom: -40px; right: -40px;
+  width: 120px; height: 120px;
   border-radius: 50%;
-  background: radial-gradient(circle, rgba(30,64,175,0.06) 0%, transparent 70%);
-  transition: transform 0.4s ease;
+  background: radial-gradient(circle, rgba(234,88,12,0.08) 0%, transparent 70%);
+  transition: transform 0.4s;
 }
-.service-card:hover .sc-glow { transform: scale(1.8); }
+.svc-card:hover .svc-bg-shape { transform: scale(2); }
+.services-progress {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  padding: 0 80px;
+  margin-top: 24px;
+  flex-shrink: 0;
+}
+.sp-bar {
+  flex: 1;
+  max-width: 200px;
+  height: 2px;
+  background: rgba(255,255,255,0.08);
+  border-radius: 2px;
+  overflow: hidden;
+}
+.sp-fill {
+  height: 100%;
+  width: 0%;
+  background: var(--orange);
+  border-radius: 2px;
+  transition: width 0.3s ease;
+}
+.sp-label {
+  font-family: var(--font-head);
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: rgba(255,255,255,0.4);
+}
 
-/* ==========================================================
+/* ═══════════════════════════════════════════════════
    WHY US
-   ========================================================== */
-.why-us {
-  padding: 100px 0;
-  background: var(--bg-white);
+   ═══════════════════════════════════════════════════ */
+.why {
+  position: relative;
+  padding: 140px 0;
+  background: var(--black);
+  overflow: hidden;
+}
+.why-bg-text {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-family: var(--font-head);
+  font-size: clamp(8rem, 20vw, 18rem);
+  font-weight: 900;
+  color: rgba(255,255,255,0.015);
+  white-space: nowrap;
+  pointer-events: none;
+  z-index: 0;
+  letter-spacing: -0.05em;
 }
 .why-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 80px;
+  gap: 100px;
   align-items: center;
-}
-.why-visual {
-  position: relative;
-  padding: 40px 0;
-}
-.why-card-big {
-  background: linear-gradient(135deg, var(--primary-dark), var(--primary));
-  border-radius: var(--radius-xl);
-  padding: 40px;
-  color: #fff;
-  box-shadow: var(--shadow-xl);
-}
-.wcb-top {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  margin-bottom: 28px;
-}
-.wcb-icon { font-size: 2.5rem; }
-.wcb-top strong { display: block; font-family: var(--font-head); font-size: 1.25rem; font-weight: 700; }
-.wcb-top span { color: rgba(255,255,255,0.7); font-size: 0.875rem; }
-.wcb-rating {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  margin-bottom: 24px;
-}
-.stars { color: #FBBF24; font-size: 1.25rem; letter-spacing: 2px; }
-.wcb-rating span { color: rgba(255,255,255,0.8); font-size: 0.9375rem; }
-.wcb-badges {
-  display: flex;
-  gap: 10px;
-  flex-wrap: wrap;
-}
-.badge {
-  background: rgba(255,255,255,0.12);
-  border: 1px solid rgba(255,255,255,0.2);
-  color: rgba(255,255,255,0.9);
-  font-family: var(--font-head);
-  font-size: 0.75rem;
-  font-weight: 600;
-  padding: 6px 14px;
-  border-radius: 100px;
-}
-.why-float-card {
-  position: absolute;
-  background: var(--bg-white);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  padding: 16px 20px;
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  box-shadow: var(--shadow-lg);
-  font-size: 1.5rem;
-  transition: transform 0.5s ease;
-}
-.why-float-card:hover { transform: scale(1.05) !important; }
-.why-float-card div { line-height: 1.3; }
-.why-float-card strong { display: block; font-family: var(--font-head); font-size: 0.9375rem; font-weight: 700; color: var(--text-dark); }
-.why-float-card span { font-size: 0.8125rem; color: var(--text-muted); }
-.wfc1 {
-  bottom: -20px;
-  left: -20px;
-  animation: floatCard 4s infinite ease-in-out;
-}
-.wfc2 {
-  top: -10px;
-  right: -20px;
-  animation: floatCard 5s infinite ease-in-out reverse;
-}
-@keyframes floatCard {
-  0%,100% { transform: translateY(0); }
-  50% { transform: translateY(-10px); }
-}
-.why-content h2 {
-  font-family: var(--font-head);
-  font-size: clamp(1.75rem, 3vw, 2.5rem);
-  font-weight: 700;
-  color: var(--text-dark);
-  line-height: 1.2;
-  margin-bottom: 20px;
-}
-.why-intro {
-  color: var(--text-muted);
-  font-size: 1rem;
-  line-height: 1.7;
-  margin-bottom: 40px;
-}
-.why-features { display: flex; flex-direction: column; gap: 24px; }
-.wf-item {
-  display: flex;
-  gap: 20px;
-  align-items: flex-start;
-  padding: 20px;
-  border-radius: var(--radius);
-  transition: background 0.3s;
-}
-.wf-item:hover { background: var(--bg); }
-.wf-icon {
-  width: 48px;
-  height: 48px;
-  border-radius: 12px;
-  background: linear-gradient(135deg, var(--bg) 0%, #DBEAFE 100%);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 1.25rem;
-  flex-shrink: 0;
-  transition: transform 0.3s;
-}
-.wf-item:hover .wf-icon { transform: scale(1.1) rotate(-5deg); }
-.wf-item h4 {
-  font-family: var(--font-head);
-  font-size: 1rem;
-  font-weight: 600;
-  color: var(--text-dark);
-  margin-bottom: 6px;
-}
-.wf-item p { font-size: 0.9375rem; color: var(--text-muted); line-height: 1.6; }
-
-/* ==========================================================
-   PROCESS
-   ========================================================== */
-.process {
-  padding: 100px 0;
-  background: var(--primary-dark);
-  position: relative;
-  overflow: hidden;
-}
-.process::before {
-  content: '';
-  position: absolute;
-  top: -100px; right: -100px;
-  width: 500px; height: 500px;
-  background: radial-gradient(circle, rgba(59,130,246,0.15) 0%, transparent 60%);
-  border-radius: 50%;
-}
-.process .section-header h2,
-.process .section-header p { color: #fff; }
-.process .section-header p { color: rgba(255,255,255,0.7); }
-.process-steps {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 32px;
-  position: relative;
-}
-.process-line {
-  position: absolute;
-  top: 60px;
-  left: calc(12.5% + 16px);
-  right: calc(12.5% + 16px);
-  height: 2px;
-  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3) 20%, rgba(255,255,255,0.3) 80%, transparent);
-  z-index: 0;
-}
-.process-step {
-  text-align: center;
   position: relative;
   z-index: 1;
 }
-.ps-num {
+.why-left h2 {
   font-family: var(--font-head);
-  font-size: 0.75rem;
-  font-weight: 700;
-  color: var(--accent-light);
-  letter-spacing: 0.1em;
-  margin-bottom: 8px;
-}
-.ps-icon {
-  width: 80px;
-  height: 80px;
-  background: rgba(255,255,255,0.08);
-  border: 2px solid rgba(255,255,255,0.15);
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 2rem;
-  margin: 0 auto 20px;
-  transition: background 0.3s, transform 0.3s, border-color 0.3s;
-  backdrop-filter: blur(4px);
-}
-.process-step:hover .ps-icon {
-  background: rgba(255,255,255,0.15);
-  border-color: rgba(255,255,255,0.4);
-  transform: scale(1.1);
-}
-.process-step h3 {
-  font-family: var(--font-head);
-  font-size: 1rem;
-  font-weight: 700;
-  color: #fff;
-  margin-bottom: 12px;
-}
-.process-step p {
-  font-size: 0.875rem;
-  color: rgba(255,255,255,0.65);
-  line-height: 1.65;
-}
-
-/* ==========================================================
-   REVIEWS
-   ========================================================== */
-.reviews {
-  padding: 100px 0;
-  background: var(--bg);
-  overflow: hidden;
-}
-.reviews-track-wrapper {
-  overflow: hidden;
-  margin: 0 -24px;
-  padding: 16px 0;
-}
-.reviews-track {
-  display: flex;
-  gap: 24px;
-  animation: scrollReviews 30s linear infinite;
-  width: max-content;
-  padding: 0 24px;
-}
-.reviews-track:hover { animation-play-state: paused; }
-@keyframes scrollReviews {
-  0% { transform: translateX(0); }
-  100% { transform: translateX(-50%); }
-}
-.review-card {
-  background: var(--bg-white);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-lg);
-  padding: 32px;
-  width: 340px;
-  flex-shrink: 0;
-  transition: transform 0.3s, box-shadow 0.3s;
-}
-.review-card:hover {
-  transform: translateY(-6px);
-  box-shadow: var(--shadow-lg);
-}
-.rc-stars {
-  color: #FBBF24;
-  font-size: 1rem;
-  letter-spacing: 2px;
-  margin-bottom: 16px;
-}
-.review-card p {
-  font-size: 0.9375rem;
-  color: var(--text-muted);
-  line-height: 1.7;
-  margin-bottom: 24px;
-  font-style: italic;
-}
-.rc-author { display: flex; align-items: center; gap: 14px; }
-.rc-avatar {
-  width: 44px;
-  height: 44px;
-  border-radius: 50%;
-  background: linear-gradient(135deg, var(--primary), var(--primary-light));
-  color: #fff;
-  font-family: var(--font-head);
-  font-size: 0.8125rem;
-  font-weight: 700;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-}
-.rc-author div { line-height: 1.4; }
-.rc-author strong { display: block; font-size: 0.9375rem; color: var(--text-dark); }
-.rc-author span { font-size: 0.8125rem; color: var(--text-muted); }
-
-/* ==========================================================
-   CTA BAND
-   ========================================================== */
-.cta-band {
-  padding: 100px 24px;
-  background: linear-gradient(135deg, var(--accent) 0%, #c2450a 100%);
-  position: relative;
-  overflow: hidden;
-  text-align: center;
-}
-.cta-bg-anim { position: absolute; inset: 0; pointer-events: none; }
-.cba-circle {
-  position: absolute;
-  border-radius: 50%;
-  background: rgba(255,255,255,0.06);
-  animation: pulseBig 6s infinite ease-in-out;
-}
-.c1 { width: 400px; height: 400px; top: -200px; left: -100px; animation-delay: 0s; }
-.c2 { width: 300px; height: 300px; bottom: -150px; right: 5%; animation-delay: -2s; }
-.c3 { width: 200px; height: 200px; top: 50%; right: 25%; transform: translateY(-50%); animation-delay: -4s; }
-@keyframes pulseBig {
-  0%,100% { transform: scale(1); opacity: 0.6; }
-  50% { transform: scale(1.1); opacity: 1; }
-}
-.cta-band-inner { position: relative; z-index: 1; }
-.cta-band h2 {
-  font-family: var(--font-head);
-  font-size: clamp(1.75rem, 4vw, 3rem);
+  font-size: clamp(2rem, 4vw, 3.25rem);
   font-weight: 800;
-  color: #fff;
-  margin-bottom: 16px;
-  line-height: 1.2;
-}
-.cta-band h2 span { color: rgba(255,255,255,0.75); }
-.cta-band p {
-  font-size: 1.0625rem;
-  color: rgba(255,255,255,0.85);
-  margin-bottom: 40px;
-}
-.cta-band-actions {
-  display: flex;
-  gap: 16px;
-  justify-content: center;
-  flex-wrap: wrap;
-}
-.cta-band .btn-primary {
-  background: #fff;
-  color: var(--accent);
-  border-color: #fff;
-}
-.cta-band .btn-primary:hover {
-  background: rgba(255,255,255,0.9);
-  border-color: rgba(255,255,255,0.9);
-  box-shadow: 0 8px 25px rgba(0,0,0,0.2);
-}
-
-/* ==========================================================
-   CONTACT
-   ========================================================== */
-.contact {
-  padding: 100px 0;
-  background: var(--bg-white);
-}
-.contact-grid {
-  display: grid;
-  grid-template-columns: 1fr 1.4fr;
-  gap: 80px;
-  align-items: start;
-}
-.contact-info h2 {
-  font-family: var(--font-head);
-  font-size: clamp(1.75rem, 3vw, 2.5rem);
-  font-weight: 700;
-  color: var(--text-dark);
-  margin-bottom: 16px;
-}
-.contact-info > p {
-  color: var(--text-muted);
-  font-size: 1rem;
-  line-height: 1.7;
-  margin-bottom: 40px;
-}
-.ci-list { display: flex; flex-direction: column; gap: 20px; }
-.ci-item {
-  display: flex;
-  gap: 16px;
-  align-items: flex-start;
-}
-.ci-icon {
-  width: 44px;
-  height: 44px;
-  border-radius: 10px;
-  background: var(--bg);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 1.125rem;
-  flex-shrink: 0;
-}
-.ci-item strong { display: block; font-family: var(--font-head); font-size: 0.875rem; font-weight: 600; color: var(--text-dark); margin-bottom: 2px; }
-.ci-item a, .ci-item span { font-size: 0.9375rem; color: var(--text-muted); }
-.ci-item a:hover { color: var(--primary); }
-
-/* Form */
-.contact-form {
-  background: var(--bg);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-xl);
-  padding: 48px 40px;
-}
-.form-row {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 20px;
-}
-.form-group {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
+  line-height: 1.15;
+  letter-spacing: -0.02em;
   margin-bottom: 20px;
 }
-.form-group label {
+.why-intro {
+  font-size: 1rem;
+  color: rgba(255,255,255,0.55);
+  line-height: 1.75;
+  margin-bottom: 48px;
+}
+.why-features { display: flex; flex-direction: column; gap: 4px; }
+.wf {
+  display: flex;
+  gap: 24px;
+  padding: 20px;
+  border-radius: 14px;
+  border: 1px solid transparent;
+  transition: background 0.3s, border-color 0.3s;
+  cursor: default;
+}
+.wf:hover { background: rgba(255,255,255,0.03); border-color: var(--border); }
+.wf-num {
+  font-family: var(--font-head);
+  font-size: 0.6875rem;
+  font-weight: 700;
+  color: var(--orange);
+  letter-spacing: 0.1em;
+  padding-top: 3px;
+  flex-shrink: 0;
+}
+.wf h4 {
+  font-family: var(--font-head);
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--white);
+  margin-bottom: 6px;
+}
+.wf p { font-size: 0.875rem; color: rgba(255,255,255,0.5); line-height: 1.6; }
+.why-right { position: relative; padding: 60px 0; }
+.trophy-card {
+  background: linear-gradient(135deg, rgba(30,64,175,0.5), rgba(30,58,138,0.8));
+  border: 1px solid rgba(59,130,246,0.25);
+  border-radius: 24px;
+  padding: 40px;
+  backdrop-filter: blur(20px);
+  box-shadow: 0 40px 80px rgba(0,0,0,0.4);
+}
+.tc-icon { font-size: 3rem; margin-bottom: 16px; }
+.trophy-card strong {
+  display: block;
+  font-family: var(--font-head);
+  font-size: 1.375rem;
+  font-weight: 800;
+  color: var(--white);
+  margin-bottom: 4px;
+}
+.trophy-card > span { font-size: 0.875rem; color: rgba(255,255,255,0.6); }
+.tc-stars { color: #FBBF24; font-size: 1.125rem; letter-spacing: 3px; margin: 20px 0 8px; }
+.tc-reviews { font-size: 0.875rem; color: rgba(255,255,255,0.6); margin-bottom: 24px; }
+.tc-badges { display: flex; gap: 8px; flex-wrap: wrap; }
+.tc-badges span {
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.12);
+  color: rgba(255,255,255,0.75);
+  font-family: var(--font-head);
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 5px 12px;
+  border-radius: 100px;
+}
+.float-pill {
+  position: absolute;
+  background: rgba(6,9,15,0.85);
+  border: 1px solid rgba(255,255,255,0.1);
+  backdrop-filter: blur(20px);
+  color: var(--white);
   font-family: var(--font-head);
   font-size: 0.875rem;
   font-weight: 600;
-  color: var(--text-dark);
+  padding: 14px 22px;
+  border-radius: 100px;
+  white-space: nowrap;
+  box-shadow: 0 20px 40px rgba(0,0,0,0.3);
 }
-.form-group input,
-.form-group select,
-.form-group textarea {
-  font-family: var(--font-body);
-  font-size: 0.9375rem;
-  color: var(--text-dark);
-  background: var(--bg-white);
-  border: 1.5px solid var(--border);
-  border-radius: var(--radius);
-  padding: 12px 16px;
-  transition: border-color 0.3s, box-shadow 0.3s;
-  outline: none;
-  width: 100%;
-  resize: none;
-}
-.form-group input::placeholder,
-.form-group textarea::placeholder { color: var(--text-muted); }
-.form-group input:focus,
-.form-group select:focus,
-.form-group textarea:focus {
-  border-color: var(--primary-light);
-  box-shadow: 0 0 0 3px rgba(59,130,246,0.12);
-}
-.form-disclaimer {
-  text-align: center;
-  font-size: 0.8125rem;
-  color: var(--text-muted);
-  margin-top: 16px;
-}
-.form-success {
-  display: none;
-  flex-direction: column;
-  align-items: center;
-  text-align: center;
-  gap: 8px;
-  background: #ECFDF5;
-  border: 1px solid #6EE7B7;
-  border-radius: var(--radius);
-  padding: 28px;
-  margin-top: 20px;
-}
-.form-success span { font-size: 2rem; }
-.form-success strong { font-family: var(--font-head); font-size: 1.125rem; color: #065F46; }
-.form-success p { font-size: 0.9375rem; color: #047857; }
-.form-success.visible { display: flex; }
+.fp1 { bottom: 0; left: -40px; }
+.fp2 { top: 20px; right: -40px; }
 
-/* ==========================================================
-   FOOTER
-   ========================================================== */
-.footer {
-  background: var(--text-dark);
-  color: rgba(255,255,255,0.7);
-  padding: 80px 0 0;
-}
-.footer-grid {
+/* ═══════════════════════════════════════════════════
+   PROCESS — PINNED
+   ═══════════════════════════════════════════════════ */
+.process { background: rgba(255,255,255,0.02); }
+.process-sticky {
+  position: sticky;
+  top: 0;
+  height: 100vh;
   display: grid;
-  grid-template-columns: 1.5fr 1fr 1fr 1fr;
-  gap: 60px;
-  margin-bottom: 60px;
+  grid-template-columns: 1fr 1fr;
+  gap: 80px;
+  align-items: center;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 32px;
 }
-.footer-brand p {
-  font-size: 0.9375rem;
-  line-height: 1.7;
-  margin: 20px 0 28px;
-  color: rgba(255,255,255,0.55);
+.process-left h2 {
+  font-family: var(--font-head);
+  font-size: clamp(2rem, 3.5vw, 3rem);
+  font-weight: 800;
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+  margin-bottom: 48px;
 }
-.footer-brand .logo-text { color: #fff; }
-.social-links {
+.process-progress-steps {
   display: flex;
-  gap: 12px;
+  flex-direction: column;
+  gap: 0;
+  position: relative;
+  padding-left: 20px;
 }
-.social-links a {
-  width: 40px;
-  height: 40px;
-  border-radius: 10px;
-  border: 1px solid rgba(255,255,255,0.1);
+.pps {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 16px 0;
+  opacity: 0.35;
+  transition: opacity 0.4s;
+}
+.pps.active { opacity: 1; }
+.pps-dot {
+  width: 10px; height: 10px;
+  border-radius: 50%;
+  border: 2px solid rgba(255,255,255,0.3);
+  transition: border-color 0.4s, background 0.4s;
+  flex-shrink: 0;
+}
+.pps.active .pps-dot { border-color: var(--orange); background: var(--orange); }
+.pps span {
+  font-family: var(--font-head);
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: var(--white);
+}
+.pps-track {
+  position: absolute;
+  left: 24px;
+  top: 24px;
+  bottom: 24px;
+  width: 2px;
+  background: rgba(255,255,255,0.06);
+  border-radius: 2px;
+  overflow: hidden;
+}
+.pps-line {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 0%;
+  background: var(--orange);
+  border-radius: 2px;
+  transition: height 0.4s ease;
+}
+.process-right { position: relative; }
+.process-panel {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  opacity: 0;
+  transform: translateY(40px);
+  transition: opacity 0.5s ease, transform 0.5s ease;
+  pointer-events: none;
+}
+.process-panel.active {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+.pp-num {
+  font-family: var(--font-head);
+  font-size: 5rem;
+  font-weight: 900;
+  color: rgba(255,255,255,0.04);
+  line-height: 1;
+  margin-bottom: -16px;
+}
+.pp-icon { font-size: 3rem; margin-bottom: 20px; }
+.process-panel h3 {
+  font-family: var(--font-head);
+  font-size: 2rem;
+  font-weight: 800;
+  color: var(--white);
+  margin-bottom: 20px;
+}
+.process-panel p {
+  font-size: 1rem;
+  color: rgba(255,255,255,0.55);
+  line-height: 1.8;
+  max-width: 420px;
+}
+
+/* ═══════════════════════════════════════════════════
+   REVIEWS
+   ═══════════════════════════════════════════════════ */
+.reviews { padding: 140px 0; background: var(--black); }
+.section-header { text-align: center; margin-bottom: 64px; }
+.section-header h2 {
+  font-family: var(--font-head);
+  font-size: clamp(2rem, 4vw, 3.25rem);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+.reviews-grid {
+  display: grid;
+  grid-template-columns: 1.4fr 1fr 1fr;
+  grid-template-rows: auto auto;
+  gap: 20px;
+}
+.rv-card {
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 20px;
+  padding: 32px;
+  transition: border-color 0.3s, background 0.3s, transform 0.3s;
+}
+.rv-card:hover {
+  border-color: rgba(234,88,12,0.3);
+  background: rgba(234,88,12,0.04);
+  transform: translateY(-4px);
+}
+.rv-card.large { grid-row: span 2; display: flex; flex-direction: column; justify-content: space-between; }
+.rv-stars { color: #FBBF24; font-size: 0.875rem; letter-spacing: 3px; margin-bottom: 16px; }
+.rv-card p {
+  font-size: 0.9375rem;
+  color: rgba(255,255,255,0.65);
+  line-height: 1.75;
+  font-style: italic;
+  flex: 1;
+  margin-bottom: 24px;
+}
+.rv-author { display: flex; align-items: center; gap: 14px; }
+.rv-av {
+  width: 40px; height: 40px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--blue), var(--blue-light));
+  color: var(--white);
+  font-family: var(--font-head);
+  font-size: 0.75rem;
+  font-weight: 700;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-weight: 700;
-  font-size: 0.875rem;
-  color: rgba(255,255,255,0.6);
-  transition: background 0.3s, color 0.3s, border-color 0.3s;
+  flex-shrink: 0;
 }
-.social-links a:hover {
-  background: var(--primary);
-  color: #fff;
-  border-color: var(--primary);
+.rv-author strong { display: block; font-size: 0.9375rem; color: var(--white); }
+.rv-author span { font-size: 0.8125rem; color: rgba(255,255,255,0.45); }
+
+/* ═══════════════════════════════════════════════════
+   CTA SECTION
+   ═══════════════════════════════════════════════════ */
+.cta-section {
+  position: relative;
+  padding: 140px 0;
+  background: var(--black);
+  overflow: hidden;
 }
-.footer-col h4 {
+#ctaCanvas {
+  position: absolute;
+  inset: 0;
+  width: 100%; height: 100%;
+  opacity: 0.6;
+}
+.cta-inner { position: relative; z-index: 1; text-align: center; }
+.cta-inner h2 {
   font-family: var(--font-head);
-  font-size: 0.875rem;
-  font-weight: 700;
-  color: #fff;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
+  font-size: clamp(2.5rem, 5vw, 4rem);
+  font-weight: 900;
+  letter-spacing: -0.03em;
+  line-height: 1.1;
   margin-bottom: 20px;
 }
-.footer-col ul { display: flex; flex-direction: column; gap: 12px; }
-.footer-col li a, .footer-col li span {
+.cta-inner > p {
+  font-size: 1.0625rem;
+  color: rgba(255,255,255,0.55);
+  margin-bottom: 56px;
+}
+.cta-two-col {
+  display: grid;
+  grid-template-columns: 1fr 1.5fr;
+  gap: 32px;
+  max-width: 900px;
+  margin: 0 auto;
+  text-align: left;
+}
+.cta-phone {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 20px;
+  padding: 36px 32px;
+  transition: background 0.3s, border-color 0.3s, transform 0.3s;
+}
+.cta-phone:hover { background: rgba(255,255,255,0.07); border-color: rgba(255,255,255,0.15); transform: translateY(-4px); }
+.cp-icon { font-size: 2.5rem; }
+.cta-phone strong { display: block; font-family: var(--font-head); font-size: 1.5rem; font-weight: 800; color: var(--white); margin-bottom: 4px; }
+.cta-phone span { font-size: 0.875rem; color: rgba(255,255,255,0.5); }
+.cta-form {
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 20px;
+  padding: 36px 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.cf-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.cta-form input,
+.cta-form select,
+.cta-form textarea {
+  font-family: var(--font-body);
+  font-size: 0.9375rem;
+  color: var(--white);
+  background: rgba(255,255,255,0.05);
+  border: 1.5px solid rgba(255,255,255,0.08);
+  border-radius: 10px;
+  padding: 12px 16px;
+  outline: none;
+  transition: border-color 0.3s;
+  width: 100%;
+  resize: none;
+}
+.cta-form input::placeholder,
+.cta-form textarea::placeholder { color: rgba(255,255,255,0.3); }
+.cta-form input:focus,
+.cta-form select:focus,
+.cta-form textarea:focus { border-color: var(--orange); }
+.cta-form select option { background: var(--black); }
+.cf-success {
+  display: none;
+  text-align: center;
+  font-family: var(--font-head);
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: #34D399;
+  padding: 12px;
+  background: rgba(52,211,153,0.08);
+  border: 1px solid rgba(52,211,153,0.2);
+  border-radius: 10px;
+}
+.cf-success.show { display: block; }
+
+/* ═══════════════════════════════════════════════════
+   FOOTER
+   ═══════════════════════════════════════════════════ */
+.footer {
+  background: rgba(255,255,255,0.02);
+  border-top: 1px solid var(--border);
+  padding: 80px 0 0;
+}
+.footer-top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 40px;
+  margin-bottom: 60px;
+  padding-bottom: 60px;
+  border-bottom: 1px solid var(--border);
+}
+.footer-top p {
+  font-size: 0.9375rem;
+  color: rgba(255,255,255,0.45);
+  line-height: 1.7;
+  max-width: 360px;
+  text-align: right;
+}
+.footer-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 60px;
+  margin-bottom: 60px;
+}
+.footer-grid h4 {
+  font-family: var(--font-head);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.35);
+  margin-bottom: 20px;
+}
+.footer-grid ul { display: flex; flex-direction: column; gap: 12px; }
+.footer-grid li a, .footer-grid li span {
   font-size: 0.9375rem;
   color: rgba(255,255,255,0.55);
   transition: color 0.2s;
 }
-.footer-col li a:hover { color: #fff; }
+.footer-grid li a:hover { color: var(--white); }
 .footer-bottom {
-  border-top: 1px solid rgba(255,255,255,0.08);
+  border-top: 1px solid var(--border);
   padding: 24px 0;
   display: flex;
   justify-content: space-between;
@@ -1159,27 +1094,24 @@ button { cursor: pointer; border: none; background: none; font-family: inherit; 
   flex-wrap: wrap;
   gap: 16px;
   font-size: 0.8125rem;
-  color: rgba(255,255,255,0.4);
+  color: rgba(255,255,255,0.25);
 }
-.footer-legal {
-  display: flex;
-  gap: 24px;
-}
-.footer-legal a { color: rgba(255,255,255,0.4); transition: color 0.2s; }
-.footer-legal a:hover { color: rgba(255,255,255,0.8); }
+.footer-bottom div { display: flex; gap: 24px; }
+.footer-bottom a { color: rgba(255,255,255,0.25); transition: color 0.2s; }
+.footer-bottom a:hover { color: rgba(255,255,255,0.6); }
 
-/* ==========================================================
-   STICKY CALL
-   ========================================================== */
-.sticky-call {
+/* ═══════════════════════════════════════════════════
+   STICKY CTA
+   ═══════════════════════════════════════════════════ */
+.sticky-cta {
   display: none;
   position: fixed;
   bottom: 24px;
   left: 50%;
   transform: translateX(-50%);
   z-index: 900;
-  background: var(--accent);
-  color: #fff;
+  background: var(--orange);
+  color: var(--white);
   font-family: var(--font-head);
   font-weight: 700;
   font-size: 0.9375rem;
@@ -1187,767 +1119,919 @@ button { cursor: pointer; border: none; background: none; font-family: inherit; 
   border-radius: 100px;
   box-shadow: 0 4px 24px rgba(234,88,12,0.45);
   white-space: nowrap;
-  animation: bounceCta 2s infinite;
-  transition: transform 0.3s, box-shadow 0.3s;
-}
-.sticky-call:hover {
-  transform: translateX(-50%) translateY(-3px);
-  box-shadow: 0 8px 32px rgba(234,88,12,0.55);
-}
-@keyframes bounceCta {
-  0%,100% { bottom: 24px; }
-  50% { bottom: 30px; }
 }
 
-/* ==========================================================
+/* ═══════════════════════════════════════════════════
+   MAGNETIC
+   ═══════════════════════════════════════════════════ */
+.magnetic { transition: transform 0.4s cubic-bezier(0.23,1,0.32,1); }
+
+/* ═══════════════════════════════════════════════════
+   SPLIT TEXT (GSAP placeholders)
+   ═══════════════════════════════════════════════════ */
+.split-text .char { display: inline-block; }
+
+/* ═══════════════════════════════════════════════════
    RESPONSIVE
-   ========================================================== */
+   ═══════════════════════════════════════════════════ */
 @media (max-width: 1024px) {
   .why-grid { grid-template-columns: 1fr; gap: 60px; }
-  .why-visual { max-width: 480px; margin: 0 auto; }
-  .contact-grid { grid-template-columns: 1fr; gap: 60px; }
-  .footer-grid { grid-template-columns: 1fr 1fr; gap: 40px; }
-  .process-steps { grid-template-columns: repeat(2, 1fr); }
-  .process-line { display: none; }
+  .why-right { max-width: 480px; }
+  .process-sticky { grid-template-columns: 1fr; }
+  .process-left { display: none; }
+  .process-panel { position: relative; opacity: 1; transform: none; pointer-events: auto; }
+  .cta-two-col { grid-template-columns: 1fr; }
+  .reviews-grid { grid-template-columns: 1fr 1fr; }
+  .rv-card.large { grid-row: auto; }
+  .footer-grid { grid-template-columns: 1fr 1fr; }
 }
 @media (max-width: 768px) {
+  .cursor, .cursor-follower { display: none; }
+  body { cursor: auto; }
+  button { cursor: pointer; }
   .nav-links, .nav-cta { display: none; }
   .hamburger { display: flex; }
-  .hero-stats { padding: 20px 24px; gap: 0; }
-  .stat { padding: 0 16px; }
-  .stat-num { font-size: 1.5rem; }
-  .services-grid { grid-template-columns: 1fr; }
-  .form-row { grid-template-columns: 1fr; }
-  .contact-form { padding: 32px 24px; }
-  .footer-grid { grid-template-columns: 1fr; gap: 40px; }
-  .footer-bottom { flex-direction: column; text-align: center; }
-  .sticky-call { display: block; }
-  .cba-circle { display: none; }
-}
-@media (max-width: 480px) {
-  .process-steps { grid-template-columns: 1fr; }
+  .services-header { padding: 0 24px; }
+  .services-track { padding: 20px 24px; }
+  .services-progress { padding: 0 24px; }
   .hero-stats { flex-direction: column; gap: 16px; }
-  .stat-divider { display: none; }
-  .trust-inner { gap: 20px; }
+  .hs-divider { display: none; }
+  .reviews-grid { grid-template-columns: 1fr; }
+  .footer-grid { grid-template-columns: 1fr; }
+  .footer-top { flex-direction: column; }
+  .footer-top p { text-align: left; }
+  .sticky-cta { display: block; }
+  .fp1, .fp2 { display: none; }
 }
 </style>
 </head>
 <body>
 
-  <!-- NAV -->
+  <!-- ═══ CURSOR ═══ -->
+  <div class="cursor" id="cursor"></div>
+  <div class="cursor-follower" id="cursorFollower"></div>
+
+  <!-- ═══ LOADER ═══ -->
+  <div class="loader" id="loader">
+    <div class="loader-inner">
+      <svg class="loader-pipe" viewBox="0 0 100 100" fill="none">
+        <path class="pipe-path" d="M10,50 Q30,10 50,50 Q70,90 90,50" stroke="#EA580C" stroke-width="3" fill="none" stroke-linecap="round"/>
+      </svg>
+      <div class="loader-count" id="loaderCount">0</div>
+      <div class="loader-bar"><div class="loader-fill" id="loaderFill"></div></div>
+    </div>
+  </div>
+
+  <!-- ═══ NAV ═══ -->
   <nav id="navbar">
     <div class="nav-inner">
-      <a href="#" class="logo">
-        <span class="logo-icon">💧</span>
-        <span class="logo-text">FlowMaster<span class="logo-accent">Pro</span></span>
+      <a href="#hero" class="logo">
+        <span class="logo-drop">💧</span>
+        <span class="logo-text">FlowMaster<span class="accent">Pro</span></span>
       </a>
       <ul class="nav-links">
-        <li><a href="#services">Services</a></li>
-        <li><a href="#why-us">Why Us</a></li>
-        <li><a href="#process">Process</a></li>
-        <li><a href="#reviews">Reviews</a></li>
-        <li><a href="#contact">Contact</a></li>
+        <li><a href="#services" data-hover="Services">Services</a></li>
+        <li><a href="#why" data-hover="Why Us">Why Us</a></li>
+        <li><a href="#process" data-hover="Process">Process</a></li>
+        <li><a href="#reviews" data-hover="Reviews">Reviews</a></li>
       </ul>
-      <a href="tel:+18005551234" class="nav-cta">📞 Call Now</a>
-      <button class="hamburger" id="hamburger" aria-label="Open menu">
-        <span></span><span></span><span></span>
-      </button>
+      <a href="tel:+18005551234" class="nav-cta magnetic">
+        <span>📞 Call Now</span>
+      </a>
+      <button class="hamburger" id="hamburger"><span></span><span></span><span></span></button>
     </div>
     <div class="mobile-menu" id="mobileMenu">
       <a href="#services">Services</a>
-      <a href="#why-us">Why Us</a>
+      <a href="#why">Why Us</a>
       <a href="#process">Process</a>
       <a href="#reviews">Reviews</a>
-      <a href="#contact">Contact</a>
       <a href="tel:+18005551234" class="mobile-cta">📞 (800) 555-1234</a>
     </div>
   </nav>
 
-  <!-- HERO -->
-  <section class="hero" id="home">
-    <div class="hero-bg">
-      <div class="water-drop d1"></div>
-      <div class="water-drop d2"></div>
-      <div class="water-drop d3"></div>
-      <div class="pipe-line pl1"></div>
-      <div class="pipe-line pl2"></div>
-      <div class="bubble b1"></div>
-      <div class="bubble b2"></div>
-      <div class="bubble b3"></div>
-      <div class="bubble b4"></div>
-      <div class="bubble b5"></div>
-    </div>
+  <!-- ═══ HERO ═══ -->
+  <section class="hero" id="hero">
+    <canvas id="heroCanvas"></canvas>
+    <div class="hero-noise"></div>
+
     <div class="hero-content">
-      <div class="hero-badge reveal">⚡ Available 24/7 Emergency Service</div>
-      <h1 class="hero-title reveal">
-        Your Pipes.<br />
-        <span class="gradient-text">Our Expertise.</span><br />
-        Problem Solved.
-      </h1>
-      <p class="hero-sub reveal">
-        Trusted by 10,000+ homeowners. Fast response, fair prices, and work that lasts.
-        No surprise charges — ever.
-      </p>
-      <div class="hero-actions reveal">
-        <a href="#contact" class="btn-primary">Get Free Quote</a>
-        <a href="#services" class="btn-ghost">Our Services ↓</a>
+      <div class="hero-eyebrow">
+        <span class="eyebrow-dot"></span>
+        <span class="eyebrow-text">Available 24/7 · Emergency Response</span>
       </div>
-      <div class="hero-stats reveal">
-        <div class="stat">
-          <span class="stat-num" data-target="10000">0</span><span class="stat-suffix">+</span>
-          <span class="stat-label">Happy Customers</span>
+
+      <h1 class="hero-title">
+        <span class="line l1"><span class="word">Your</span> <span class="word">Pipes.</span></span>
+        <span class="line l2 accent-line"><span class="word">Our</span> <span class="word">Expertise.</span></span>
+        <span class="line l3"><span class="word">Problem</span> <span class="word">Solved.</span></span>
+      </h1>
+
+      <p class="hero-sub">Trusted by 10,000+ homeowners. Fast response, honest pricing,<br/>and work that lasts. No surprises — ever.</p>
+
+      <div class="hero-actions">
+        <a href="#contact" class="btn-primary magnetic">
+          <span class="btn-bg"></span>
+          <span class="btn-label">Get Free Quote</span>
+          <svg width="16" height="16" viewBox="0 0 16 16"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </a>
+        <a href="#services" class="btn-ghost magnetic">
+          <span>Explore Services</span>
+          <span class="btn-arrow">↓</span>
+        </a>
+      </div>
+
+      <div class="hero-stats">
+        <div class="hero-stat">
+          <span class="hs-num" data-target="10000">0</span><span class="hs-suffix">+</span>
+          <span class="hs-label">Happy Customers</span>
         </div>
-        <div class="stat-divider"></div>
-        <div class="stat">
-          <span class="stat-num" data-target="25">0</span><span class="stat-suffix">yr</span>
-          <span class="stat-label">Experience</span>
+        <div class="hs-divider"></div>
+        <div class="hero-stat">
+          <span class="hs-num" data-target="25">0</span><span class="hs-suffix">yr</span>
+          <span class="hs-label">Experience</span>
         </div>
-        <div class="stat-divider"></div>
-        <div class="stat">
-          <span class="stat-num" data-target="60">0</span><span class="stat-suffix">min</span>
-          <span class="stat-label">Avg Response</span>
+        <div class="hs-divider"></div>
+        <div class="hero-stat">
+          <span class="hs-num" data-target="60">0</span><span class="hs-suffix">min</span>
+          <span class="hs-label">Avg Response</span>
         </div>
-        <div class="stat-divider"></div>
-        <div class="stat">
-          <span class="stat-num" data-target="100">0</span><span class="stat-suffix">%</span>
-          <span class="stat-label">Satisfaction</span>
+        <div class="hs-divider"></div>
+        <div class="hero-stat">
+          <span class="hs-num" data-target="100">0</span><span class="hs-suffix">%</span>
+          <span class="hs-label">Satisfaction</span>
         </div>
       </div>
     </div>
-    <div class="hero-scroll-indicator">
-      <div class="scroll-dot"></div>
+
+    <div class="hero-scroll-hint">
+      <div class="scroll-line"></div>
+      <span>Scroll</span>
     </div>
   </section>
 
-  <!-- TRUST BAR -->
-  <div class="trust-bar">
-    <div class="trust-inner">
-      <div class="trust-item"><span class="ti-icon">🏅</span> Licensed & Insured</div>
-      <div class="trust-item"><span class="ti-icon">⭐</span> 4.9/5 Google Rating</div>
-      <div class="trust-item"><span class="ti-icon">🔒</span> Upfront Pricing</div>
-      <div class="trust-item"><span class="ti-icon">🛠️</span> 2-Year Guarantee</div>
-      <div class="trust-item"><span class="ti-icon">🚨</span> 24/7 Emergency</div>
+  <!-- ═══ MARQUEE ═══ -->
+  <div class="marquee-section">
+    <div class="marquee-track">
+      <div class="marquee-inner" id="marqueeInner">
+        <span>Licensed & Insured</span><span class="dot">●</span>
+        <span>24/7 Emergency</span><span class="dot">●</span>
+        <span>Upfront Pricing</span><span class="dot">●</span>
+        <span>2-Year Guarantee</span><span class="dot">●</span>
+        <span>4.9★ Google Rating</span><span class="dot">●</span>
+        <span>Background Checked</span><span class="dot">●</span>
+        <span>Same-Day Service</span><span class="dot">●</span>
+        <span>Free Quotes</span><span class="dot">●</span>
+        <span>Licensed & Insured</span><span class="dot">●</span>
+        <span>24/7 Emergency</span><span class="dot">●</span>
+        <span>Upfront Pricing</span><span class="dot">●</span>
+        <span>2-Year Guarantee</span><span class="dot">●</span>
+        <span>4.9★ Google Rating</span><span class="dot">●</span>
+        <span>Background Checked</span><span class="dot">●</span>
+        <span>Same-Day Service</span><span class="dot">●</span>
+        <span>Free Quotes</span><span class="dot">●</span>
+      </div>
     </div>
   </div>
 
-  <!-- SERVICES -->
+  <!-- ═══ SERVICES — HORIZONTAL SCROLL ═══ -->
   <section class="services" id="services">
-    <div class="container">
-      <div class="section-header reveal">
+    <div class="services-sticky">
+      <div class="services-header">
         <span class="section-tag">What We Do</span>
-        <h2>Expert Services for Every Plumbing Need</h2>
-        <p>From dripping taps to full re-pipes, our certified plumbers handle it all with speed and precision.</p>
+        <h2 class="split-text">Expert Services for <br/><em>Every Plumbing Need</em></h2>
       </div>
-      <div class="services-grid">
-        <div class="service-card reveal" style="--delay:0ms">
-          <div class="sc-icon">🚨</div>
-          <h3>Emergency Repairs</h3>
-          <p>Burst pipes, flooding, or no hot water? We're on-site within 60 minutes — day or night.</p>
-          <ul class="sc-list">
-            <li>Burst pipe repair</li>
-            <li>Sewage backup</li>
-            <li>Gas leaks</li>
-          </ul>
-          <a href="#contact" class="sc-link">Book Emergency →</a>
-          <div class="sc-glow"></div>
+      <div class="services-track-wrap">
+        <div class="services-track" id="servicesTrack">
+          <div class="svc-card">
+            <div class="svc-num">01</div>
+            <div class="svc-icon">🚨</div>
+            <h3>Emergency Repairs</h3>
+            <p>Burst pipes, flooding, no hot water? On-site within 60 minutes — day or night.</p>
+            <ul><li>Burst pipe repair</li><li>Sewage backup</li><li>Gas leak response</li></ul>
+            <a href="#contact" class="svc-link">Book Emergency <span>→</span></a>
+            <div class="svc-bg-shape"></div>
+          </div>
+          <div class="svc-card">
+            <div class="svc-num">02</div>
+            <div class="svc-icon">🪠</div>
+            <h3>Drain Cleaning</h3>
+            <p>Slow drains? Full blockages? Our hydro-jetting tech clears any clog fast.</p>
+            <ul><li>Hydro-jetting</li><li>Snake / augering</li><li>CCTV inspection</li></ul>
+            <a href="#contact" class="svc-link">Book Service <span>→</span></a>
+            <div class="svc-bg-shape"></div>
+          </div>
+          <div class="svc-card featured">
+            <div class="svc-badge">Most Popular</div>
+            <div class="svc-num">03</div>
+            <div class="svc-icon">🔧</div>
+            <h3>General Repairs</h3>
+            <p>Leaky faucets, running toilets, low water pressure — fixed right first time.</p>
+            <ul><li>Faucet & fixture repair</li><li>Toilet rebuild</li><li>Pipe leak repair</li></ul>
+            <a href="#contact" class="svc-link">Book Service <span>→</span></a>
+            <div class="svc-bg-shape"></div>
+          </div>
+          <div class="svc-card">
+            <div class="svc-num">04</div>
+            <div class="svc-icon">🏠</div>
+            <h3>Installations</h3>
+            <p>Water heater, sink, shower or full bathroom remodel — installed properly.</p>
+            <ul><li>Water heater install</li><li>Fixture installation</li><li>Bathroom remodel</li></ul>
+            <a href="#contact" class="svc-link">Book Service <span>→</span></a>
+            <div class="svc-bg-shape"></div>
+          </div>
+          <div class="svc-card">
+            <div class="svc-num">05</div>
+            <div class="svc-icon">💧</div>
+            <h3>Water Quality</h3>
+            <p>Hard water, bad taste, low pressure? We test and treat your water supply.</p>
+            <ul><li>Softener installation</li><li>Filtration systems</li><li>Pressure regulators</li></ul>
+            <a href="#contact" class="svc-link">Book Service <span>→</span></a>
+            <div class="svc-bg-shape"></div>
+          </div>
+          <div class="svc-card">
+            <div class="svc-num">06</div>
+            <div class="svc-icon">🏗️</div>
+            <h3>Re-Piping</h3>
+            <p>Old galvanised or lead pipes? Fully re-pipe your home for safety and reliability.</p>
+            <ul><li>Full home re-pipe</li><li>PEX / copper piping</li><li>Slab leak repair</li></ul>
+            <a href="#contact" class="svc-link">Book Service <span>→</span></a>
+            <div class="svc-bg-shape"></div>
+          </div>
         </div>
-        <div class="service-card reveal" style="--delay:100ms">
-          <div class="sc-icon">🪠</div>
-          <h3>Drain Cleaning</h3>
-          <p>Slow drains? Complete blockages? Our hydro-jetting tech clears any clog fast.</p>
-          <ul class="sc-list">
-            <li>Hydro-jetting</li>
-            <li>Snake / augering</li>
-            <li>CCTV inspection</li>
-          </ul>
-          <a href="#contact" class="sc-link">Book Service →</a>
-          <div class="sc-glow"></div>
-        </div>
-        <div class="service-card reveal featured" style="--delay:200ms">
-          <div class="sc-badge">Most Popular</div>
-          <div class="sc-icon">🔧</div>
-          <h3>General Repairs</h3>
-          <p>Leaky faucets, running toilets, or low water pressure — fixed right the first time.</p>
-          <ul class="sc-list">
-            <li>Faucet & fixture repair</li>
-            <li>Toilet rebuild</li>
-            <li>Pipe leak repair</li>
-          </ul>
-          <a href="#contact" class="sc-link">Book Service →</a>
-          <div class="sc-glow"></div>
-        </div>
-        <div class="service-card reveal" style="--delay:300ms">
-          <div class="sc-icon">🏠</div>
-          <h3>Installations</h3>
-          <p>New water heater, sink, shower, or full bathroom remodel — we install it properly.</p>
-          <ul class="sc-list">
-            <li>Water heater install</li>
-            <li>Fixture installation</li>
-            <li>Bathroom remodel</li>
-          </ul>
-          <a href="#contact" class="sc-link">Book Service →</a>
-          <div class="sc-glow"></div>
-        </div>
-        <div class="service-card reveal" style="--delay:400ms">
-          <div class="sc-icon">💧</div>
-          <h3>Water Quality</h3>
-          <p>Hard water, bad taste, or low pressure? We test and treat your water supply.</p>
-          <ul class="sc-list">
-            <li>Softener installation</li>
-            <li>Filtration systems</li>
-            <li>Pressure regulators</li>
-          </ul>
-          <a href="#contact" class="sc-link">Book Service →</a>
-          <div class="sc-glow"></div>
-        </div>
-        <div class="service-card reveal" style="--delay:500ms">
-          <div class="sc-icon">🏗️</div>
-          <h3>Re-Piping</h3>
-          <p>Old galvanised or lead pipes? We fully re-pipe your home for safety and reliability.</p>
-          <ul class="sc-list">
-            <li>Full home re-pipe</li>
-            <li>PEX / copper piping</li>
-            <li>Slab leak repair</li>
-          </ul>
-          <a href="#contact" class="sc-link">Book Service →</a>
-          <div class="sc-glow"></div>
-        </div>
+      </div>
+      <div class="services-progress">
+        <div class="sp-bar"><div class="sp-fill" id="spFill"></div></div>
+        <span class="sp-label" id="spLabel">01 / 06</span>
       </div>
     </div>
   </section>
 
-  <!-- WHY US -->
-  <section class="why-us" id="why-us">
+  <!-- ═══ WHY US — PARALLAX ═══ -->
+  <section class="why" id="why">
+    <div class="why-bg-text">TRUSTED</div>
     <div class="container">
       <div class="why-grid">
-        <div class="why-visual reveal">
-          <div class="why-card-big">
-            <div class="wcb-top">
-              <span class="wcb-icon">🏆</span>
-              <div>
-                <strong>#1 Rated Plumber</strong>
-                <span>In the Greater Metro Area</span>
-              </div>
-            </div>
-            <div class="wcb-rating">
-              <span class="stars">★★★★★</span>
-              <span>4.9 from 2,400+ reviews</span>
-            </div>
-            <div class="wcb-badges">
-              <span class="badge">BBB A+</span>
-              <span class="badge">Angi Top Pro</span>
-              <span class="badge">HomeAdvisor Elite</span>
-            </div>
-          </div>
-          <div class="why-float-card wfc1 reveal">
-            <span>🚀</span>
-            <div>
-              <strong>60 Min</strong>
-              <span>Emergency Response</span>
-            </div>
-          </div>
-          <div class="why-float-card wfc2 reveal">
-            <span>💰</span>
-            <div>
-              <strong>Free Quotes</strong>
-              <span>No obligation</span>
-            </div>
-          </div>
-        </div>
-        <div class="why-content reveal">
+        <div class="why-left">
           <span class="section-tag">Why Choose Us</span>
-          <h2>The Plumbers Your Neighbours Recommend</h2>
-          <p class="why-intro">We're not just fixing pipes — we're building trust. Every job comes with our promise of honest work, honest pricing, and a finish you'll be proud of.</p>
+          <h2 class="split-text">The Plumbers Your<br/><em>Neighbours Recommend</em></h2>
+          <p class="why-intro">We don't just fix pipes — we build trust. Every job backed by honest work, honest pricing, and a finish you'll be proud of.</p>
           <div class="why-features">
-            <div class="wf-item">
-              <div class="wf-icon">⚡</div>
-              <div>
+            <div class="wf" data-index="0">
+              <div class="wf-num">01</div>
+              <div class="wf-body">
                 <h4>Same-Day Service</h4>
-                <p>Book before noon, we're there today. Emergency slots always available.</p>
+                <p>Book before noon, we're there today.</p>
               </div>
             </div>
-            <div class="wf-item">
-              <div class="wf-icon">💲</div>
-              <div>
+            <div class="wf" data-index="1">
+              <div class="wf-num">02</div>
+              <div class="wf-body">
                 <h4>Upfront Pricing</h4>
-                <p>You approve the price before we start. Zero hidden fees. Ever.</p>
+                <p>You approve the price before we start.</p>
               </div>
             </div>
-            <div class="wf-item">
-              <div class="wf-icon">🛡️</div>
-              <div>
+            <div class="wf" data-index="2">
+              <div class="wf-num">03</div>
+              <div class="wf-body">
                 <h4>2-Year Guarantee</h4>
-                <p>Our work is backed by a 2-year parts and labour warranty.</p>
+                <p>Parts and labour warranty on all work.</p>
               </div>
             </div>
-            <div class="wf-item">
-              <div class="wf-icon">👷</div>
-              <div>
+            <div class="wf" data-index="3">
+              <div class="wf-num">04</div>
+              <div class="wf-body">
                 <h4>Background Checked</h4>
-                <p>Every technician is fully licensed, insured, and background verified.</p>
+                <p>Every tech is licensed, insured & verified.</p>
               </div>
             </div>
           </div>
         </div>
+        <div class="why-right">
+          <div class="trophy-card parallax-card">
+            <div class="tc-icon">🏆</div>
+            <strong>#1 Rated Plumber</strong>
+            <span>Greater Metro Area</span>
+            <div class="tc-stars">★★★★★</div>
+            <div class="tc-reviews">4.9 from 2,400+ reviews</div>
+            <div class="tc-badges">
+              <span>BBB A+</span><span>Angi Top Pro</span><span>HomeAdvisor Elite</span>
+            </div>
+          </div>
+          <div class="float-pill fp1 parallax-card">⚡ 60 Min Emergency Response</div>
+          <div class="float-pill fp2 parallax-card">💰 Free Quotes · No Obligation</div>
+        </div>
       </div>
     </div>
   </section>
 
-  <!-- PROCESS -->
+  <!-- ═══ PROCESS — PINNED SCROLL ═══ -->
   <section class="process" id="process">
-    <div class="container">
-      <div class="section-header reveal">
+    <div class="process-sticky">
+      <div class="process-left">
         <span class="section-tag">How It Works</span>
-        <h2>4 Simple Steps to a Fixed Plumbing Problem</h2>
-        <p>We've made booking a plumber as stress-free as possible.</p>
+        <h2 class="split-text">4 Steps to a<br/><em>Fixed Problem</em></h2>
+        <div class="process-progress-steps">
+          <div class="pps" data-step="0"><div class="pps-dot"></div><span>Book</span></div>
+          <div class="pps" data-step="1"><div class="pps-dot"></div><span>Diagnose</span></div>
+          <div class="pps" data-step="2"><div class="pps-dot"></div><span>Repair</span></div>
+          <div class="pps" data-step="3"><div class="pps-dot"></div><span>Guarantee</span></div>
+          <div class="pps-track"><div class="pps-line" id="ppsLine"></div></div>
+        </div>
       </div>
-      <div class="process-steps">
-        <div class="process-line"></div>
-        <div class="process-step reveal" style="--delay:0ms">
-          <div class="ps-num">01</div>
-          <div class="ps-icon">📞</div>
+      <div class="process-right">
+        <div class="process-panel" data-step="0">
+          <div class="pp-num">01</div>
+          <div class="pp-icon">📞</div>
           <h3>Call or Book Online</h3>
-          <p>Tell us your problem. We'll schedule a time that suits you — often same day.</p>
+          <p>Tell us your problem. We schedule a time that suits you — often same day. No call centres, speak directly with our dispatch team.</p>
         </div>
-        <div class="process-step reveal" style="--delay:150ms">
-          <div class="ps-num">02</div>
-          <div class="ps-icon">🔍</div>
+        <div class="process-panel" data-step="1">
+          <div class="pp-num">02</div>
+          <div class="pp-icon">🔍</div>
           <h3>Diagnosis & Quote</h3>
-          <p>Our plumber diagnoses the issue and gives you a clear upfront price. No surprises.</p>
+          <p>Our plumber diagnoses the issue and gives you a clear, upfront price before any work begins. No surprises. No hidden fees.</p>
         </div>
-        <div class="process-step reveal" style="--delay:300ms">
-          <div class="ps-num">03</div>
-          <div class="ps-icon">🔧</div>
+        <div class="process-panel" data-step="2">
+          <div class="pp-num">03</div>
+          <div class="pp-icon">🔧</div>
           <h3>Expert Repair</h3>
-          <p>Once you approve, we get to work — efficiently and cleanly, respecting your home.</p>
+          <p>Once you approve the quote, we get to work efficiently and cleanly — always respecting your home and leaving zero mess.</p>
         </div>
-        <div class="process-step reveal" style="--delay:450ms">
-          <div class="ps-num">04</div>
-          <div class="ps-icon">✅</div>
+        <div class="process-panel" data-step="3">
+          <div class="pp-num">04</div>
+          <div class="pp-icon">✅</div>
           <h3>Final Check & Guarantee</h3>
-          <p>We test everything thoroughly and leave you with a 2-year written guarantee.</p>
+          <p>We thoroughly test all work and hand you a 2-year written warranty. You won't need to call us back — but we're here if you do.</p>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- REVIEWS -->
+  <!-- ═══ REVIEWS ═══ -->
   <section class="reviews" id="reviews">
     <div class="container">
-      <div class="section-header reveal">
-        <span class="section-tag">Customer Reviews</span>
-        <h2>What Our Customers Say</h2>
-        <p>Real reviews from real homeowners — unedited and unprompted.</p>
+      <div class="section-header">
+        <span class="section-tag">Reviews</span>
+        <h2 class="split-text">What Customers Say</h2>
       </div>
-      <div class="reviews-track-wrapper">
-        <div class="reviews-track">
-          <div class="review-card">
-            <div class="rc-stars">★★★★★</div>
-            <p>"Pipe burst at midnight. FlowMaster were there in 45 minutes and had it fixed by 2am. Absolutely incredible service."</p>
-            <div class="rc-author">
-              <div class="rc-avatar">SJ</div>
-              <div><strong>Sarah J.</strong><span>Homeowner, Chicago</span></div>
-            </div>
-          </div>
-          <div class="review-card">
-            <div class="rc-stars">★★★★★</div>
-            <p>"Used three other plumbers before FlowMaster. They diagnosed the issue in 10 minutes that others missed for months. Worth every penny."</p>
-            <div class="rc-author">
-              <div class="rc-avatar">MR</div>
-              <div><strong>Mike R.</strong><span>Property Manager</span></div>
-            </div>
-          </div>
-          <div class="review-card">
-            <div class="rc-stars">★★★★★</div>
-            <p>"Transparent pricing, clean work, and they even cleaned up after themselves. My new go-to for everything plumbing."</p>
-            <div class="rc-author">
-              <div class="rc-avatar">AL</div>
-              <div><strong>Amanda L.</strong><span>Homeowner, Oak Park</span></div>
-            </div>
-          </div>
-          <div class="review-card">
-            <div class="rc-stars">★★★★★</div>
-            <p>"Re-piped our whole house. Project done on time, on budget. Communication was excellent throughout. Highly recommend."</p>
-            <div class="rc-author">
-              <div class="rc-avatar">DK</div>
-              <div><strong>David K.</strong><span>Homeowner, Evanston</span></div>
-            </div>
-          </div>
-          <div class="review-card">
-            <div class="rc-stars">★★★★★</div>
-            <p>"Fixed our water heater same day. The technician was polite, explained everything clearly, and the price was fair."</p>
-            <div class="rc-author">
-              <div class="rc-avatar">TC</div>
-              <div><strong>Tina C.</strong><span>Apartment Owner</span></div>
-            </div>
-          </div>
-          <div class="review-card">
-            <div class="rc-stars">★★★★★</div>
-            <p>"Had a slab leak — stressful situation. FlowMaster made the whole process painless. Professional from start to finish."</p>
-            <div class="rc-author">
-              <div class="rc-avatar">BW</div>
-              <div><strong>Brian W.</strong><span>Homeowner, Naperville</span></div>
-            </div>
-          </div>
-          <!-- duplicate for infinite scroll -->
-          <div class="review-card">
-            <div class="rc-stars">★★★★★</div>
-            <p>"Pipe burst at midnight. FlowMaster were there in 45 minutes and had it fixed by 2am. Absolutely incredible service."</p>
-            <div class="rc-author">
-              <div class="rc-avatar">SJ</div>
-              <div><strong>Sarah J.</strong><span>Homeowner, Chicago</span></div>
-            </div>
-          </div>
-          <div class="review-card">
-            <div class="rc-stars">★★★★★</div>
-            <p>"Used three other plumbers before FlowMaster. They diagnosed the issue in 10 minutes that others missed for months. Worth every penny."</p>
-            <div class="rc-author">
-              <div class="rc-avatar">MR</div>
-              <div><strong>Mike R.</strong><span>Property Manager</span></div>
-            </div>
-          </div>
-          <div class="review-card">
-            <div class="rc-stars">★★★★★</div>
-            <p>"Transparent pricing, clean work, and they even cleaned up after themselves. My new go-to for everything plumbing."</p>
-            <div class="rc-author">
-              <div class="rc-avatar">AL</div>
-              <div><strong>Amanda L.</strong><span>Homeowner, Oak Park</span></div>
-            </div>
-          </div>
+      <div class="reviews-grid">
+        <div class="rv-card large">
+          <div class="rv-stars">★★★★★</div>
+          <p>"Pipe burst at midnight. FlowMaster were on-site in 45 minutes and had it fixed by 2am. Absolutely incredible service — I can't thank them enough."</p>
+          <div class="rv-author"><div class="rv-av">SJ</div><div><strong>Sarah J.</strong><span>Homeowner, Chicago</span></div></div>
+        </div>
+        <div class="rv-card">
+          <div class="rv-stars">★★★★★</div>
+          <p>"Three other plumbers missed the issue. FlowMaster found it in 10 minutes. Worth every penny."</p>
+          <div class="rv-author"><div class="rv-av">MR</div><div><strong>Mike R.</strong><span>Property Manager</span></div></div>
+        </div>
+        <div class="rv-card">
+          <div class="rv-stars">★★★★★</div>
+          <p>"Transparent pricing, clean work, and they cleaned up after themselves. My go-to for everything plumbing."</p>
+          <div class="rv-author"><div class="rv-av">AL</div><div><strong>Amanda L.</strong><span>Oak Park</span></div></div>
+        </div>
+        <div class="rv-card">
+          <div class="rv-stars">★★★★★</div>
+          <p>"Re-piped our whole house. On time, on budget. Communication was excellent throughout."</p>
+          <div class="rv-author"><div class="rv-av">DK</div><div><strong>David K.</strong><span>Evanston</span></div></div>
+        </div>
+        <div class="rv-card">
+          <div class="rv-stars">★★★★★</div>
+          <p>"Fixed our water heater same day. Polite, explained everything clearly, fair price. Perfect."</p>
+          <div class="rv-author"><div class="rv-av">TC</div><div><strong>Tina C.</strong><span>Apartment Owner</span></div></div>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- CTA BAND -->
-  <section class="cta-band">
-    <div class="cta-bg-anim">
-      <div class="cba-circle c1"></div>
-      <div class="cba-circle c2"></div>
-      <div class="cba-circle c3"></div>
-    </div>
+  <!-- ═══ CTA ═══ -->
+  <section class="cta-section" id="contact">
+    <canvas id="ctaCanvas"></canvas>
     <div class="container">
-      <div class="cta-band-inner reveal">
-        <h2>Got a Plumbing Problem? <span>Let's Fix It Today.</span></h2>
-        <p>Call now for same-day service or fill out the form below for a free quote.</p>
-        <div class="cta-band-actions">
-          <a href="tel:+18005551234" class="btn-primary btn-lg">📞 (800) 555-1234</a>
-          <a href="#contact" class="btn-ghost-white btn-lg">Get Free Quote</a>
-        </div>
-      </div>
-    </div>
-  </section>
+      <div class="cta-inner">
+        <span class="section-tag">Get In Touch</span>
+        <h2 class="split-text">Got a Problem?<br/><em>Let's Fix It Today.</em></h2>
+        <p>Same-day service available. Call now or fill the form for your free quote.</p>
 
-  <!-- CONTACT -->
-  <section class="contact" id="contact">
-    <div class="container">
-      <div class="contact-grid">
-        <div class="contact-info reveal">
-          <span class="section-tag">Get In Touch</span>
-          <h2>Book Your Free Quote</h2>
-          <p>Fill out the form and we'll get back to you within 30 minutes during business hours, or call us any time for emergencies.</p>
-          <div class="ci-list">
-            <div class="ci-item">
-              <span class="ci-icon">📞</span>
-              <div>
-                <strong>Phone</strong>
-                <a href="tel:+18005551234">(800) 555-1234</a>
-              </div>
+        <div class="cta-two-col">
+          <a href="tel:+18005551234" class="cta-phone magnetic">
+            <span class="cp-icon">📞</span>
+            <div>
+              <strong>(800) 555-1234</strong>
+              <span>Call for immediate help</span>
             </div>
-            <div class="ci-item">
-              <span class="ci-icon">📧</span>
-              <div>
-                <strong>Email</strong>
-                <a href="mailto:hello@flowmasterpro.com">hello@flowmasterpro.com</a>
-              </div>
+          </a>
+
+          <form class="cta-form" id="ctaForm">
+            <div class="cf-row">
+              <input type="text" placeholder="Your Name" required />
+              <input type="tel" placeholder="Phone Number" required />
             </div>
-            <div class="ci-item">
-              <span class="ci-icon">📍</span>
-              <div>
-                <strong>Service Area</strong>
-                <span>Chicago Metro & Surrounding Areas</span>
-              </div>
-            </div>
-            <div class="ci-item">
-              <span class="ci-icon">🕐</span>
-              <div>
-                <strong>Hours</strong>
-                <span>Mon–Fri 7am–8pm · Sat 8am–6pm · Emergency 24/7</span>
-              </div>
-            </div>
-          </div>
-        </div>
-        <form class="contact-form reveal" id="contactForm">
-          <div class="form-row">
-            <div class="form-group">
-              <label for="fname">First Name *</label>
-              <input type="text" id="fname" name="fname" placeholder="John" required />
-            </div>
-            <div class="form-group">
-              <label for="lname">Last Name *</label>
-              <input type="text" id="lname" name="lname" placeholder="Smith" required />
-            </div>
-          </div>
-          <div class="form-row">
-            <div class="form-group">
-              <label for="email">Email *</label>
-              <input type="email" id="email" name="email" placeholder="john@email.com" required />
-            </div>
-            <div class="form-group">
-              <label for="phone">Phone *</label>
-              <input type="tel" id="phone" name="phone" placeholder="(555) 000-0000" required />
-            </div>
-          </div>
-          <div class="form-group">
-            <label for="service">Service Needed</label>
-            <select id="service" name="service">
-              <option value="">Select a service...</option>
+            <select>
+              <option value="">Select service...</option>
               <option>Emergency Repair</option>
               <option>Drain Cleaning</option>
               <option>General Repair</option>
               <option>Installation</option>
-              <option>Water Quality</option>
               <option>Re-Piping</option>
-              <option>Other</option>
             </select>
-          </div>
-          <div class="form-group">
-            <label for="message">Describe the Problem *</label>
-            <textarea id="message" name="message" rows="4" placeholder="Tell us what's going on..." required></textarea>
-          </div>
-          <button type="submit" class="btn-primary btn-full">
-            <span class="btn-text">Send My Free Quote Request</span>
-            <span class="btn-spinner" style="display:none">Sending…</span>
-          </button>
-          <p class="form-disclaimer">🔒 Your information is secure. No spam, ever.</p>
-          <div class="form-success" id="formSuccess">
-            <span>✅</span>
-            <strong>Message Sent!</strong>
-            <p>We'll get back to you within 30 minutes during business hours.</p>
-          </div>
-        </form>
+            <textarea rows="3" placeholder="Describe the problem..." required></textarea>
+            <button type="submit" class="btn-primary magnetic">
+              <span class="btn-bg"></span>
+              <span class="btn-label">Send Free Quote Request</span>
+              <svg width="16" height="16" viewBox="0 0 16 16"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
+            <div class="cf-success" id="cfSuccess">✅ Sent! We'll call you within 30 minutes.</div>
+          </form>
+        </div>
       </div>
     </div>
   </section>
 
-  <!-- FOOTER -->
+  <!-- ═══ FOOTER ═══ -->
   <footer class="footer">
     <div class="container">
+      <div class="footer-top">
+        <a href="#hero" class="logo">
+          <span class="logo-drop">💧</span>
+          <span class="logo-text">FlowMaster<span class="accent">Pro</span></span>
+        </a>
+        <p>Chicago's most trusted plumbing service since 1999.<br/>Licensed, insured, and here when you need us.</p>
+      </div>
       <div class="footer-grid">
-        <div class="footer-brand">
-          <a href="#" class="logo">
-            <span class="logo-icon">💧</span>
-            <span class="logo-text">FlowMaster<span class="logo-accent">Pro</span></span>
-          </a>
-          <p>Chicago's most trusted plumbing service since 1999. Licensed, insured, and here when you need us.</p>
-          <div class="social-links">
-            <a href="#" aria-label="Facebook">f</a>
-            <a href="#" aria-label="Google">G</a>
-            <a href="#" aria-label="Yelp">Y</a>
-          </div>
-        </div>
-        <div class="footer-col">
-          <h4>Services</h4>
-          <ul>
-            <li><a href="#services">Emergency Repairs</a></li>
-            <li><a href="#services">Drain Cleaning</a></li>
-            <li><a href="#services">General Repairs</a></li>
-            <li><a href="#services">Installations</a></li>
-            <li><a href="#services">Water Quality</a></li>
-            <li><a href="#services">Re-Piping</a></li>
-          </ul>
-        </div>
-        <div class="footer-col">
-          <h4>Company</h4>
-          <ul>
-            <li><a href="#why-us">About Us</a></li>
-            <li><a href="#process">Our Process</a></li>
-            <li><a href="#reviews">Reviews</a></li>
-            <li><a href="#contact">Contact</a></li>
-            <li><a href="#">Careers</a></li>
-            <li><a href="#">Blog</a></li>
-          </ul>
-        </div>
-        <div class="footer-col">
-          <h4>Contact</h4>
-          <ul>
-            <li><a href="tel:+18005551234">📞 (800) 555-1234</a></li>
-            <li><a href="mailto:hello@flowmasterpro.com">✉️ hello@flowmasterpro.com</a></li>
-            <li><span>📍 Chicago, IL & Metro</span></li>
-            <li><span>🕐 24/7 Emergency Line</span></li>
-          </ul>
-        </div>
+        <div><h4>Services</h4><ul>
+          <li><a href="#services">Emergency Repairs</a></li>
+          <li><a href="#services">Drain Cleaning</a></li>
+          <li><a href="#services">General Repairs</a></li>
+          <li><a href="#services">Installations</a></li>
+          <li><a href="#services">Re-Piping</a></li>
+        </ul></div>
+        <div><h4>Company</h4><ul>
+          <li><a href="#why">About Us</a></li>
+          <li><a href="#process">Our Process</a></li>
+          <li><a href="#reviews">Reviews</a></li>
+          <li><a href="#contact">Contact</a></li>
+        </ul></div>
+        <div><h4>Contact</h4><ul>
+          <li><a href="tel:+18005551234">📞 (800) 555-1234</a></li>
+          <li><a href="mailto:hello@flowmasterpro.com">✉️ hello@flowmasterpro.com</a></li>
+          <li><span>📍 Chicago Metro Area</span></li>
+          <li><span>🕐 24/7 Emergency Line</span></li>
+        </ul></div>
       </div>
       <div class="footer-bottom">
-        <p>© 2025 FlowMaster Pro Plumbing. All rights reserved. Licensed & Insured · License #PL-2024-CHI</p>
-        <div class="footer-legal">
-          <a href="#">Privacy Policy</a>
-          <a href="#">Terms</a>
-          <a href="#">Sitemap</a>
-        </div>
+        <p>© 2025 FlowMaster Pro. Licensed & Insured · #PL-2024-CHI</p>
+        <div><a href="#">Privacy</a><a href="#">Terms</a></div>
       </div>
     </div>
   </footer>
 
-  <!-- STICKY CALL BTN (mobile) -->
-  <a href="tel:+18005551234" class="sticky-call">📞 Call Now</a>
+  <a href="tel:+18005551234" class="sticky-cta">📞 Call Now</a>
 
-  <script>/* FlowMaster Pro — Animations & Interactions */
+  <script>/* ═══════════════════════════════════════════════════
+   FlowMaster Pro — GSAP + Three.js Cinematic Animations
+   ═══════════════════════════════════════════════════ */
 
-/* ── Navbar scroll effect ── */
-const navbar = document.getElementById('navbar');
-window.addEventListener('scroll', () => {
-  navbar.classList.toggle('scrolled', window.scrollY > 40);
-}, { passive: true });
+gsap.registerPlugin(ScrollTrigger, ScrollToPlugin);
 
-/* ── Mobile menu ── */
-const hamburger = document.getElementById('hamburger');
-const mobileMenu = document.getElementById('mobileMenu');
-hamburger.addEventListener('click', () => {
-  mobileMenu.classList.toggle('open');
-});
-mobileMenu.querySelectorAll('a').forEach(link => {
-  link.addEventListener('click', () => mobileMenu.classList.remove('open'));
-});
+/* ─── Lenis smooth scroll ─── */
+const lenis = new Lenis({ lerp: 0.08, smoothWheel: true });
+lenis.on('scroll', ScrollTrigger.update);
+gsap.ticker.add((time) => lenis.raf(time * 1000));
+gsap.ticker.lagSmoothing(0);
 
-/* ── Scroll reveal ── */
-const revealObserver = new IntersectionObserver((entries) => {
-  entries.forEach(entry => {
-    if (entry.isIntersecting) {
-      entry.target.classList.add('visible');
-      revealObserver.unobserve(entry.target);
+/* ════════════════════════════════════════════════════
+   THREE.JS — HERO CANVAS (fluid wave background)
+   ════════════════════════════════════════════════════ */
+(function initHeroCanvas() {
+  const canvas = document.getElementById('heroCanvas');
+  const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  renderer.setSize(window.innerWidth, window.innerHeight);
+
+  const scene = new THREE.Scene();
+  const camera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
+
+  const vertShader = `
+    varying vec2 vUv;
+    void main() {
+      vUv = uv;
+      gl_Position = vec4(position, 1.0);
+    }
+  `;
+  const fragShader = `
+    uniform float uTime;
+    uniform vec2 uResolution;
+    varying vec2 vUv;
+
+    float wave(vec2 uv, float freq, float speed, float amp) {
+      return sin(uv.x * freq + uTime * speed) * amp;
+    }
+
+    void main() {
+      vec2 uv = vUv;
+      uv.x *= uResolution.x / uResolution.y;
+
+      float w1 = wave(uv, 4.0, 0.4, 0.05);
+      float w2 = wave(uv, 6.5, 0.6, 0.03);
+      float w3 = wave(uv, 9.0, 0.3, 0.02);
+      float wSum = w1 + w2 + w3;
+
+      float line1 = smoothstep(0.003, 0.0, abs(uv.y - 0.3 + wSum));
+      float line2 = smoothstep(0.003, 0.0, abs(uv.y - 0.5 + wSum * 1.3));
+      float line3 = smoothstep(0.003, 0.0, abs(uv.y - 0.7 + wSum * 0.8));
+
+      vec3 col1 = vec3(0.118, 0.251, 0.686); // blue
+      vec3 col2 = vec3(0.918, 0.345, 0.047); // orange
+      vec3 bg   = vec3(0.024, 0.035, 0.059); // near-black
+
+      vec3 col = bg;
+      col = mix(col, col1, line1 * 0.6);
+      col = mix(col, col2, line2 * 0.5);
+      col = mix(col, col1 * 0.6, line3 * 0.4);
+
+      // Radial vignette
+      float dist = length(vUv - 0.5) * 1.4;
+      col = mix(col, bg, smoothstep(0.5, 1.0, dist));
+
+      // Subtle glow orb
+      float orb = 1.0 - length(vUv - vec2(0.5, 0.45)) * 2.0;
+      orb = clamp(orb, 0.0, 1.0);
+      col += vec3(0.04, 0.06, 0.15) * orb * orb;
+
+      gl_FragColor = vec4(col, 1.0);
+    }
+  `;
+
+  const mat = new THREE.ShaderMaterial({
+    vertexShader: vertShader,
+    fragmentShader: fragShader,
+    uniforms: {
+      uTime: { value: 0 },
+      uResolution: { value: new THREE.Vector2(window.innerWidth, window.innerHeight) }
     }
   });
-}, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
 
-document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
+  const geo = new THREE.PlaneGeometry(2, 2);
+  scene.add(new THREE.Mesh(geo, mat));
 
-/* ── Animated counters ── */
-function animateCounter(el) {
-  const target = parseInt(el.dataset.target, 10);
-  const duration = 2000;
-  const step = 30;
-  const increment = target / (duration / step);
-  let current = 0;
-  const timer = setInterval(() => {
-    current += increment;
-    if (current >= target) {
-      current = target;
-      clearInterval(timer);
+  let raf;
+  function animate(t) {
+    raf = requestAnimationFrame(animate);
+    mat.uniforms.uTime.value = t * 0.001;
+    renderer.render(scene, camera);
+  }
+  animate(0);
+
+  window.addEventListener('resize', () => {
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    mat.uniforms.uResolution.value.set(window.innerWidth, window.innerHeight);
+  });
+})();
+
+/* ════════════════════════════════════════════════════
+   THREE.JS — CTA CANVAS (particle field)
+   ════════════════════════════════════════════════════ */
+(function initCtaCanvas() {
+  const canvas = document.getElementById('ctaCanvas');
+  const renderer = new THREE.WebGLRenderer({ canvas, antialias: false, alpha: true });
+  renderer.setPixelRatio(1);
+
+  const section = document.getElementById('contact');
+  const W = section.offsetWidth, H = section.offsetHeight;
+  renderer.setSize(W, H);
+
+  const scene = new THREE.Scene();
+  const camera = new THREE.PerspectiveCamera(60, W / H, 0.1, 100);
+  camera.position.z = 3;
+
+  const count = 800;
+  const positions = new Float32Array(count * 3);
+  for (let i = 0; i < count; i++) {
+    positions[i * 3]     = (Math.random() - 0.5) * 10;
+    positions[i * 3 + 1] = (Math.random() - 0.5) * 10;
+    positions[i * 3 + 2] = (Math.random() - 0.5) * 10;
+  }
+  const geo = new THREE.BufferGeometry();
+  geo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+
+  const mat = new THREE.PointsMaterial({ color: 0xEA580C, size: 0.025, transparent: true, opacity: 0.6 });
+  const points = new THREE.Points(geo, mat);
+  scene.add(points);
+
+  function animate(t) {
+    requestAnimationFrame(animate);
+    points.rotation.y = t * 0.00008;
+    points.rotation.x = t * 0.00004;
+    renderer.render(scene, camera);
+  }
+  animate(0);
+})();
+
+/* ════════════════════════════════════════════════════
+   LOADER
+   ════════════════════════════════════════════════════ */
+(function runLoader() {
+  const loader    = document.getElementById('loader');
+  const countEl   = document.getElementById('loaderCount');
+  const fillEl    = document.getElementById('loaderFill');
+
+  let count = 0;
+  const interval = setInterval(() => {
+    count += Math.floor(Math.random() * 8) + 2;
+    if (count >= 100) count = 100;
+    countEl.textContent = count;
+    fillEl.style.width = count + '%';
+    if (count === 100) {
+      clearInterval(interval);
+      setTimeout(() => {
+        gsap.to(loader, {
+          yPercent: -100,
+          duration: 1,
+          ease: 'power4.inOut',
+          onComplete: () => { loader.style.display = 'none'; runHeroAnim(); }
+        });
+      }, 300);
     }
-    el.textContent = Math.floor(current).toLocaleString();
-  }, step);
+  }, 30);
+})();
+
+/* ════════════════════════════════════════════════════
+   HERO ANIMATION
+   ════════════════════════════════════════════════════ */
+function runHeroAnim() {
+  const tl = gsap.timeline({ defaults: { ease: 'power4.out' } });
+
+  tl.to('.hero-eyebrow', { opacity: 1, y: 0, duration: 0.8 })
+    .to('.hero-title .word', {
+      y: 0, duration: 1, stagger: 0.06, ease: 'power4.out'
+    }, '-=0.4')
+    .to('.hero-sub', { opacity: 1, y: 0, duration: 0.8 }, '-=0.6')
+    .to('.hero-actions', { opacity: 1, y: 0, duration: 0.8 }, '-=0.6')
+    .to('.hero-stats', { opacity: 1, y: 0, duration: 0.8 }, '-=0.5')
+    .to('.hero-scroll-hint', { opacity: 1, duration: 0.8 }, '-=0.3');
+
+  // Count up stats
+  document.querySelectorAll('.hs-num').forEach(el => {
+    const target = parseInt(el.dataset.target);
+    gsap.to(el, {
+      duration: 2,
+      ease: 'power2.out',
+      delay: 1.5,
+      onUpdate() {
+        el.textContent = Math.floor(gsap.getProperty(el, '--n') || 0).toLocaleString();
+      },
+      '--n': target,
+    });
+    // simple fallback
+    let cur = 0;
+    const step = target / 60;
+    const t = setInterval(() => {
+      cur += step;
+      if (cur >= target) { cur = target; clearInterval(t); }
+      el.textContent = Math.floor(cur).toLocaleString();
+    }, 33);
+  });
 }
 
-const counterObserver = new IntersectionObserver((entries) => {
-  entries.forEach(entry => {
-    if (entry.isIntersecting) {
-      entry.target.querySelectorAll('[data-target]').forEach(animateCounter);
-      counterObserver.unobserve(entry.target);
-    }
+/* ════════════════════════════════════════════════════
+   NAVBAR
+   ════════════════════════════════════════════════════ */
+const navbar = document.getElementById('navbar');
+window.addEventListener('scroll', () => {
+  navbar.classList.toggle('scrolled', window.scrollY > 60);
+}, { passive: true });
+
+document.getElementById('hamburger').addEventListener('click', () => {
+  document.getElementById('mobileMenu').classList.toggle('open');
+});
+document.querySelectorAll('.mobile-menu a').forEach(a => {
+  a.addEventListener('click', () => document.getElementById('mobileMenu').classList.remove('open'));
+});
+
+/* ════════════════════════════════════════════════════
+   CUSTOM CURSOR
+   ════════════════════════════════════════════════════ */
+const cursor   = document.getElementById('cursor');
+const follower = document.getElementById('cursorFollower');
+let mx = 0, my = 0, fx = 0, fy = 0;
+
+document.addEventListener('mousemove', e => {
+  mx = e.clientX; my = e.clientY;
+  gsap.to(cursor, { x: mx, y: my, duration: 0.05 });
+});
+
+gsap.ticker.add(() => {
+  fx += (mx - fx) * 0.12;
+  fy += (my - fy) * 0.12;
+  gsap.set(follower, { x: fx, y: fy });
+});
+
+document.querySelectorAll('a, button, .magnetic, .svc-card, .wf, .rv-card').forEach(el => {
+  el.addEventListener('mouseenter', () => { cursor.classList.add('expand'); follower.classList.add('expand'); });
+  el.addEventListener('mouseleave', () => { cursor.classList.remove('expand'); follower.classList.remove('expand'); });
+});
+
+/* ════════════════════════════════════════════════════
+   MAGNETIC BUTTONS
+   ════════════════════════════════════════════════════ */
+document.querySelectorAll('.magnetic').forEach(el => {
+  el.addEventListener('mousemove', e => {
+    const rect = el.getBoundingClientRect();
+    const dx = e.clientX - (rect.left + rect.width / 2);
+    const dy = e.clientY - (rect.top + rect.height / 2);
+    gsap.to(el, { x: dx * 0.3, y: dy * 0.3, duration: 0.4, ease: 'power2.out' });
   });
-}, { threshold: 0.5 });
+  el.addEventListener('mouseleave', () => {
+    gsap.to(el, { x: 0, y: 0, duration: 0.6, ease: 'elastic.out(1,0.5)' });
+  });
+});
 
-const statsEl = document.querySelector('.hero-stats');
-if (statsEl) counterObserver.observe(statsEl);
+/* ════════════════════════════════════════════════════
+   SPLIT TEXT REVEALS (scroll)
+   ════════════════════════════════════════════════════ */
+document.querySelectorAll('.split-text').forEach(el => {
+  // wrap each word
+  const words = el.innerHTML.replace(/<br\s*\/?>/gi, '<br>').split(/(\s+|<br>)/);
+  el.innerHTML = words.map(w => {
+    if (w.match(/\s+/) || w === '<br>') return w;
+    return `<span class="st-word" style="display:inline-block;overflow:hidden"><span class="st-inner" style="display:inline-block;transform:translateY(100%)">${w}</span></span>`;
+  }).join('');
 
-/* ── Active nav link on scroll ── */
-const sections = document.querySelectorAll('section[id]');
-const navLinks = document.querySelectorAll('.nav-links a');
-
-const sectionObserver = new IntersectionObserver((entries) => {
-  entries.forEach(entry => {
-    if (entry.isIntersecting) {
-      const id = entry.target.id;
-      navLinks.forEach(link => {
-        link.classList.toggle('active', link.getAttribute('href') === `#${id}`);
+  ScrollTrigger.create({
+    trigger: el,
+    start: 'top 85%',
+    onEnter: () => {
+      gsap.to(el.querySelectorAll('.st-inner'), {
+        y: 0, duration: 1, stagger: 0.04, ease: 'power4.out'
       });
     }
   });
-}, { threshold: 0.4 });
+});
 
-sections.forEach(s => sectionObserver.observe(s));
+/* ════════════════════════════════════════════════════
+   SERVICES — HORIZONTAL DRAG SCROLL
+   ════════════════════════════════════════════════════ */
+(function initServicesScroll() {
+  const track   = document.getElementById('servicesTrack');
+  const fillEl  = document.getElementById('spFill');
+  const labelEl = document.getElementById('spLabel');
+  const cards   = track.querySelectorAll('.svc-card');
+  const cardW   = 320 + 24; // card width + gap
+  const total   = cards.length;
+  let current   = 0;
 
-/* ── Smooth scroll for all anchor links ── */
-document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-  anchor.addEventListener('click', e => {
-    const target = document.querySelector(anchor.getAttribute('href'));
-    if (!target) return;
-    e.preventDefault();
-    const offset = 80;
-    const top = target.getBoundingClientRect().top + window.scrollY - offset;
-    window.scrollTo({ top, behavior: 'smooth' });
+  ScrollTrigger.create({
+    trigger: '.services',
+    start: 'top top',
+    end: () => `+=${(total - 1) * cardW + 200}`,
+    pin: true,
+    scrub: 1,
+    onUpdate(self) {
+      const maxX = (total - 1) * cardW;
+      const x = -self.progress * maxX;
+      gsap.set(track, { x });
+
+      const idx = Math.round(-x / cardW);
+      current = Math.max(0, Math.min(total - 1, idx));
+      fillEl.style.width = ((current + 1) / total * 100) + '%';
+      labelEl.textContent = `0${current + 1} / 0${total}`;
+    }
+  });
+})();
+
+/* ════════════════════════════════════════════════════
+   WHY US — PARALLAX
+   ════════════════════════════════════════════════════ */
+gsap.to('.why-bg-text', {
+  yPercent: -30,
+  ease: 'none',
+  scrollTrigger: { trigger: '.why', scrub: 1 }
+});
+
+gsap.from('.trophy-card', {
+  y: 80, opacity: 0, duration: 1, ease: 'power3.out',
+  scrollTrigger: { trigger: '.why-right', start: 'top 75%' }
+});
+
+document.querySelectorAll('.float-pill').forEach((pill, i) => {
+  gsap.from(pill, {
+    y: 40, opacity: 0, duration: 0.8, delay: i * 0.15, ease: 'power3.out',
+    scrollTrigger: { trigger: '.why-right', start: 'top 70%' }
+  });
+  gsap.to(pill, {
+    y: i === 0 ? -20 : 20,
+    ease: 'sine.inOut',
+    duration: 3 + i,
+    repeat: -1,
+    yoyo: true
   });
 });
 
-/* ── Contact form ── */
-const form = document.getElementById('contactForm');
-const formSuccess = document.getElementById('formSuccess');
+document.querySelectorAll('.wf').forEach((el, i) => {
+  gsap.from(el, {
+    x: -40, opacity: 0, duration: 0.7, delay: i * 0.1, ease: 'power3.out',
+    scrollTrigger: { trigger: el, start: 'top 85%' }
+  });
+});
 
-form.addEventListener('submit', e => {
+/* ════════════════════════════════════════════════════
+   PROCESS — PINNED STEP REVEAL
+   ════════════════════════════════════════════════════ */
+(function initProcess() {
+  const panels   = document.querySelectorAll('.process-panel');
+  const pps      = document.querySelectorAll('.pps');
+  const ppsLine  = document.getElementById('ppsLine');
+  const steps    = panels.length;
+
+  if (!panels.length) return;
+
+  // show first panel
+  panels[0].classList.add('active');
+  pps[0] && pps[0].classList.add('active');
+
+  ScrollTrigger.create({
+    trigger: '.process',
+    start: 'top top',
+    end: () => `+=${steps * window.innerHeight}`,
+    pin: true,
+    scrub: false,
+    snap: 1 / (steps - 1),
+    onUpdate(self) {
+      const idx = Math.min(steps - 1, Math.floor(self.progress * steps));
+      panels.forEach((p, i) => p.classList.toggle('active', i === idx));
+      pps.forEach((p, i) => p.classList.toggle('active', i <= idx));
+      if (ppsLine) ppsLine.style.height = (idx / (steps - 1) * 100) + '%';
+    }
+  });
+})();
+
+/* ════════════════════════════════════════════════════
+   REVIEWS — STAGGER IN
+   ════════════════════════════════════════════════════ */
+gsap.from('.rv-card', {
+  y: 60, opacity: 0, duration: 0.8, stagger: 0.1, ease: 'power3.out',
+  scrollTrigger: { trigger: '.reviews-grid', start: 'top 80%' }
+});
+
+/* ════════════════════════════════════════════════════
+   CTA SECTION
+   ════════════════════════════════════════════════════ */
+gsap.from('.cta-phone, .cta-form', {
+  y: 40, opacity: 0, duration: 0.8, stagger: 0.2, ease: 'power3.out',
+  scrollTrigger: { trigger: '.cta-two-col', start: 'top 80%' }
+});
+
+/* ════════════════════════════════════════════════════
+   CONTACT FORM
+   ════════════════════════════════════════════════════ */
+document.getElementById('ctaForm').addEventListener('submit', e => {
   e.preventDefault();
-  const btn = form.querySelector('button[type="submit"]');
-  const btnText = btn.querySelector('.btn-text');
-  const btnSpinner = btn.querySelector('.btn-spinner');
-
+  const btn = e.target.querySelector('button');
+  const lbl = btn.querySelector('.btn-label');
+  lbl.textContent = 'Sending…';
   btn.disabled = true;
-  btnText.style.display = 'none';
-  btnSpinner.style.display = 'inline';
-
-  // Simulate async submit
   setTimeout(() => {
+    document.getElementById('cfSuccess').classList.add('show');
+    e.target.reset();
     btn.disabled = false;
-    btnText.style.display = 'inline';
-    btnSpinner.style.display = 'none';
-    form.reset();
-    formSuccess.classList.add('visible');
-    formSuccess.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    lbl.textContent = 'Send Free Quote Request';
   }, 1800);
 });
 
-/* ── Parallax hero background elements ── */
-document.addEventListener('mousemove', e => {
-  const { innerWidth, innerHeight } = window;
-  const x = (e.clientX / innerWidth - 0.5) * 20;
-  const y = (e.clientY / innerHeight - 0.5) * 20;
-  const drops = document.querySelectorAll('.water-drop');
-  drops.forEach((drop, i) => {
-    const factor = (i + 1) * 0.4;
-    drop.style.transform = `translate(${x * factor}px, ${y * factor}px)`;
+/* ════════════════════════════════════════════════════
+   SMOOTH ANCHOR SCROLL
+   ════════════════════════════════════════════════════ */
+document.querySelectorAll('a[href^="#"]').forEach(a => {
+  a.addEventListener('click', e => {
+    const target = document.querySelector(a.getAttribute('href'));
+    if (!target) return;
+    e.preventDefault();
+    lenis.scrollTo(target, { offset: -80, duration: 1.4 });
   });
 });
 
-/* ── Cursor ripple on click ── */
-document.addEventListener('click', e => {
-  const ripple = document.createElement('div');
-  ripple.style.cssText = `
-    position: fixed;
-    left: ${e.clientX}px;
-    top: ${e.clientY}px;
-    width: 0;
-    height: 0;
-    border-radius: 50%;
-    background: rgba(30,64,175,0.15);
-    transform: translate(-50%, -50%);
-    pointer-events: none;
-    z-index: 9999;
-    animation: rippleOut 0.6s ease-out forwards;
-  `;
-  document.body.appendChild(ripple);
-  setTimeout(() => ripple.remove(), 600);
+/* ════════════════════════════════════════════════════
+   PARALLAX CARDS (mousemove)
+   ════════════════════════════════════════════════════ */
+document.querySelectorAll('.parallax-card').forEach(card => {
+  card.addEventListener('mousemove', e => {
+    const rect = card.getBoundingClientRect();
+    const dx = (e.clientX - rect.left - rect.width / 2) / rect.width;
+    const dy = (e.clientY - rect.top - rect.height / 2) / rect.height;
+    gsap.to(card, { rotateY: dx * 12, rotateX: -dy * 12, transformPerspective: 800, duration: 0.4, ease: 'power2.out' });
+  });
+  card.addEventListener('mouseleave', () => {
+    gsap.to(card, { rotateY: 0, rotateX: 0, duration: 0.7, ease: 'elastic.out(1,0.5)' });
+  });
 });
 
-/* Inject ripple keyframe */
-const style = document.createElement('style');
-style.textContent = `
-  @keyframes rippleOut {
-    to { width: 120px; height: 120px; opacity: 0; }
-  }
-  .nav-links a.active {
-    color: var(--accent-light) !important;
-  }
-`;
-document.head.appendChild(style);
+/* ════════════════════════════════════════════════════
+   MARQUEE — pause on hover
+   ════════════════════════════════════════════════════ */
+const marqueeEl = document.querySelector('.marquee-inner');
+marqueeEl.addEventListener('mouseenter', () => marqueeEl.style.animationPlayState = 'paused');
+marqueeEl.addEventListener('mouseleave', () => marqueeEl.style.animationPlayState = 'running');
 </script>
 </body>
 </html>

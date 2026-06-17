@@ -3,572 +3,448 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>FlowMaster Plumbing — Expert Service, Every Time</title>
-  <meta name="description" content="Professional plumbing services. Fast response, honest pricing, guaranteed work. Available 24/7 for emergencies." />
+  <title>FlowMaster Pro — Expert Plumbing</title>
+
+  <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;500;600;700&family=Poppins:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800;900&family=Open+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
+
+  <!-- GSAP + ScrollTrigger + SplitText -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollToPlugin.min.js"></script>
+
+  <!-- Lenis smooth scroll -->
+  <script src="https://cdn.jsdelivr.net/npm/@studio-freight/lenis@1.0.42/dist/lenis.min.js"></script>
+
+  <!-- Three.js -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
 
-  <!-- NAV -->
+  <!-- ═══ CURSOR ═══ -->
+  <div class="cursor" id="cursor"></div>
+  <div class="cursor-follower" id="cursorFollower"></div>
+
+  <!-- ═══ LOADER ═══ -->
+  <div class="loader" id="loader">
+    <div class="loader-inner">
+      <svg class="loader-pipe" viewBox="0 0 100 100" fill="none">
+        <path class="pipe-path" d="M10,50 Q30,10 50,50 Q70,90 90,50" stroke="#EA580C" stroke-width="3" fill="none" stroke-linecap="round"/>
+      </svg>
+      <div class="loader-count" id="loaderCount">0</div>
+      <div class="loader-bar"><div class="loader-fill" id="loaderFill"></div></div>
+    </div>
+  </div>
+
+  <!-- ═══ NAV ═══ -->
   <nav id="navbar">
     <div class="nav-inner">
-      <a href="#" class="logo">
-        <span class="logo-icon">💧</span>
-        <span class="logo-text">FlowMaster<span class="logo-accent">Pro</span></span>
+      <a href="#hero" class="logo">
+        <span class="logo-drop">💧</span>
+        <span class="logo-text">FlowMaster<span class="accent">Pro</span></span>
       </a>
       <ul class="nav-links">
-        <li><a href="#services">Services</a></li>
-        <li><a href="#why-us">Why Us</a></li>
-        <li><a href="#process">Process</a></li>
-        <li><a href="#reviews">Reviews</a></li>
-        <li><a href="#contact">Contact</a></li>
+        <li><a href="#services" data-hover="Services">Services</a></li>
+        <li><a href="#why" data-hover="Why Us">Why Us</a></li>
+        <li><a href="#process" data-hover="Process">Process</a></li>
+        <li><a href="#reviews" data-hover="Reviews">Reviews</a></li>
       </ul>
-      <a href="tel:+18005551234" class="nav-cta">📞 Call Now</a>
-      <button class="hamburger" id="hamburger" aria-label="Open menu">
-        <span></span><span></span><span></span>
-      </button>
+      <a href="tel:+18005551234" class="nav-cta magnetic">
+        <span>📞 Call Now</span>
+      </a>
+      <button class="hamburger" id="hamburger"><span></span><span></span><span></span></button>
     </div>
     <div class="mobile-menu" id="mobileMenu">
       <a href="#services">Services</a>
-      <a href="#why-us">Why Us</a>
+      <a href="#why">Why Us</a>
       <a href="#process">Process</a>
       <a href="#reviews">Reviews</a>
-      <a href="#contact">Contact</a>
       <a href="tel:+18005551234" class="mobile-cta">📞 (800) 555-1234</a>
     </div>
   </nav>
 
-  <!-- HERO -->
-  <section class="hero" id="home">
-    <div class="hero-bg">
-      <div class="water-drop d1"></div>
-      <div class="water-drop d2"></div>
-      <div class="water-drop d3"></div>
-      <div class="pipe-line pl1"></div>
-      <div class="pipe-line pl2"></div>
-      <div class="bubble b1"></div>
-      <div class="bubble b2"></div>
-      <div class="bubble b3"></div>
-      <div class="bubble b4"></div>
-      <div class="bubble b5"></div>
-    </div>
+  <!-- ═══ HERO ═══ -->
+  <section class="hero" id="hero">
+    <canvas id="heroCanvas"></canvas>
+    <div class="hero-noise"></div>
+
     <div class="hero-content">
-      <div class="hero-badge reveal">⚡ Available 24/7 Emergency Service</div>
-      <h1 class="hero-title reveal">
-        Your Pipes.<br />
-        <span class="gradient-text">Our Expertise.</span><br />
-        Problem Solved.
-      </h1>
-      <p class="hero-sub reveal">
-        Trusted by 10,000+ homeowners. Fast response, fair prices, and work that lasts.
-        No surprise charges — ever.
-      </p>
-      <div class="hero-actions reveal">
-        <a href="#contact" class="btn-primary">Get Free Quote</a>
-        <a href="#services" class="btn-ghost">Our Services ↓</a>
+      <div class="hero-eyebrow">
+        <span class="eyebrow-dot"></span>
+        <span class="eyebrow-text">Available 24/7 · Emergency Response</span>
       </div>
-      <div class="hero-stats reveal">
-        <div class="stat">
-          <span class="stat-num" data-target="10000">0</span><span class="stat-suffix">+</span>
-          <span class="stat-label">Happy Customers</span>
+
+      <h1 class="hero-title">
+        <span class="line l1"><span class="word">Your</span> <span class="word">Pipes.</span></span>
+        <span class="line l2 accent-line"><span class="word">Our</span> <span class="word">Expertise.</span></span>
+        <span class="line l3"><span class="word">Problem</span> <span class="word">Solved.</span></span>
+      </h1>
+
+      <p class="hero-sub">Trusted by 10,000+ homeowners. Fast response, honest pricing,<br/>and work that lasts. No surprises — ever.</p>
+
+      <div class="hero-actions">
+        <a href="#contact" class="btn-primary magnetic">
+          <span class="btn-bg"></span>
+          <span class="btn-label">Get Free Quote</span>
+          <svg width="16" height="16" viewBox="0 0 16 16"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </a>
+        <a href="#services" class="btn-ghost magnetic">
+          <span>Explore Services</span>
+          <span class="btn-arrow">↓</span>
+        </a>
+      </div>
+
+      <div class="hero-stats">
+        <div class="hero-stat">
+          <span class="hs-num" data-target="10000">0</span><span class="hs-suffix">+</span>
+          <span class="hs-label">Happy Customers</span>
         </div>
-        <div class="stat-divider"></div>
-        <div class="stat">
-          <span class="stat-num" data-target="25">0</span><span class="stat-suffix">yr</span>
-          <span class="stat-label">Experience</span>
+        <div class="hs-divider"></div>
+        <div class="hero-stat">
+          <span class="hs-num" data-target="25">0</span><span class="hs-suffix">yr</span>
+          <span class="hs-label">Experience</span>
         </div>
-        <div class="stat-divider"></div>
-        <div class="stat">
-          <span class="stat-num" data-target="60">0</span><span class="stat-suffix">min</span>
-          <span class="stat-label">Avg Response</span>
+        <div class="hs-divider"></div>
+        <div class="hero-stat">
+          <span class="hs-num" data-target="60">0</span><span class="hs-suffix">min</span>
+          <span class="hs-label">Avg Response</span>
         </div>
-        <div class="stat-divider"></div>
-        <div class="stat">
-          <span class="stat-num" data-target="100">0</span><span class="stat-suffix">%</span>
-          <span class="stat-label">Satisfaction</span>
+        <div class="hs-divider"></div>
+        <div class="hero-stat">
+          <span class="hs-num" data-target="100">0</span><span class="hs-suffix">%</span>
+          <span class="hs-label">Satisfaction</span>
         </div>
       </div>
     </div>
-    <div class="hero-scroll-indicator">
-      <div class="scroll-dot"></div>
+
+    <div class="hero-scroll-hint">
+      <div class="scroll-line"></div>
+      <span>Scroll</span>
     </div>
   </section>
 
-  <!-- TRUST BAR -->
-  <div class="trust-bar">
-    <div class="trust-inner">
-      <div class="trust-item"><span class="ti-icon">🏅</span> Licensed & Insured</div>
-      <div class="trust-item"><span class="ti-icon">⭐</span> 4.9/5 Google Rating</div>
-      <div class="trust-item"><span class="ti-icon">🔒</span> Upfront Pricing</div>
-      <div class="trust-item"><span class="ti-icon">🛠️</span> 2-Year Guarantee</div>
-      <div class="trust-item"><span class="ti-icon">🚨</span> 24/7 Emergency</div>
+  <!-- ═══ MARQUEE ═══ -->
+  <div class="marquee-section">
+    <div class="marquee-track">
+      <div class="marquee-inner" id="marqueeInner">
+        <span>Licensed & Insured</span><span class="dot">●</span>
+        <span>24/7 Emergency</span><span class="dot">●</span>
+        <span>Upfront Pricing</span><span class="dot">●</span>
+        <span>2-Year Guarantee</span><span class="dot">●</span>
+        <span>4.9★ Google Rating</span><span class="dot">●</span>
+        <span>Background Checked</span><span class="dot">●</span>
+        <span>Same-Day Service</span><span class="dot">●</span>
+        <span>Free Quotes</span><span class="dot">●</span>
+        <span>Licensed & Insured</span><span class="dot">●</span>
+        <span>24/7 Emergency</span><span class="dot">●</span>
+        <span>Upfront Pricing</span><span class="dot">●</span>
+        <span>2-Year Guarantee</span><span class="dot">●</span>
+        <span>4.9★ Google Rating</span><span class="dot">●</span>
+        <span>Background Checked</span><span class="dot">●</span>
+        <span>Same-Day Service</span><span class="dot">●</span>
+        <span>Free Quotes</span><span class="dot">●</span>
+      </div>
     </div>
   </div>
 
-  <!-- SERVICES -->
+  <!-- ═══ SERVICES — HORIZONTAL SCROLL ═══ -->
   <section class="services" id="services">
-    <div class="container">
-      <div class="section-header reveal">
+    <div class="services-sticky">
+      <div class="services-header">
         <span class="section-tag">What We Do</span>
-        <h2>Expert Services for Every Plumbing Need</h2>
-        <p>From dripping taps to full re-pipes, our certified plumbers handle it all with speed and precision.</p>
+        <h2 class="split-text">Expert Services for <br/><em>Every Plumbing Need</em></h2>
       </div>
-      <div class="services-grid">
-        <div class="service-card reveal" style="--delay:0ms">
-          <div class="sc-icon">🚨</div>
-          <h3>Emergency Repairs</h3>
-          <p>Burst pipes, flooding, or no hot water? We're on-site within 60 minutes — day or night.</p>
-          <ul class="sc-list">
-            <li>Burst pipe repair</li>
-            <li>Sewage backup</li>
-            <li>Gas leaks</li>
-          </ul>
-          <a href="#contact" class="sc-link">Book Emergency →</a>
-          <div class="sc-glow"></div>
+      <div class="services-track-wrap">
+        <div class="services-track" id="servicesTrack">
+          <div class="svc-card">
+            <div class="svc-num">01</div>
+            <div class="svc-icon">🚨</div>
+            <h3>Emergency Repairs</h3>
+            <p>Burst pipes, flooding, no hot water? On-site within 60 minutes — day or night.</p>
+            <ul><li>Burst pipe repair</li><li>Sewage backup</li><li>Gas leak response</li></ul>
+            <a href="#contact" class="svc-link">Book Emergency <span>→</span></a>
+            <div class="svc-bg-shape"></div>
+          </div>
+          <div class="svc-card">
+            <div class="svc-num">02</div>
+            <div class="svc-icon">🪠</div>
+            <h3>Drain Cleaning</h3>
+            <p>Slow drains? Full blockages? Our hydro-jetting tech clears any clog fast.</p>
+            <ul><li>Hydro-jetting</li><li>Snake / augering</li><li>CCTV inspection</li></ul>
+            <a href="#contact" class="svc-link">Book Service <span>→</span></a>
+            <div class="svc-bg-shape"></div>
+          </div>
+          <div class="svc-card featured">
+            <div class="svc-badge">Most Popular</div>
+            <div class="svc-num">03</div>
+            <div class="svc-icon">🔧</div>
+            <h3>General Repairs</h3>
+            <p>Leaky faucets, running toilets, low water pressure — fixed right first time.</p>
+            <ul><li>Faucet & fixture repair</li><li>Toilet rebuild</li><li>Pipe leak repair</li></ul>
+            <a href="#contact" class="svc-link">Book Service <span>→</span></a>
+            <div class="svc-bg-shape"></div>
+          </div>
+          <div class="svc-card">
+            <div class="svc-num">04</div>
+            <div class="svc-icon">🏠</div>
+            <h3>Installations</h3>
+            <p>Water heater, sink, shower or full bathroom remodel — installed properly.</p>
+            <ul><li>Water heater install</li><li>Fixture installation</li><li>Bathroom remodel</li></ul>
+            <a href="#contact" class="svc-link">Book Service <span>→</span></a>
+            <div class="svc-bg-shape"></div>
+          </div>
+          <div class="svc-card">
+            <div class="svc-num">05</div>
+            <div class="svc-icon">💧</div>
+            <h3>Water Quality</h3>
+            <p>Hard water, bad taste, low pressure? We test and treat your water supply.</p>
+            <ul><li>Softener installation</li><li>Filtration systems</li><li>Pressure regulators</li></ul>
+            <a href="#contact" class="svc-link">Book Service <span>→</span></a>
+            <div class="svc-bg-shape"></div>
+          </div>
+          <div class="svc-card">
+            <div class="svc-num">06</div>
+            <div class="svc-icon">🏗️</div>
+            <h3>Re-Piping</h3>
+            <p>Old galvanised or lead pipes? Fully re-pipe your home for safety and reliability.</p>
+            <ul><li>Full home re-pipe</li><li>PEX / copper piping</li><li>Slab leak repair</li></ul>
+            <a href="#contact" class="svc-link">Book Service <span>→</span></a>
+            <div class="svc-bg-shape"></div>
+          </div>
         </div>
-        <div class="service-card reveal" style="--delay:100ms">
-          <div class="sc-icon">🪠</div>
-          <h3>Drain Cleaning</h3>
-          <p>Slow drains? Complete blockages? Our hydro-jetting tech clears any clog fast.</p>
-          <ul class="sc-list">
-            <li>Hydro-jetting</li>
-            <li>Snake / augering</li>
-            <li>CCTV inspection</li>
-          </ul>
-          <a href="#contact" class="sc-link">Book Service →</a>
-          <div class="sc-glow"></div>
-        </div>
-        <div class="service-card reveal featured" style="--delay:200ms">
-          <div class="sc-badge">Most Popular</div>
-          <div class="sc-icon">🔧</div>
-          <h3>General Repairs</h3>
-          <p>Leaky faucets, running toilets, or low water pressure — fixed right the first time.</p>
-          <ul class="sc-list">
-            <li>Faucet & fixture repair</li>
-            <li>Toilet rebuild</li>
-            <li>Pipe leak repair</li>
-          </ul>
-          <a href="#contact" class="sc-link">Book Service →</a>
-          <div class="sc-glow"></div>
-        </div>
-        <div class="service-card reveal" style="--delay:300ms">
-          <div class="sc-icon">🏠</div>
-          <h3>Installations</h3>
-          <p>New water heater, sink, shower, or full bathroom remodel — we install it properly.</p>
-          <ul class="sc-list">
-            <li>Water heater install</li>
-            <li>Fixture installation</li>
-            <li>Bathroom remodel</li>
-          </ul>
-          <a href="#contact" class="sc-link">Book Service →</a>
-          <div class="sc-glow"></div>
-        </div>
-        <div class="service-card reveal" style="--delay:400ms">
-          <div class="sc-icon">💧</div>
-          <h3>Water Quality</h3>
-          <p>Hard water, bad taste, or low pressure? We test and treat your water supply.</p>
-          <ul class="sc-list">
-            <li>Softener installation</li>
-            <li>Filtration systems</li>
-            <li>Pressure regulators</li>
-          </ul>
-          <a href="#contact" class="sc-link">Book Service →</a>
-          <div class="sc-glow"></div>
-        </div>
-        <div class="service-card reveal" style="--delay:500ms">
-          <div class="sc-icon">🏗️</div>
-          <h3>Re-Piping</h3>
-          <p>Old galvanised or lead pipes? We fully re-pipe your home for safety and reliability.</p>
-          <ul class="sc-list">
-            <li>Full home re-pipe</li>
-            <li>PEX / copper piping</li>
-            <li>Slab leak repair</li>
-          </ul>
-          <a href="#contact" class="sc-link">Book Service →</a>
-          <div class="sc-glow"></div>
-        </div>
+      </div>
+      <div class="services-progress">
+        <div class="sp-bar"><div class="sp-fill" id="spFill"></div></div>
+        <span class="sp-label" id="spLabel">01 / 06</span>
       </div>
     </div>
   </section>
 
-  <!-- WHY US -->
-  <section class="why-us" id="why-us">
+  <!-- ═══ WHY US — PARALLAX ═══ -->
+  <section class="why" id="why">
+    <div class="why-bg-text">TRUSTED</div>
     <div class="container">
       <div class="why-grid">
-        <div class="why-visual reveal">
-          <div class="why-card-big">
-            <div class="wcb-top">
-              <span class="wcb-icon">🏆</span>
-              <div>
-                <strong>#1 Rated Plumber</strong>
-                <span>In the Greater Metro Area</span>
-              </div>
-            </div>
-            <div class="wcb-rating">
-              <span class="stars">★★★★★</span>
-              <span>4.9 from 2,400+ reviews</span>
-            </div>
-            <div class="wcb-badges">
-              <span class="badge">BBB A+</span>
-              <span class="badge">Angi Top Pro</span>
-              <span class="badge">HomeAdvisor Elite</span>
-            </div>
-          </div>
-          <div class="why-float-card wfc1 reveal">
-            <span>🚀</span>
-            <div>
-              <strong>60 Min</strong>
-              <span>Emergency Response</span>
-            </div>
-          </div>
-          <div class="why-float-card wfc2 reveal">
-            <span>💰</span>
-            <div>
-              <strong>Free Quotes</strong>
-              <span>No obligation</span>
-            </div>
-          </div>
-        </div>
-        <div class="why-content reveal">
+        <div class="why-left">
           <span class="section-tag">Why Choose Us</span>
-          <h2>The Plumbers Your Neighbours Recommend</h2>
-          <p class="why-intro">We're not just fixing pipes — we're building trust. Every job comes with our promise of honest work, honest pricing, and a finish you'll be proud of.</p>
+          <h2 class="split-text">The Plumbers Your<br/><em>Neighbours Recommend</em></h2>
+          <p class="why-intro">We don't just fix pipes — we build trust. Every job backed by honest work, honest pricing, and a finish you'll be proud of.</p>
           <div class="why-features">
-            <div class="wf-item">
-              <div class="wf-icon">⚡</div>
-              <div>
+            <div class="wf" data-index="0">
+              <div class="wf-num">01</div>
+              <div class="wf-body">
                 <h4>Same-Day Service</h4>
-                <p>Book before noon, we're there today. Emergency slots always available.</p>
+                <p>Book before noon, we're there today.</p>
               </div>
             </div>
-            <div class="wf-item">
-              <div class="wf-icon">💲</div>
-              <div>
+            <div class="wf" data-index="1">
+              <div class="wf-num">02</div>
+              <div class="wf-body">
                 <h4>Upfront Pricing</h4>
-                <p>You approve the price before we start. Zero hidden fees. Ever.</p>
+                <p>You approve the price before we start.</p>
               </div>
             </div>
-            <div class="wf-item">
-              <div class="wf-icon">🛡️</div>
-              <div>
+            <div class="wf" data-index="2">
+              <div class="wf-num">03</div>
+              <div class="wf-body">
                 <h4>2-Year Guarantee</h4>
-                <p>Our work is backed by a 2-year parts and labour warranty.</p>
+                <p>Parts and labour warranty on all work.</p>
               </div>
             </div>
-            <div class="wf-item">
-              <div class="wf-icon">👷</div>
-              <div>
+            <div class="wf" data-index="3">
+              <div class="wf-num">04</div>
+              <div class="wf-body">
                 <h4>Background Checked</h4>
-                <p>Every technician is fully licensed, insured, and background verified.</p>
+                <p>Every tech is licensed, insured & verified.</p>
               </div>
             </div>
           </div>
         </div>
+        <div class="why-right">
+          <div class="trophy-card parallax-card">
+            <div class="tc-icon">🏆</div>
+            <strong>#1 Rated Plumber</strong>
+            <span>Greater Metro Area</span>
+            <div class="tc-stars">★★★★★</div>
+            <div class="tc-reviews">4.9 from 2,400+ reviews</div>
+            <div class="tc-badges">
+              <span>BBB A+</span><span>Angi Top Pro</span><span>HomeAdvisor Elite</span>
+            </div>
+          </div>
+          <div class="float-pill fp1 parallax-card">⚡ 60 Min Emergency Response</div>
+          <div class="float-pill fp2 parallax-card">💰 Free Quotes · No Obligation</div>
+        </div>
       </div>
     </div>
   </section>
 
-  <!-- PROCESS -->
+  <!-- ═══ PROCESS — PINNED SCROLL ═══ -->
   <section class="process" id="process">
-    <div class="container">
-      <div class="section-header reveal">
+    <div class="process-sticky">
+      <div class="process-left">
         <span class="section-tag">How It Works</span>
-        <h2>4 Simple Steps to a Fixed Plumbing Problem</h2>
-        <p>We've made booking a plumber as stress-free as possible.</p>
+        <h2 class="split-text">4 Steps to a<br/><em>Fixed Problem</em></h2>
+        <div class="process-progress-steps">
+          <div class="pps" data-step="0"><div class="pps-dot"></div><span>Book</span></div>
+          <div class="pps" data-step="1"><div class="pps-dot"></div><span>Diagnose</span></div>
+          <div class="pps" data-step="2"><div class="pps-dot"></div><span>Repair</span></div>
+          <div class="pps" data-step="3"><div class="pps-dot"></div><span>Guarantee</span></div>
+          <div class="pps-track"><div class="pps-line" id="ppsLine"></div></div>
+        </div>
       </div>
-      <div class="process-steps">
-        <div class="process-line"></div>
-        <div class="process-step reveal" style="--delay:0ms">
-          <div class="ps-num">01</div>
-          <div class="ps-icon">📞</div>
+      <div class="process-right">
+        <div class="process-panel" data-step="0">
+          <div class="pp-num">01</div>
+          <div class="pp-icon">📞</div>
           <h3>Call or Book Online</h3>
-          <p>Tell us your problem. We'll schedule a time that suits you — often same day.</p>
+          <p>Tell us your problem. We schedule a time that suits you — often same day. No call centres, speak directly with our dispatch team.</p>
         </div>
-        <div class="process-step reveal" style="--delay:150ms">
-          <div class="ps-num">02</div>
-          <div class="ps-icon">🔍</div>
+        <div class="process-panel" data-step="1">
+          <div class="pp-num">02</div>
+          <div class="pp-icon">🔍</div>
           <h3>Diagnosis & Quote</h3>
-          <p>Our plumber diagnoses the issue and gives you a clear upfront price. No surprises.</p>
+          <p>Our plumber diagnoses the issue and gives you a clear, upfront price before any work begins. No surprises. No hidden fees.</p>
         </div>
-        <div class="process-step reveal" style="--delay:300ms">
-          <div class="ps-num">03</div>
-          <div class="ps-icon">🔧</div>
+        <div class="process-panel" data-step="2">
+          <div class="pp-num">03</div>
+          <div class="pp-icon">🔧</div>
           <h3>Expert Repair</h3>
-          <p>Once you approve, we get to work — efficiently and cleanly, respecting your home.</p>
+          <p>Once you approve the quote, we get to work efficiently and cleanly — always respecting your home and leaving zero mess.</p>
         </div>
-        <div class="process-step reveal" style="--delay:450ms">
-          <div class="ps-num">04</div>
-          <div class="ps-icon">✅</div>
+        <div class="process-panel" data-step="3">
+          <div class="pp-num">04</div>
+          <div class="pp-icon">✅</div>
           <h3>Final Check & Guarantee</h3>
-          <p>We test everything thoroughly and leave you with a 2-year written guarantee.</p>
+          <p>We thoroughly test all work and hand you a 2-year written warranty. You won't need to call us back — but we're here if you do.</p>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- REVIEWS -->
+  <!-- ═══ REVIEWS ═══ -->
   <section class="reviews" id="reviews">
     <div class="container">
-      <div class="section-header reveal">
-        <span class="section-tag">Customer Reviews</span>
-        <h2>What Our Customers Say</h2>
-        <p>Real reviews from real homeowners — unedited and unprompted.</p>
+      <div class="section-header">
+        <span class="section-tag">Reviews</span>
+        <h2 class="split-text">What Customers Say</h2>
       </div>
-      <div class="reviews-track-wrapper">
-        <div class="reviews-track">
-          <div class="review-card">
-            <div class="rc-stars">★★★★★</div>
-            <p>"Pipe burst at midnight. FlowMaster were there in 45 minutes and had it fixed by 2am. Absolutely incredible service."</p>
-            <div class="rc-author">
-              <div class="rc-avatar">SJ</div>
-              <div><strong>Sarah J.</strong><span>Homeowner, Chicago</span></div>
-            </div>
-          </div>
-          <div class="review-card">
-            <div class="rc-stars">★★★★★</div>
-            <p>"Used three other plumbers before FlowMaster. They diagnosed the issue in 10 minutes that others missed for months. Worth every penny."</p>
-            <div class="rc-author">
-              <div class="rc-avatar">MR</div>
-              <div><strong>Mike R.</strong><span>Property Manager</span></div>
-            </div>
-          </div>
-          <div class="review-card">
-            <div class="rc-stars">★★★★★</div>
-            <p>"Transparent pricing, clean work, and they even cleaned up after themselves. My new go-to for everything plumbing."</p>
-            <div class="rc-author">
-              <div class="rc-avatar">AL</div>
-              <div><strong>Amanda L.</strong><span>Homeowner, Oak Park</span></div>
-            </div>
-          </div>
-          <div class="review-card">
-            <div class="rc-stars">★★★★★</div>
-            <p>"Re-piped our whole house. Project done on time, on budget. Communication was excellent throughout. Highly recommend."</p>
-            <div class="rc-author">
-              <div class="rc-avatar">DK</div>
-              <div><strong>David K.</strong><span>Homeowner, Evanston</span></div>
-            </div>
-          </div>
-          <div class="review-card">
-            <div class="rc-stars">★★★★★</div>
-            <p>"Fixed our water heater same day. The technician was polite, explained everything clearly, and the price was fair."</p>
-            <div class="rc-author">
-              <div class="rc-avatar">TC</div>
-              <div><strong>Tina C.</strong><span>Apartment Owner</span></div>
-            </div>
-          </div>
-          <div class="review-card">
-            <div class="rc-stars">★★★★★</div>
-            <p>"Had a slab leak — stressful situation. FlowMaster made the whole process painless. Professional from start to finish."</p>
-            <div class="rc-author">
-              <div class="rc-avatar">BW</div>
-              <div><strong>Brian W.</strong><span>Homeowner, Naperville</span></div>
-            </div>
-          </div>
-          <!-- duplicate for infinite scroll -->
-          <div class="review-card">
-            <div class="rc-stars">★★★★★</div>
-            <p>"Pipe burst at midnight. FlowMaster were there in 45 minutes and had it fixed by 2am. Absolutely incredible service."</p>
-            <div class="rc-author">
-              <div class="rc-avatar">SJ</div>
-              <div><strong>Sarah J.</strong><span>Homeowner, Chicago</span></div>
-            </div>
-          </div>
-          <div class="review-card">
-            <div class="rc-stars">★★★★★</div>
-            <p>"Used three other plumbers before FlowMaster. They diagnosed the issue in 10 minutes that others missed for months. Worth every penny."</p>
-            <div class="rc-author">
-              <div class="rc-avatar">MR</div>
-              <div><strong>Mike R.</strong><span>Property Manager</span></div>
-            </div>
-          </div>
-          <div class="review-card">
-            <div class="rc-stars">★★★★★</div>
-            <p>"Transparent pricing, clean work, and they even cleaned up after themselves. My new go-to for everything plumbing."</p>
-            <div class="rc-author">
-              <div class="rc-avatar">AL</div>
-              <div><strong>Amanda L.</strong><span>Homeowner, Oak Park</span></div>
-            </div>
-          </div>
+      <div class="reviews-grid">
+        <div class="rv-card large">
+          <div class="rv-stars">★★★★★</div>
+          <p>"Pipe burst at midnight. FlowMaster were on-site in 45 minutes and had it fixed by 2am. Absolutely incredible service — I can't thank them enough."</p>
+          <div class="rv-author"><div class="rv-av">SJ</div><div><strong>Sarah J.</strong><span>Homeowner, Chicago</span></div></div>
+        </div>
+        <div class="rv-card">
+          <div class="rv-stars">★★★★★</div>
+          <p>"Three other plumbers missed the issue. FlowMaster found it in 10 minutes. Worth every penny."</p>
+          <div class="rv-author"><div class="rv-av">MR</div><div><strong>Mike R.</strong><span>Property Manager</span></div></div>
+        </div>
+        <div class="rv-card">
+          <div class="rv-stars">★★★★★</div>
+          <p>"Transparent pricing, clean work, and they cleaned up after themselves. My go-to for everything plumbing."</p>
+          <div class="rv-author"><div class="rv-av">AL</div><div><strong>Amanda L.</strong><span>Oak Park</span></div></div>
+        </div>
+        <div class="rv-card">
+          <div class="rv-stars">★★★★★</div>
+          <p>"Re-piped our whole house. On time, on budget. Communication was excellent throughout."</p>
+          <div class="rv-author"><div class="rv-av">DK</div><div><strong>David K.</strong><span>Evanston</span></div></div>
+        </div>
+        <div class="rv-card">
+          <div class="rv-stars">★★★★★</div>
+          <p>"Fixed our water heater same day. Polite, explained everything clearly, fair price. Perfect."</p>
+          <div class="rv-author"><div class="rv-av">TC</div><div><strong>Tina C.</strong><span>Apartment Owner</span></div></div>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- CTA BAND -->
-  <section class="cta-band">
-    <div class="cta-bg-anim">
-      <div class="cba-circle c1"></div>
-      <div class="cba-circle c2"></div>
-      <div class="cba-circle c3"></div>
-    </div>
+  <!-- ═══ CTA ═══ -->
+  <section class="cta-section" id="contact">
+    <canvas id="ctaCanvas"></canvas>
     <div class="container">
-      <div class="cta-band-inner reveal">
-        <h2>Got a Plumbing Problem? <span>Let's Fix It Today.</span></h2>
-        <p>Call now for same-day service or fill out the form below for a free quote.</p>
-        <div class="cta-band-actions">
-          <a href="tel:+18005551234" class="btn-primary btn-lg">📞 (800) 555-1234</a>
-          <a href="#contact" class="btn-ghost-white btn-lg">Get Free Quote</a>
-        </div>
-      </div>
-    </div>
-  </section>
+      <div class="cta-inner">
+        <span class="section-tag">Get In Touch</span>
+        <h2 class="split-text">Got a Problem?<br/><em>Let's Fix It Today.</em></h2>
+        <p>Same-day service available. Call now or fill the form for your free quote.</p>
 
-  <!-- CONTACT -->
-  <section class="contact" id="contact">
-    <div class="container">
-      <div class="contact-grid">
-        <div class="contact-info reveal">
-          <span class="section-tag">Get In Touch</span>
-          <h2>Book Your Free Quote</h2>
-          <p>Fill out the form and we'll get back to you within 30 minutes during business hours, or call us any time for emergencies.</p>
-          <div class="ci-list">
-            <div class="ci-item">
-              <span class="ci-icon">📞</span>
-              <div>
-                <strong>Phone</strong>
-                <a href="tel:+18005551234">(800) 555-1234</a>
-              </div>
+        <div class="cta-two-col">
+          <a href="tel:+18005551234" class="cta-phone magnetic">
+            <span class="cp-icon">📞</span>
+            <div>
+              <strong>(800) 555-1234</strong>
+              <span>Call for immediate help</span>
             </div>
-            <div class="ci-item">
-              <span class="ci-icon">📧</span>
-              <div>
-                <strong>Email</strong>
-                <a href="mailto:hello@flowmasterpro.com">hello@flowmasterpro.com</a>
-              </div>
+          </a>
+
+          <form class="cta-form" id="ctaForm">
+            <div class="cf-row">
+              <input type="text" placeholder="Your Name" required />
+              <input type="tel" placeholder="Phone Number" required />
             </div>
-            <div class="ci-item">
-              <span class="ci-icon">📍</span>
-              <div>
-                <strong>Service Area</strong>
-                <span>Chicago Metro & Surrounding Areas</span>
-              </div>
-            </div>
-            <div class="ci-item">
-              <span class="ci-icon">🕐</span>
-              <div>
-                <strong>Hours</strong>
-                <span>Mon–Fri 7am–8pm · Sat 8am–6pm · Emergency 24/7</span>
-              </div>
-            </div>
-          </div>
-        </div>
-        <form class="contact-form reveal" id="contactForm">
-          <div class="form-row">
-            <div class="form-group">
-              <label for="fname">First Name *</label>
-              <input type="text" id="fname" name="fname" placeholder="John" required />
-            </div>
-            <div class="form-group">
-              <label for="lname">Last Name *</label>
-              <input type="text" id="lname" name="lname" placeholder="Smith" required />
-            </div>
-          </div>
-          <div class="form-row">
-            <div class="form-group">
-              <label for="email">Email *</label>
-              <input type="email" id="email" name="email" placeholder="john@email.com" required />
-            </div>
-            <div class="form-group">
-              <label for="phone">Phone *</label>
-              <input type="tel" id="phone" name="phone" placeholder="(555) 000-0000" required />
-            </div>
-          </div>
-          <div class="form-group">
-            <label for="service">Service Needed</label>
-            <select id="service" name="service">
-              <option value="">Select a service...</option>
+            <select>
+              <option value="">Select service...</option>
               <option>Emergency Repair</option>
               <option>Drain Cleaning</option>
               <option>General Repair</option>
               <option>Installation</option>
-              <option>Water Quality</option>
               <option>Re-Piping</option>
-              <option>Other</option>
             </select>
-          </div>
-          <div class="form-group">
-            <label for="message">Describe the Problem *</label>
-            <textarea id="message" name="message" rows="4" placeholder="Tell us what's going on..." required></textarea>
-          </div>
-          <button type="submit" class="btn-primary btn-full">
-            <span class="btn-text">Send My Free Quote Request</span>
-            <span class="btn-spinner" style="display:none">Sending…</span>
-          </button>
-          <p class="form-disclaimer">🔒 Your information is secure. No spam, ever.</p>
-          <div class="form-success" id="formSuccess">
-            <span>✅</span>
-            <strong>Message Sent!</strong>
-            <p>We'll get back to you within 30 minutes during business hours.</p>
-          </div>
-        </form>
+            <textarea rows="3" placeholder="Describe the problem..." required></textarea>
+            <button type="submit" class="btn-primary magnetic">
+              <span class="btn-bg"></span>
+              <span class="btn-label">Send Free Quote Request</span>
+              <svg width="16" height="16" viewBox="0 0 16 16"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
+            <div class="cf-success" id="cfSuccess">✅ Sent! We'll call you within 30 minutes.</div>
+          </form>
+        </div>
       </div>
     </div>
   </section>
 
-  <!-- FOOTER -->
+  <!-- ═══ FOOTER ═══ -->
   <footer class="footer">
     <div class="container">
+      <div class="footer-top">
+        <a href="#hero" class="logo">
+          <span class="logo-drop">💧</span>
+          <span class="logo-text">FlowMaster<span class="accent">Pro</span></span>
+        </a>
+        <p>Chicago's most trusted plumbing service since 1999.<br/>Licensed, insured, and here when you need us.</p>
+      </div>
       <div class="footer-grid">
-        <div class="footer-brand">
-          <a href="#" class="logo">
-            <span class="logo-icon">💧</span>
-            <span class="logo-text">FlowMaster<span class="logo-accent">Pro</span></span>
-          </a>
-          <p>Chicago's most trusted plumbing service since 1999. Licensed, insured, and here when you need us.</p>
-          <div class="social-links">
-            <a href="#" aria-label="Facebook">f</a>
-            <a href="#" aria-label="Google">G</a>
-            <a href="#" aria-label="Yelp">Y</a>
-          </div>
-        </div>
-        <div class="footer-col">
-          <h4>Services</h4>
-          <ul>
-            <li><a href="#services">Emergency Repairs</a></li>
-            <li><a href="#services">Drain Cleaning</a></li>
-            <li><a href="#services">General Repairs</a></li>
-            <li><a href="#services">Installations</a></li>
-            <li><a href="#services">Water Quality</a></li>
-            <li><a href="#services">Re-Piping</a></li>
-          </ul>
-        </div>
-        <div class="footer-col">
-          <h4>Company</h4>
-          <ul>
-            <li><a href="#why-us">About Us</a></li>
-            <li><a href="#process">Our Process</a></li>
-            <li><a href="#reviews">Reviews</a></li>
-            <li><a href="#contact">Contact</a></li>
-            <li><a href="#">Careers</a></li>
-            <li><a href="#">Blog</a></li>
-          </ul>
-        </div>
-        <div class="footer-col">
-          <h4>Contact</h4>
-          <ul>
-            <li><a href="tel:+18005551234">📞 (800) 555-1234</a></li>
-            <li><a href="mailto:hello@flowmasterpro.com">✉️ hello@flowmasterpro.com</a></li>
-            <li><span>📍 Chicago, IL & Metro</span></li>
-            <li><span>🕐 24/7 Emergency Line</span></li>
-          </ul>
-        </div>
+        <div><h4>Services</h4><ul>
+          <li><a href="#services">Emergency Repairs</a></li>
+          <li><a href="#services">Drain Cleaning</a></li>
+          <li><a href="#services">General Repairs</a></li>
+          <li><a href="#services">Installations</a></li>
+          <li><a href="#services">Re-Piping</a></li>
+        </ul></div>
+        <div><h4>Company</h4><ul>
+          <li><a href="#why">About Us</a></li>
+          <li><a href="#process">Our Process</a></li>
+          <li><a href="#reviews">Reviews</a></li>
+          <li><a href="#contact">Contact</a></li>
+        </ul></div>
+        <div><h4>Contact</h4><ul>
+          <li><a href="tel:+18005551234">📞 (800) 555-1234</a></li>
+          <li><a href="mailto:hello@flowmasterpro.com">✉️ hello@flowmasterpro.com</a></li>
+          <li><span>📍 Chicago Metro Area</span></li>
+          <li><span>🕐 24/7 Emergency Line</span></li>
+        </ul></div>
       </div>
       <div class="footer-bottom">
-        <p>© 2025 FlowMaster Pro Plumbing. All rights reserved. Licensed & Insured · License #PL-2024-CHI</p>
-        <div class="footer-legal">
-          <a href="#">Privacy Policy</a>
-          <a href="#">Terms</a>
-          <a href="#">Sitemap</a>
-        </div>
+        <p>© 2025 FlowMaster Pro. Licensed & Insured · #PL-2024-CHI</p>
+        <div><a href="#">Privacy</a><a href="#">Terms</a></div>
       </div>
     </div>
   </footer>
 
-  <!-- STICKY CALL BTN (mobile) -->
-  <a href="tel:+18005551234" class="sticky-call">📞 Call Now</a>
+  <a href="tel:+18005551234" class="sticky-cta">📞 Call Now</a>
 
   <script src="script.js"></script>
 </body>
