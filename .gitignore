@@ -2,3 +2,4 @@
 !.claude/skills/
 *.min.js.map
 node_modules/
+.vite/
