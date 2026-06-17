@@ -1,0 +1,1953 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FlowMaster Plumbing — Expert Service, Every Time</title>
+  <meta name="description" content="Professional plumbing services. Fast response, honest pricing, guaranteed work. Available 24/7 for emergencies." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;500;600;700&family=Poppins:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <style>/* ============================================================
+   FlowMaster Pro — Plumbing Website Styles
+   Design System: Home Services palette + Poppins/Open Sans
+   ============================================================ */
+
+/* ---------- CSS Variables ---------- */
+:root {
+  --primary: #1E40AF;
+  --primary-dark: #1E3A8A;
+  --primary-light: #3B82F6;
+  --accent: #EA580C;
+  --accent-light: #FB923C;
+  --bg: #EFF6FF;
+  --bg-white: #FFFFFF;
+  --text: #1E3A8A;
+  --text-dark: #0F172A;
+  --text-muted: #64748B;
+  --border: #BFDBFE;
+  --muted: #E9EEF6;
+  --shadow-sm: 0 1px 3px rgba(30,64,175,0.08);
+  --shadow-md: 0 4px 20px rgba(30,64,175,0.12);
+  --shadow-lg: 0 8px 40px rgba(30,64,175,0.18);
+  --shadow-xl: 0 20px 60px rgba(30,64,175,0.22);
+  --radius: 12px;
+  --radius-lg: 20px;
+  --radius-xl: 32px;
+  --transition: 0.3s cubic-bezier(0.4,0,0.2,1);
+  --font-head: 'Poppins', sans-serif;
+  --font-body: 'Open Sans', sans-serif;
+}
+
+/* ---------- Reset ---------- */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; font-size: 16px; }
+body {
+  font-family: var(--font-body);
+  color: var(--text-dark);
+  background: var(--bg-white);
+  overflow-x: hidden;
+  line-height: 1.6;
+}
+img { display: block; max-width: 100%; }
+a { text-decoration: none; color: inherit; }
+ul { list-style: none; }
+button { cursor: pointer; border: none; background: none; font-family: inherit; }
+
+/* ---------- Utilities ---------- */
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 24px;
+}
+.section-tag {
+  display: inline-block;
+  font-family: var(--font-head);
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--accent);
+  background: rgba(234,88,12,0.08);
+  border: 1px solid rgba(234,88,12,0.2);
+  padding: 4px 14px;
+  border-radius: 100px;
+  margin-bottom: 16px;
+}
+.section-header {
+  text-align: center;
+  max-width: 680px;
+  margin: 0 auto 64px;
+}
+.section-header h2 {
+  font-family: var(--font-head);
+  font-size: clamp(1.75rem, 3.5vw, 2.75rem);
+  font-weight: 700;
+  color: var(--text-dark);
+  line-height: 1.2;
+  margin-bottom: 16px;
+}
+.section-header p {
+  font-size: 1.0625rem;
+  color: var(--text-muted);
+  line-height: 1.7;
+}
+.gradient-text {
+  background: linear-gradient(135deg, #60A5FA 0%, var(--accent-light) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* ---------- Reveal Animation ---------- */
+.reveal {
+  opacity: 0;
+  transform: translateY(32px);
+  transition: opacity 0.7s ease, transform 0.7s ease;
+  transition-delay: var(--delay, 0ms);
+}
+.reveal.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ---------- Buttons ---------- */
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--accent);
+  color: #fff;
+  font-family: var(--font-head);
+  font-weight: 600;
+  font-size: 0.9375rem;
+  padding: 14px 28px;
+  border-radius: var(--radius);
+  border: 2px solid var(--accent);
+  transition: var(--transition);
+  position: relative;
+  overflow: hidden;
+}
+.btn-primary::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: rgba(255,255,255,0.15);
+  transform: translateX(-110%) skewX(-20deg);
+  transition: transform 0.5s ease;
+}
+.btn-primary:hover::before { transform: translateX(110%) skewX(-20deg); }
+.btn-primary:hover {
+  background: #c2450a;
+  border-color: #c2450a;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(234,88,12,0.35);
+}
+.btn-ghost {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: rgba(255,255,255,0.9);
+  font-family: var(--font-head);
+  font-weight: 600;
+  font-size: 0.9375rem;
+  padding: 14px 28px;
+  border-radius: var(--radius);
+  border: 2px solid rgba(255,255,255,0.35);
+  transition: var(--transition);
+  backdrop-filter: blur(4px);
+}
+.btn-ghost:hover {
+  background: rgba(255,255,255,0.12);
+  border-color: rgba(255,255,255,0.6);
+  transform: translateY(-2px);
+}
+.btn-ghost-white {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: #fff;
+  font-family: var(--font-head);
+  font-weight: 600;
+  font-size: 0.9375rem;
+  padding: 14px 28px;
+  border-radius: var(--radius);
+  border: 2px solid rgba(255,255,255,0.6);
+  transition: var(--transition);
+}
+.btn-ghost-white:hover {
+  background: rgba(255,255,255,0.15);
+  transform: translateY(-2px);
+}
+.btn-lg { padding: 18px 36px; font-size: 1.0625rem; }
+.btn-full { width: 100%; justify-content: center; }
+
+/* ==========================================================
+   NAVBAR
+   ========================================================== */
+#navbar {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 1000;
+  background: transparent;
+  transition: background 0.4s ease, box-shadow 0.4s ease, padding 0.4s ease;
+  padding: 20px 0;
+}
+#navbar.scrolled {
+  background: rgba(255,255,255,0.97);
+  backdrop-filter: blur(16px);
+  box-shadow: 0 2px 20px rgba(30,64,175,0.1);
+  padding: 12px 0;
+}
+.nav-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 24px;
+  display: flex;
+  align-items: center;
+  gap: 40px;
+}
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  text-decoration: none;
+  flex-shrink: 0;
+}
+.logo-icon { font-size: 1.5rem; animation: wobble 3s infinite; }
+.logo-text {
+  font-family: var(--font-head);
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #fff;
+  transition: color 0.4s;
+}
+#navbar.scrolled .logo-text { color: var(--text-dark); }
+.logo-accent { color: var(--accent); }
+.nav-links {
+  display: flex;
+  gap: 8px;
+  margin-left: auto;
+}
+.nav-links a {
+  font-family: var(--font-head);
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: rgba(255,255,255,0.9);
+  padding: 8px 14px;
+  border-radius: 8px;
+  transition: var(--transition);
+}
+#navbar.scrolled .nav-links a { color: var(--text-dark); }
+.nav-links a:hover {
+  background: rgba(255,255,255,0.15);
+  color: #fff;
+}
+#navbar.scrolled .nav-links a:hover {
+  background: var(--bg);
+  color: var(--primary);
+}
+.nav-cta {
+  font-family: var(--font-head);
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #fff;
+  background: var(--accent);
+  padding: 10px 20px;
+  border-radius: var(--radius);
+  transition: var(--transition);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.nav-cta:hover {
+  background: #c2450a;
+  transform: translateY(-1px);
+}
+.hamburger {
+  display: none;
+  flex-direction: column;
+  gap: 5px;
+  padding: 8px;
+  margin-left: auto;
+}
+.hamburger span {
+  display: block;
+  width: 22px;
+  height: 2px;
+  background: #fff;
+  border-radius: 2px;
+  transition: var(--transition);
+}
+#navbar.scrolled .hamburger span { background: var(--text-dark); }
+.mobile-menu {
+  display: none;
+  flex-direction: column;
+  background: var(--bg-white);
+  padding: 16px 24px 24px;
+  border-top: 1px solid var(--border);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+}
+.mobile-menu a {
+  font-family: var(--font-head);
+  font-size: 1rem;
+  font-weight: 500;
+  color: var(--text-dark);
+  padding: 12px 0;
+  border-bottom: 1px solid var(--border);
+  transition: color 0.2s;
+}
+.mobile-menu a:last-child { border-bottom: none; }
+.mobile-menu a:hover { color: var(--primary); }
+.mobile-cta {
+  margin-top: 8px;
+  background: var(--accent);
+  color: #fff !important;
+  padding: 14px !important;
+  border-radius: var(--radius);
+  text-align: center;
+  border-bottom: none !important;
+}
+.mobile-menu.open { display: flex; }
+
+@keyframes wobble {
+  0%,100% { transform: rotate(0deg); }
+  25% { transform: rotate(-10deg); }
+  75% { transform: rotate(10deg); }
+}
+
+/* ==========================================================
+   HERO
+   ========================================================== */
+.hero {
+  min-height: 100vh;
+  background: linear-gradient(135deg, var(--primary-dark) 0%, #1d4ed8 50%, var(--primary-light) 100%);
+  display: flex;
+  align-items: center;
+  position: relative;
+  overflow: hidden;
+  padding: 120px 24px 80px;
+}
+.hero-bg {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+.water-drop {
+  position: absolute;
+  border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+  background: rgba(255,255,255,0.04);
+  animation: floatDrop 8s infinite ease-in-out;
+}
+.d1 { width: 300px; height: 350px; top: -80px; right: 10%; animation-delay: 0s; }
+.d2 { width: 200px; height: 240px; top: 30%; right: 5%; animation-delay: -3s; }
+.d3 { width: 150px; height: 180px; bottom: 10%; right: 20%; animation-delay: -5s; }
+@keyframes floatDrop {
+  0%,100% { transform: translateY(0) rotate(0deg); }
+  50% { transform: translateY(-30px) rotate(5deg); }
+}
+.pipe-line {
+  position: absolute;
+  background: rgba(255,255,255,0.04);
+  border-radius: 4px;
+}
+.pl1 { width: 3px; height: 60%; top: 0; left: 15%; animation: pipeFlow 4s infinite linear; }
+.pl2 { width: 3px; height: 40%; top: 20%; left: 25%; animation: pipeFlow 6s infinite linear reverse; }
+@keyframes pipeFlow {
+  0% { transform: scaleY(0); transform-origin: top; }
+  50% { transform: scaleY(1); transform-origin: top; }
+  100% { transform: scaleY(0); transform-origin: bottom; }
+}
+.bubble {
+  position: absolute;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.07);
+  animation: rise linear infinite;
+}
+.b1 { width: 12px; height: 12px; left: 8%; bottom: -20px; animation-duration: 7s; animation-delay: 0s; }
+.b2 { width: 8px; height: 8px; left: 18%; bottom: -20px; animation-duration: 9s; animation-delay: -2s; }
+.b3 { width: 16px; height: 16px; left: 35%; bottom: -20px; animation-duration: 6s; animation-delay: -4s; }
+.b4 { width: 6px; height: 6px; left: 55%; bottom: -20px; animation-duration: 11s; animation-delay: -1s; }
+.b5 { width: 10px; height: 10px; left: 72%; bottom: -20px; animation-duration: 8s; animation-delay: -6s; }
+@keyframes rise {
+  0% { transform: translateY(0) translateX(0); opacity: 0; }
+  10% { opacity: 1; }
+  90% { opacity: 0.4; }
+  100% { transform: translateY(-110vh) translateX(30px); opacity: 0; }
+}
+.hero-content {
+  position: relative;
+  z-index: 2;
+  max-width: 800px;
+  margin: 0 auto;
+  text-align: center;
+  color: #fff;
+}
+.hero-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(255,255,255,0.12);
+  border: 1px solid rgba(255,255,255,0.25);
+  backdrop-filter: blur(8px);
+  color: #fff;
+  font-family: var(--font-head);
+  font-size: 0.8125rem;
+  font-weight: 600;
+  padding: 8px 18px;
+  border-radius: 100px;
+  margin-bottom: 28px;
+  animation: pulse-badge 2.5s infinite;
+}
+@keyframes pulse-badge {
+  0%,100% { box-shadow: 0 0 0 0 rgba(255,255,255,0.2); }
+  50% { box-shadow: 0 0 0 8px rgba(255,255,255,0); }
+}
+.hero-title {
+  font-family: var(--font-head);
+  font-size: clamp(2.5rem, 7vw, 5rem);
+  font-weight: 900;
+  line-height: 1.1;
+  margin-bottom: 24px;
+  letter-spacing: -0.02em;
+}
+.hero-sub {
+  font-size: clamp(1rem, 2vw, 1.25rem);
+  color: rgba(255,255,255,0.85);
+  max-width: 560px;
+  margin: 0 auto 40px;
+  line-height: 1.7;
+}
+.hero-actions {
+  display: flex;
+  gap: 16px;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-bottom: 60px;
+}
+.hero-stats {
+  display: flex;
+  gap: 0;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+  background: rgba(255,255,255,0.1);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255,255,255,0.15);
+  border-radius: var(--radius-lg);
+  padding: 24px 40px;
+  gap: 0;
+}
+.stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 0 32px;
+}
+.stat-num {
+  font-family: var(--font-head);
+  font-size: 2rem;
+  font-weight: 800;
+  color: #fff;
+  line-height: 1;
+}
+.stat-suffix {
+  font-family: var(--font-head);
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--accent-light);
+}
+.stat-label {
+  font-size: 0.75rem;
+  color: rgba(255,255,255,0.7);
+  margin-top: 4px;
+  white-space: nowrap;
+}
+.stat-divider {
+  width: 1px;
+  height: 40px;
+  background: rgba(255,255,255,0.2);
+}
+.hero-scroll-indicator {
+  position: absolute;
+  bottom: 32px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.scroll-dot {
+  width: 24px;
+  height: 40px;
+  border: 2px solid rgba(255,255,255,0.4);
+  border-radius: 12px;
+  position: relative;
+}
+.scroll-dot::before {
+  content: '';
+  position: absolute;
+  top: 6px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 4px;
+  height: 8px;
+  background: rgba(255,255,255,0.7);
+  border-radius: 2px;
+  animation: scrollPulse 2s infinite;
+}
+@keyframes scrollPulse {
+  0% { opacity: 1; transform: translateX(-50%) translateY(0); }
+  100% { opacity: 0; transform: translateX(-50%) translateY(14px); }
+}
+
+/* ==========================================================
+   TRUST BAR
+   ========================================================== */
+.trust-bar {
+  background: var(--primary-dark);
+  padding: 20px 24px;
+  overflow: hidden;
+}
+.trust-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  gap: 40px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+.trust-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: rgba(255,255,255,0.9);
+  font-family: var(--font-head);
+  font-size: 0.875rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+.ti-icon { font-size: 1.125rem; }
+
+/* ==========================================================
+   SERVICES
+   ========================================================== */
+.services {
+  padding: 100px 0;
+  background: var(--bg);
+}
+.services-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 28px;
+}
+.service-card {
+  background: var(--bg-white);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 36px 32px;
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.4s ease, box-shadow 0.4s ease, border-color 0.4s ease;
+  cursor: default;
+}
+.service-card:hover {
+  transform: translateY(-8px);
+  box-shadow: var(--shadow-xl);
+  border-color: var(--primary-light);
+}
+.service-card.featured {
+  border-color: var(--primary);
+  background: linear-gradient(135deg, #fff 0%, #EFF6FF 100%);
+}
+.sc-badge {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  background: var(--accent);
+  color: #fff;
+  font-family: var(--font-head);
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 4px 12px;
+  border-radius: 100px;
+}
+.sc-icon {
+  font-size: 2.5rem;
+  margin-bottom: 20px;
+  display: block;
+  transition: transform 0.3s ease;
+}
+.service-card:hover .sc-icon { transform: scale(1.15) rotate(-5deg); }
+.service-card h3 {
+  font-family: var(--font-head);
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--text-dark);
+  margin-bottom: 12px;
+}
+.service-card p {
+  color: var(--text-muted);
+  font-size: 0.9375rem;
+  line-height: 1.65;
+  margin-bottom: 20px;
+}
+.sc-list {
+  margin-bottom: 24px;
+}
+.sc-list li {
+  font-size: 0.875rem;
+  color: var(--text-muted);
+  padding: 6px 0;
+  border-bottom: 1px solid var(--muted);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.sc-list li::before {
+  content: '✓';
+  color: var(--primary-light);
+  font-weight: 700;
+  font-size: 0.875rem;
+}
+.sc-link {
+  font-family: var(--font-head);
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--primary);
+  transition: gap 0.2s, color 0.2s;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.sc-link:hover { color: var(--accent); gap: 10px; }
+.sc-glow {
+  position: absolute;
+  bottom: -40px;
+  right: -40px;
+  width: 140px;
+  height: 140px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(30,64,175,0.06) 0%, transparent 70%);
+  transition: transform 0.4s ease;
+}
+.service-card:hover .sc-glow { transform: scale(1.8); }
+
+/* ==========================================================
+   WHY US
+   ========================================================== */
+.why-us {
+  padding: 100px 0;
+  background: var(--bg-white);
+}
+.why-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 80px;
+  align-items: center;
+}
+.why-visual {
+  position: relative;
+  padding: 40px 0;
+}
+.why-card-big {
+  background: linear-gradient(135deg, var(--primary-dark), var(--primary));
+  border-radius: var(--radius-xl);
+  padding: 40px;
+  color: #fff;
+  box-shadow: var(--shadow-xl);
+}
+.wcb-top {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 28px;
+}
+.wcb-icon { font-size: 2.5rem; }
+.wcb-top strong { display: block; font-family: var(--font-head); font-size: 1.25rem; font-weight: 700; }
+.wcb-top span { color: rgba(255,255,255,0.7); font-size: 0.875rem; }
+.wcb-rating {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+.stars { color: #FBBF24; font-size: 1.25rem; letter-spacing: 2px; }
+.wcb-rating span { color: rgba(255,255,255,0.8); font-size: 0.9375rem; }
+.wcb-badges {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.badge {
+  background: rgba(255,255,255,0.12);
+  border: 1px solid rgba(255,255,255,0.2);
+  color: rgba(255,255,255,0.9);
+  font-family: var(--font-head);
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 6px 14px;
+  border-radius: 100px;
+}
+.why-float-card {
+  position: absolute;
+  background: var(--bg-white);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 16px 20px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  box-shadow: var(--shadow-lg);
+  font-size: 1.5rem;
+  transition: transform 0.5s ease;
+}
+.why-float-card:hover { transform: scale(1.05) !important; }
+.why-float-card div { line-height: 1.3; }
+.why-float-card strong { display: block; font-family: var(--font-head); font-size: 0.9375rem; font-weight: 700; color: var(--text-dark); }
+.why-float-card span { font-size: 0.8125rem; color: var(--text-muted); }
+.wfc1 {
+  bottom: -20px;
+  left: -20px;
+  animation: floatCard 4s infinite ease-in-out;
+}
+.wfc2 {
+  top: -10px;
+  right: -20px;
+  animation: floatCard 5s infinite ease-in-out reverse;
+}
+@keyframes floatCard {
+  0%,100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+.why-content h2 {
+  font-family: var(--font-head);
+  font-size: clamp(1.75rem, 3vw, 2.5rem);
+  font-weight: 700;
+  color: var(--text-dark);
+  line-height: 1.2;
+  margin-bottom: 20px;
+}
+.why-intro {
+  color: var(--text-muted);
+  font-size: 1rem;
+  line-height: 1.7;
+  margin-bottom: 40px;
+}
+.why-features { display: flex; flex-direction: column; gap: 24px; }
+.wf-item {
+  display: flex;
+  gap: 20px;
+  align-items: flex-start;
+  padding: 20px;
+  border-radius: var(--radius);
+  transition: background 0.3s;
+}
+.wf-item:hover { background: var(--bg); }
+.wf-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, var(--bg) 0%, #DBEAFE 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.25rem;
+  flex-shrink: 0;
+  transition: transform 0.3s;
+}
+.wf-item:hover .wf-icon { transform: scale(1.1) rotate(-5deg); }
+.wf-item h4 {
+  font-family: var(--font-head);
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text-dark);
+  margin-bottom: 6px;
+}
+.wf-item p { font-size: 0.9375rem; color: var(--text-muted); line-height: 1.6; }
+
+/* ==========================================================
+   PROCESS
+   ========================================================== */
+.process {
+  padding: 100px 0;
+  background: var(--primary-dark);
+  position: relative;
+  overflow: hidden;
+}
+.process::before {
+  content: '';
+  position: absolute;
+  top: -100px; right: -100px;
+  width: 500px; height: 500px;
+  background: radial-gradient(circle, rgba(59,130,246,0.15) 0%, transparent 60%);
+  border-radius: 50%;
+}
+.process .section-header h2,
+.process .section-header p { color: #fff; }
+.process .section-header p { color: rgba(255,255,255,0.7); }
+.process-steps {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 32px;
+  position: relative;
+}
+.process-line {
+  position: absolute;
+  top: 60px;
+  left: calc(12.5% + 16px);
+  right: calc(12.5% + 16px);
+  height: 2px;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3) 20%, rgba(255,255,255,0.3) 80%, transparent);
+  z-index: 0;
+}
+.process-step {
+  text-align: center;
+  position: relative;
+  z-index: 1;
+}
+.ps-num {
+  font-family: var(--font-head);
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--accent-light);
+  letter-spacing: 0.1em;
+  margin-bottom: 8px;
+}
+.ps-icon {
+  width: 80px;
+  height: 80px;
+  background: rgba(255,255,255,0.08);
+  border: 2px solid rgba(255,255,255,0.15);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2rem;
+  margin: 0 auto 20px;
+  transition: background 0.3s, transform 0.3s, border-color 0.3s;
+  backdrop-filter: blur(4px);
+}
+.process-step:hover .ps-icon {
+  background: rgba(255,255,255,0.15);
+  border-color: rgba(255,255,255,0.4);
+  transform: scale(1.1);
+}
+.process-step h3 {
+  font-family: var(--font-head);
+  font-size: 1rem;
+  font-weight: 700;
+  color: #fff;
+  margin-bottom: 12px;
+}
+.process-step p {
+  font-size: 0.875rem;
+  color: rgba(255,255,255,0.65);
+  line-height: 1.65;
+}
+
+/* ==========================================================
+   REVIEWS
+   ========================================================== */
+.reviews {
+  padding: 100px 0;
+  background: var(--bg);
+  overflow: hidden;
+}
+.reviews-track-wrapper {
+  overflow: hidden;
+  margin: 0 -24px;
+  padding: 16px 0;
+}
+.reviews-track {
+  display: flex;
+  gap: 24px;
+  animation: scrollReviews 30s linear infinite;
+  width: max-content;
+  padding: 0 24px;
+}
+.reviews-track:hover { animation-play-state: paused; }
+@keyframes scrollReviews {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+.review-card {
+  background: var(--bg-white);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 32px;
+  width: 340px;
+  flex-shrink: 0;
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+.review-card:hover {
+  transform: translateY(-6px);
+  box-shadow: var(--shadow-lg);
+}
+.rc-stars {
+  color: #FBBF24;
+  font-size: 1rem;
+  letter-spacing: 2px;
+  margin-bottom: 16px;
+}
+.review-card p {
+  font-size: 0.9375rem;
+  color: var(--text-muted);
+  line-height: 1.7;
+  margin-bottom: 24px;
+  font-style: italic;
+}
+.rc-author { display: flex; align-items: center; gap: 14px; }
+.rc-avatar {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--primary), var(--primary-light));
+  color: #fff;
+  font-family: var(--font-head);
+  font-size: 0.8125rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.rc-author div { line-height: 1.4; }
+.rc-author strong { display: block; font-size: 0.9375rem; color: var(--text-dark); }
+.rc-author span { font-size: 0.8125rem; color: var(--text-muted); }
+
+/* ==========================================================
+   CTA BAND
+   ========================================================== */
+.cta-band {
+  padding: 100px 24px;
+  background: linear-gradient(135deg, var(--accent) 0%, #c2450a 100%);
+  position: relative;
+  overflow: hidden;
+  text-align: center;
+}
+.cta-bg-anim { position: absolute; inset: 0; pointer-events: none; }
+.cba-circle {
+  position: absolute;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.06);
+  animation: pulseBig 6s infinite ease-in-out;
+}
+.c1 { width: 400px; height: 400px; top: -200px; left: -100px; animation-delay: 0s; }
+.c2 { width: 300px; height: 300px; bottom: -150px; right: 5%; animation-delay: -2s; }
+.c3 { width: 200px; height: 200px; top: 50%; right: 25%; transform: translateY(-50%); animation-delay: -4s; }
+@keyframes pulseBig {
+  0%,100% { transform: scale(1); opacity: 0.6; }
+  50% { transform: scale(1.1); opacity: 1; }
+}
+.cta-band-inner { position: relative; z-index: 1; }
+.cta-band h2 {
+  font-family: var(--font-head);
+  font-size: clamp(1.75rem, 4vw, 3rem);
+  font-weight: 800;
+  color: #fff;
+  margin-bottom: 16px;
+  line-height: 1.2;
+}
+.cta-band h2 span { color: rgba(255,255,255,0.75); }
+.cta-band p {
+  font-size: 1.0625rem;
+  color: rgba(255,255,255,0.85);
+  margin-bottom: 40px;
+}
+.cta-band-actions {
+  display: flex;
+  gap: 16px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+.cta-band .btn-primary {
+  background: #fff;
+  color: var(--accent);
+  border-color: #fff;
+}
+.cta-band .btn-primary:hover {
+  background: rgba(255,255,255,0.9);
+  border-color: rgba(255,255,255,0.9);
+  box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+}
+
+/* ==========================================================
+   CONTACT
+   ========================================================== */
+.contact {
+  padding: 100px 0;
+  background: var(--bg-white);
+}
+.contact-grid {
+  display: grid;
+  grid-template-columns: 1fr 1.4fr;
+  gap: 80px;
+  align-items: start;
+}
+.contact-info h2 {
+  font-family: var(--font-head);
+  font-size: clamp(1.75rem, 3vw, 2.5rem);
+  font-weight: 700;
+  color: var(--text-dark);
+  margin-bottom: 16px;
+}
+.contact-info > p {
+  color: var(--text-muted);
+  font-size: 1rem;
+  line-height: 1.7;
+  margin-bottom: 40px;
+}
+.ci-list { display: flex; flex-direction: column; gap: 20px; }
+.ci-item {
+  display: flex;
+  gap: 16px;
+  align-items: flex-start;
+}
+.ci-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 10px;
+  background: var(--bg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.125rem;
+  flex-shrink: 0;
+}
+.ci-item strong { display: block; font-family: var(--font-head); font-size: 0.875rem; font-weight: 600; color: var(--text-dark); margin-bottom: 2px; }
+.ci-item a, .ci-item span { font-size: 0.9375rem; color: var(--text-muted); }
+.ci-item a:hover { color: var(--primary); }
+
+/* Form */
+.contact-form {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-xl);
+  padding: 48px 40px;
+}
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 20px;
+}
+.form-group label {
+  font-family: var(--font-head);
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--text-dark);
+}
+.form-group input,
+.form-group select,
+.form-group textarea {
+  font-family: var(--font-body);
+  font-size: 0.9375rem;
+  color: var(--text-dark);
+  background: var(--bg-white);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius);
+  padding: 12px 16px;
+  transition: border-color 0.3s, box-shadow 0.3s;
+  outline: none;
+  width: 100%;
+  resize: none;
+}
+.form-group input::placeholder,
+.form-group textarea::placeholder { color: var(--text-muted); }
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+  border-color: var(--primary-light);
+  box-shadow: 0 0 0 3px rgba(59,130,246,0.12);
+}
+.form-disclaimer {
+  text-align: center;
+  font-size: 0.8125rem;
+  color: var(--text-muted);
+  margin-top: 16px;
+}
+.form-success {
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 8px;
+  background: #ECFDF5;
+  border: 1px solid #6EE7B7;
+  border-radius: var(--radius);
+  padding: 28px;
+  margin-top: 20px;
+}
+.form-success span { font-size: 2rem; }
+.form-success strong { font-family: var(--font-head); font-size: 1.125rem; color: #065F46; }
+.form-success p { font-size: 0.9375rem; color: #047857; }
+.form-success.visible { display: flex; }
+
+/* ==========================================================
+   FOOTER
+   ========================================================== */
+.footer {
+  background: var(--text-dark);
+  color: rgba(255,255,255,0.7);
+  padding: 80px 0 0;
+}
+.footer-grid {
+  display: grid;
+  grid-template-columns: 1.5fr 1fr 1fr 1fr;
+  gap: 60px;
+  margin-bottom: 60px;
+}
+.footer-brand p {
+  font-size: 0.9375rem;
+  line-height: 1.7;
+  margin: 20px 0 28px;
+  color: rgba(255,255,255,0.55);
+}
+.footer-brand .logo-text { color: #fff; }
+.social-links {
+  display: flex;
+  gap: 12px;
+}
+.social-links a {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  border: 1px solid rgba(255,255,255,0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 0.875rem;
+  color: rgba(255,255,255,0.6);
+  transition: background 0.3s, color 0.3s, border-color 0.3s;
+}
+.social-links a:hover {
+  background: var(--primary);
+  color: #fff;
+  border-color: var(--primary);
+}
+.footer-col h4 {
+  font-family: var(--font-head);
+  font-size: 0.875rem;
+  font-weight: 700;
+  color: #fff;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: 20px;
+}
+.footer-col ul { display: flex; flex-direction: column; gap: 12px; }
+.footer-col li a, .footer-col li span {
+  font-size: 0.9375rem;
+  color: rgba(255,255,255,0.55);
+  transition: color 0.2s;
+}
+.footer-col li a:hover { color: #fff; }
+.footer-bottom {
+  border-top: 1px solid rgba(255,255,255,0.08);
+  padding: 24px 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 16px;
+  font-size: 0.8125rem;
+  color: rgba(255,255,255,0.4);
+}
+.footer-legal {
+  display: flex;
+  gap: 24px;
+}
+.footer-legal a { color: rgba(255,255,255,0.4); transition: color 0.2s; }
+.footer-legal a:hover { color: rgba(255,255,255,0.8); }
+
+/* ==========================================================
+   STICKY CALL
+   ========================================================== */
+.sticky-call {
+  display: none;
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 900;
+  background: var(--accent);
+  color: #fff;
+  font-family: var(--font-head);
+  font-weight: 700;
+  font-size: 0.9375rem;
+  padding: 16px 36px;
+  border-radius: 100px;
+  box-shadow: 0 4px 24px rgba(234,88,12,0.45);
+  white-space: nowrap;
+  animation: bounceCta 2s infinite;
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+.sticky-call:hover {
+  transform: translateX(-50%) translateY(-3px);
+  box-shadow: 0 8px 32px rgba(234,88,12,0.55);
+}
+@keyframes bounceCta {
+  0%,100% { bottom: 24px; }
+  50% { bottom: 30px; }
+}
+
+/* ==========================================================
+   RESPONSIVE
+   ========================================================== */
+@media (max-width: 1024px) {
+  .why-grid { grid-template-columns: 1fr; gap: 60px; }
+  .why-visual { max-width: 480px; margin: 0 auto; }
+  .contact-grid { grid-template-columns: 1fr; gap: 60px; }
+  .footer-grid { grid-template-columns: 1fr 1fr; gap: 40px; }
+  .process-steps { grid-template-columns: repeat(2, 1fr); }
+  .process-line { display: none; }
+}
+@media (max-width: 768px) {
+  .nav-links, .nav-cta { display: none; }
+  .hamburger { display: flex; }
+  .hero-stats { padding: 20px 24px; gap: 0; }
+  .stat { padding: 0 16px; }
+  .stat-num { font-size: 1.5rem; }
+  .services-grid { grid-template-columns: 1fr; }
+  .form-row { grid-template-columns: 1fr; }
+  .contact-form { padding: 32px 24px; }
+  .footer-grid { grid-template-columns: 1fr; gap: 40px; }
+  .footer-bottom { flex-direction: column; text-align: center; }
+  .sticky-call { display: block; }
+  .cba-circle { display: none; }
+}
+@media (max-width: 480px) {
+  .process-steps { grid-template-columns: 1fr; }
+  .hero-stats { flex-direction: column; gap: 16px; }
+  .stat-divider { display: none; }
+  .trust-inner { gap: 20px; }
+}
+</style>
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav id="navbar">
+    <div class="nav-inner">
+      <a href="#" class="logo">
+        <span class="logo-icon">💧</span>
+        <span class="logo-text">FlowMaster<span class="logo-accent">Pro</span></span>
+      </a>
+      <ul class="nav-links">
+        <li><a href="#services">Services</a></li>
+        <li><a href="#why-us">Why Us</a></li>
+        <li><a href="#process">Process</a></li>
+        <li><a href="#reviews">Reviews</a></li>
+        <li><a href="#contact">Contact</a></li>
+      </ul>
+      <a href="tel:+18005551234" class="nav-cta">📞 Call Now</a>
+      <button class="hamburger" id="hamburger" aria-label="Open menu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+    <div class="mobile-menu" id="mobileMenu">
+      <a href="#services">Services</a>
+      <a href="#why-us">Why Us</a>
+      <a href="#process">Process</a>
+      <a href="#reviews">Reviews</a>
+      <a href="#contact">Contact</a>
+      <a href="tel:+18005551234" class="mobile-cta">📞 (800) 555-1234</a>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <section class="hero" id="home">
+    <div class="hero-bg">
+      <div class="water-drop d1"></div>
+      <div class="water-drop d2"></div>
+      <div class="water-drop d3"></div>
+      <div class="pipe-line pl1"></div>
+      <div class="pipe-line pl2"></div>
+      <div class="bubble b1"></div>
+      <div class="bubble b2"></div>
+      <div class="bubble b3"></div>
+      <div class="bubble b4"></div>
+      <div class="bubble b5"></div>
+    </div>
+    <div class="hero-content">
+      <div class="hero-badge reveal">⚡ Available 24/7 Emergency Service</div>
+      <h1 class="hero-title reveal">
+        Your Pipes.<br />
+        <span class="gradient-text">Our Expertise.</span><br />
+        Problem Solved.
+      </h1>
+      <p class="hero-sub reveal">
+        Trusted by 10,000+ homeowners. Fast response, fair prices, and work that lasts.
+        No surprise charges — ever.
+      </p>
+      <div class="hero-actions reveal">
+        <a href="#contact" class="btn-primary">Get Free Quote</a>
+        <a href="#services" class="btn-ghost">Our Services ↓</a>
+      </div>
+      <div class="hero-stats reveal">
+        <div class="stat">
+          <span class="stat-num" data-target="10000">0</span><span class="stat-suffix">+</span>
+          <span class="stat-label">Happy Customers</span>
+        </div>
+        <div class="stat-divider"></div>
+        <div class="stat">
+          <span class="stat-num" data-target="25">0</span><span class="stat-suffix">yr</span>
+          <span class="stat-label">Experience</span>
+        </div>
+        <div class="stat-divider"></div>
+        <div class="stat">
+          <span class="stat-num" data-target="60">0</span><span class="stat-suffix">min</span>
+          <span class="stat-label">Avg Response</span>
+        </div>
+        <div class="stat-divider"></div>
+        <div class="stat">
+          <span class="stat-num" data-target="100">0</span><span class="stat-suffix">%</span>
+          <span class="stat-label">Satisfaction</span>
+        </div>
+      </div>
+    </div>
+    <div class="hero-scroll-indicator">
+      <div class="scroll-dot"></div>
+    </div>
+  </section>
+
+  <!-- TRUST BAR -->
+  <div class="trust-bar">
+    <div class="trust-inner">
+      <div class="trust-item"><span class="ti-icon">🏅</span> Licensed & Insured</div>
+      <div class="trust-item"><span class="ti-icon">⭐</span> 4.9/5 Google Rating</div>
+      <div class="trust-item"><span class="ti-icon">🔒</span> Upfront Pricing</div>
+      <div class="trust-item"><span class="ti-icon">🛠️</span> 2-Year Guarantee</div>
+      <div class="trust-item"><span class="ti-icon">🚨</span> 24/7 Emergency</div>
+    </div>
+  </div>
+
+  <!-- SERVICES -->
+  <section class="services" id="services">
+    <div class="container">
+      <div class="section-header reveal">
+        <span class="section-tag">What We Do</span>
+        <h2>Expert Services for Every Plumbing Need</h2>
+        <p>From dripping taps to full re-pipes, our certified plumbers handle it all with speed and precision.</p>
+      </div>
+      <div class="services-grid">
+        <div class="service-card reveal" style="--delay:0ms">
+          <div class="sc-icon">🚨</div>
+          <h3>Emergency Repairs</h3>
+          <p>Burst pipes, flooding, or no hot water? We're on-site within 60 minutes — day or night.</p>
+          <ul class="sc-list">
+            <li>Burst pipe repair</li>
+            <li>Sewage backup</li>
+            <li>Gas leaks</li>
+          </ul>
+          <a href="#contact" class="sc-link">Book Emergency →</a>
+          <div class="sc-glow"></div>
+        </div>
+        <div class="service-card reveal" style="--delay:100ms">
+          <div class="sc-icon">🪠</div>
+          <h3>Drain Cleaning</h3>
+          <p>Slow drains? Complete blockages? Our hydro-jetting tech clears any clog fast.</p>
+          <ul class="sc-list">
+            <li>Hydro-jetting</li>
+            <li>Snake / augering</li>
+            <li>CCTV inspection</li>
+          </ul>
+          <a href="#contact" class="sc-link">Book Service →</a>
+          <div class="sc-glow"></div>
+        </div>
+        <div class="service-card reveal featured" style="--delay:200ms">
+          <div class="sc-badge">Most Popular</div>
+          <div class="sc-icon">🔧</div>
+          <h3>General Repairs</h3>
+          <p>Leaky faucets, running toilets, or low water pressure — fixed right the first time.</p>
+          <ul class="sc-list">
+            <li>Faucet & fixture repair</li>
+            <li>Toilet rebuild</li>
+            <li>Pipe leak repair</li>
+          </ul>
+          <a href="#contact" class="sc-link">Book Service →</a>
+          <div class="sc-glow"></div>
+        </div>
+        <div class="service-card reveal" style="--delay:300ms">
+          <div class="sc-icon">🏠</div>
+          <h3>Installations</h3>
+          <p>New water heater, sink, shower, or full bathroom remodel — we install it properly.</p>
+          <ul class="sc-list">
+            <li>Water heater install</li>
+            <li>Fixture installation</li>
+            <li>Bathroom remodel</li>
+          </ul>
+          <a href="#contact" class="sc-link">Book Service →</a>
+          <div class="sc-glow"></div>
+        </div>
+        <div class="service-card reveal" style="--delay:400ms">
+          <div class="sc-icon">💧</div>
+          <h3>Water Quality</h3>
+          <p>Hard water, bad taste, or low pressure? We test and treat your water supply.</p>
+          <ul class="sc-list">
+            <li>Softener installation</li>
+            <li>Filtration systems</li>
+            <li>Pressure regulators</li>
+          </ul>
+          <a href="#contact" class="sc-link">Book Service →</a>
+          <div class="sc-glow"></div>
+        </div>
+        <div class="service-card reveal" style="--delay:500ms">
+          <div class="sc-icon">🏗️</div>
+          <h3>Re-Piping</h3>
+          <p>Old galvanised or lead pipes? We fully re-pipe your home for safety and reliability.</p>
+          <ul class="sc-list">
+            <li>Full home re-pipe</li>
+            <li>PEX / copper piping</li>
+            <li>Slab leak repair</li>
+          </ul>
+          <a href="#contact" class="sc-link">Book Service →</a>
+          <div class="sc-glow"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- WHY US -->
+  <section class="why-us" id="why-us">
+    <div class="container">
+      <div class="why-grid">
+        <div class="why-visual reveal">
+          <div class="why-card-big">
+            <div class="wcb-top">
+              <span class="wcb-icon">🏆</span>
+              <div>
+                <strong>#1 Rated Plumber</strong>
+                <span>In the Greater Metro Area</span>
+              </div>
+            </div>
+            <div class="wcb-rating">
+              <span class="stars">★★★★★</span>
+              <span>4.9 from 2,400+ reviews</span>
+            </div>
+            <div class="wcb-badges">
+              <span class="badge">BBB A+</span>
+              <span class="badge">Angi Top Pro</span>
+              <span class="badge">HomeAdvisor Elite</span>
+            </div>
+          </div>
+          <div class="why-float-card wfc1 reveal">
+            <span>🚀</span>
+            <div>
+              <strong>60 Min</strong>
+              <span>Emergency Response</span>
+            </div>
+          </div>
+          <div class="why-float-card wfc2 reveal">
+            <span>💰</span>
+            <div>
+              <strong>Free Quotes</strong>
+              <span>No obligation</span>
+            </div>
+          </div>
+        </div>
+        <div class="why-content reveal">
+          <span class="section-tag">Why Choose Us</span>
+          <h2>The Plumbers Your Neighbours Recommend</h2>
+          <p class="why-intro">We're not just fixing pipes — we're building trust. Every job comes with our promise of honest work, honest pricing, and a finish you'll be proud of.</p>
+          <div class="why-features">
+            <div class="wf-item">
+              <div class="wf-icon">⚡</div>
+              <div>
+                <h4>Same-Day Service</h4>
+                <p>Book before noon, we're there today. Emergency slots always available.</p>
+              </div>
+            </div>
+            <div class="wf-item">
+              <div class="wf-icon">💲</div>
+              <div>
+                <h4>Upfront Pricing</h4>
+                <p>You approve the price before we start. Zero hidden fees. Ever.</p>
+              </div>
+            </div>
+            <div class="wf-item">
+              <div class="wf-icon">🛡️</div>
+              <div>
+                <h4>2-Year Guarantee</h4>
+                <p>Our work is backed by a 2-year parts and labour warranty.</p>
+              </div>
+            </div>
+            <div class="wf-item">
+              <div class="wf-icon">👷</div>
+              <div>
+                <h4>Background Checked</h4>
+                <p>Every technician is fully licensed, insured, and background verified.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PROCESS -->
+  <section class="process" id="process">
+    <div class="container">
+      <div class="section-header reveal">
+        <span class="section-tag">How It Works</span>
+        <h2>4 Simple Steps to a Fixed Plumbing Problem</h2>
+        <p>We've made booking a plumber as stress-free as possible.</p>
+      </div>
+      <div class="process-steps">
+        <div class="process-line"></div>
+        <div class="process-step reveal" style="--delay:0ms">
+          <div class="ps-num">01</div>
+          <div class="ps-icon">📞</div>
+          <h3>Call or Book Online</h3>
+          <p>Tell us your problem. We'll schedule a time that suits you — often same day.</p>
+        </div>
+        <div class="process-step reveal" style="--delay:150ms">
+          <div class="ps-num">02</div>
+          <div class="ps-icon">🔍</div>
+          <h3>Diagnosis & Quote</h3>
+          <p>Our plumber diagnoses the issue and gives you a clear upfront price. No surprises.</p>
+        </div>
+        <div class="process-step reveal" style="--delay:300ms">
+          <div class="ps-num">03</div>
+          <div class="ps-icon">🔧</div>
+          <h3>Expert Repair</h3>
+          <p>Once you approve, we get to work — efficiently and cleanly, respecting your home.</p>
+        </div>
+        <div class="process-step reveal" style="--delay:450ms">
+          <div class="ps-num">04</div>
+          <div class="ps-icon">✅</div>
+          <h3>Final Check & Guarantee</h3>
+          <p>We test everything thoroughly and leave you with a 2-year written guarantee.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- REVIEWS -->
+  <section class="reviews" id="reviews">
+    <div class="container">
+      <div class="section-header reveal">
+        <span class="section-tag">Customer Reviews</span>
+        <h2>What Our Customers Say</h2>
+        <p>Real reviews from real homeowners — unedited and unprompted.</p>
+      </div>
+      <div class="reviews-track-wrapper">
+        <div class="reviews-track">
+          <div class="review-card">
+            <div class="rc-stars">★★★★★</div>
+            <p>"Pipe burst at midnight. FlowMaster were there in 45 minutes and had it fixed by 2am. Absolutely incredible service."</p>
+            <div class="rc-author">
+              <div class="rc-avatar">SJ</div>
+              <div><strong>Sarah J.</strong><span>Homeowner, Chicago</span></div>
+            </div>
+          </div>
+          <div class="review-card">
+            <div class="rc-stars">★★★★★</div>
+            <p>"Used three other plumbers before FlowMaster. They diagnosed the issue in 10 minutes that others missed for months. Worth every penny."</p>
+            <div class="rc-author">
+              <div class="rc-avatar">MR</div>
+              <div><strong>Mike R.</strong><span>Property Manager</span></div>
+            </div>
+          </div>
+          <div class="review-card">
+            <div class="rc-stars">★★★★★</div>
+            <p>"Transparent pricing, clean work, and they even cleaned up after themselves. My new go-to for everything plumbing."</p>
+            <div class="rc-author">
+              <div class="rc-avatar">AL</div>
+              <div><strong>Amanda L.</strong><span>Homeowner, Oak Park</span></div>
+            </div>
+          </div>
+          <div class="review-card">
+            <div class="rc-stars">★★★★★</div>
+            <p>"Re-piped our whole house. Project done on time, on budget. Communication was excellent throughout. Highly recommend."</p>
+            <div class="rc-author">
+              <div class="rc-avatar">DK</div>
+              <div><strong>David K.</strong><span>Homeowner, Evanston</span></div>
+            </div>
+          </div>
+          <div class="review-card">
+            <div class="rc-stars">★★★★★</div>
+            <p>"Fixed our water heater same day. The technician was polite, explained everything clearly, and the price was fair."</p>
+            <div class="rc-author">
+              <div class="rc-avatar">TC</div>
+              <div><strong>Tina C.</strong><span>Apartment Owner</span></div>
+            </div>
+          </div>
+          <div class="review-card">
+            <div class="rc-stars">★★★★★</div>
+            <p>"Had a slab leak — stressful situation. FlowMaster made the whole process painless. Professional from start to finish."</p>
+            <div class="rc-author">
+              <div class="rc-avatar">BW</div>
+              <div><strong>Brian W.</strong><span>Homeowner, Naperville</span></div>
+            </div>
+          </div>
+          <!-- duplicate for infinite scroll -->
+          <div class="review-card">
+            <div class="rc-stars">★★★★★</div>
+            <p>"Pipe burst at midnight. FlowMaster were there in 45 minutes and had it fixed by 2am. Absolutely incredible service."</p>
+            <div class="rc-author">
+              <div class="rc-avatar">SJ</div>
+              <div><strong>Sarah J.</strong><span>Homeowner, Chicago</span></div>
+            </div>
+          </div>
+          <div class="review-card">
+            <div class="rc-stars">★★★★★</div>
+            <p>"Used three other plumbers before FlowMaster. They diagnosed the issue in 10 minutes that others missed for months. Worth every penny."</p>
+            <div class="rc-author">
+              <div class="rc-avatar">MR</div>
+              <div><strong>Mike R.</strong><span>Property Manager</span></div>
+            </div>
+          </div>
+          <div class="review-card">
+            <div class="rc-stars">★★★★★</div>
+            <p>"Transparent pricing, clean work, and they even cleaned up after themselves. My new go-to for everything plumbing."</p>
+            <div class="rc-author">
+              <div class="rc-avatar">AL</div>
+              <div><strong>Amanda L.</strong><span>Homeowner, Oak Park</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA BAND -->
+  <section class="cta-band">
+    <div class="cta-bg-anim">
+      <div class="cba-circle c1"></div>
+      <div class="cba-circle c2"></div>
+      <div class="cba-circle c3"></div>
+    </div>
+    <div class="container">
+      <div class="cta-band-inner reveal">
+        <h2>Got a Plumbing Problem? <span>Let's Fix It Today.</span></h2>
+        <p>Call now for same-day service or fill out the form below for a free quote.</p>
+        <div class="cta-band-actions">
+          <a href="tel:+18005551234" class="btn-primary btn-lg">📞 (800) 555-1234</a>
+          <a href="#contact" class="btn-ghost-white btn-lg">Get Free Quote</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CONTACT -->
+  <section class="contact" id="contact">
+    <div class="container">
+      <div class="contact-grid">
+        <div class="contact-info reveal">
+          <span class="section-tag">Get In Touch</span>
+          <h2>Book Your Free Quote</h2>
+          <p>Fill out the form and we'll get back to you within 30 minutes during business hours, or call us any time for emergencies.</p>
+          <div class="ci-list">
+            <div class="ci-item">
+              <span class="ci-icon">📞</span>
+              <div>
+                <strong>Phone</strong>
+                <a href="tel:+18005551234">(800) 555-1234</a>
+              </div>
+            </div>
+            <div class="ci-item">
+              <span class="ci-icon">📧</span>
+              <div>
+                <strong>Email</strong>
+                <a href="mailto:hello@flowmasterpro.com">hello@flowmasterpro.com</a>
+              </div>
+            </div>
+            <div class="ci-item">
+              <span class="ci-icon">📍</span>
+              <div>
+                <strong>Service Area</strong>
+                <span>Chicago Metro & Surrounding Areas</span>
+              </div>
+            </div>
+            <div class="ci-item">
+              <span class="ci-icon">🕐</span>
+              <div>
+                <strong>Hours</strong>
+                <span>Mon–Fri 7am–8pm · Sat 8am–6pm · Emergency 24/7</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <form class="contact-form reveal" id="contactForm">
+          <div class="form-row">
+            <div class="form-group">
+              <label for="fname">First Name *</label>
+              <input type="text" id="fname" name="fname" placeholder="John" required />
+            </div>
+            <div class="form-group">
+              <label for="lname">Last Name *</label>
+              <input type="text" id="lname" name="lname" placeholder="Smith" required />
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="email">Email *</label>
+              <input type="email" id="email" name="email" placeholder="john@email.com" required />
+            </div>
+            <div class="form-group">
+              <label for="phone">Phone *</label>
+              <input type="tel" id="phone" name="phone" placeholder="(555) 000-0000" required />
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="service">Service Needed</label>
+            <select id="service" name="service">
+              <option value="">Select a service...</option>
+              <option>Emergency Repair</option>
+              <option>Drain Cleaning</option>
+              <option>General Repair</option>
+              <option>Installation</option>
+              <option>Water Quality</option>
+              <option>Re-Piping</option>
+              <option>Other</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="message">Describe the Problem *</label>
+            <textarea id="message" name="message" rows="4" placeholder="Tell us what's going on..." required></textarea>
+          </div>
+          <button type="submit" class="btn-primary btn-full">
+            <span class="btn-text">Send My Free Quote Request</span>
+            <span class="btn-spinner" style="display:none">Sending…</span>
+          </button>
+          <p class="form-disclaimer">🔒 Your information is secure. No spam, ever.</p>
+          <div class="form-success" id="formSuccess">
+            <span>✅</span>
+            <strong>Message Sent!</strong>
+            <p>We'll get back to you within 30 minutes during business hours.</p>
+          </div>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <a href="#" class="logo">
+            <span class="logo-icon">💧</span>
+            <span class="logo-text">FlowMaster<span class="logo-accent">Pro</span></span>
+          </a>
+          <p>Chicago's most trusted plumbing service since 1999. Licensed, insured, and here when you need us.</p>
+          <div class="social-links">
+            <a href="#" aria-label="Facebook">f</a>
+            <a href="#" aria-label="Google">G</a>
+            <a href="#" aria-label="Yelp">Y</a>
+          </div>
+        </div>
+        <div class="footer-col">
+          <h4>Services</h4>
+          <ul>
+            <li><a href="#services">Emergency Repairs</a></li>
+            <li><a href="#services">Drain Cleaning</a></li>
+            <li><a href="#services">General Repairs</a></li>
+            <li><a href="#services">Installations</a></li>
+            <li><a href="#services">Water Quality</a></li>
+            <li><a href="#services">Re-Piping</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>Company</h4>
+          <ul>
+            <li><a href="#why-us">About Us</a></li>
+            <li><a href="#process">Our Process</a></li>
+            <li><a href="#reviews">Reviews</a></li>
+            <li><a href="#contact">Contact</a></li>
+            <li><a href="#">Careers</a></li>
+            <li><a href="#">Blog</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>Contact</h4>
+          <ul>
+            <li><a href="tel:+18005551234">📞 (800) 555-1234</a></li>
+            <li><a href="mailto:hello@flowmasterpro.com">✉️ hello@flowmasterpro.com</a></li>
+            <li><span>📍 Chicago, IL & Metro</span></li>
+            <li><span>🕐 24/7 Emergency Line</span></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>© 2025 FlowMaster Pro Plumbing. All rights reserved. Licensed & Insured · License #PL-2024-CHI</p>
+        <div class="footer-legal">
+          <a href="#">Privacy Policy</a>
+          <a href="#">Terms</a>
+          <a href="#">Sitemap</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- STICKY CALL BTN (mobile) -->
+  <a href="tel:+18005551234" class="sticky-call">📞 Call Now</a>
+
+  <script>/* FlowMaster Pro — Animations & Interactions */
+
+/* ── Navbar scroll effect ── */
+const navbar = document.getElementById('navbar');
+window.addEventListener('scroll', () => {
+  navbar.classList.toggle('scrolled', window.scrollY > 40);
+}, { passive: true });
+
+/* ── Mobile menu ── */
+const hamburger = document.getElementById('hamburger');
+const mobileMenu = document.getElementById('mobileMenu');
+hamburger.addEventListener('click', () => {
+  mobileMenu.classList.toggle('open');
+});
+mobileMenu.querySelectorAll('a').forEach(link => {
+  link.addEventListener('click', () => mobileMenu.classList.remove('open'));
+});
+
+/* ── Scroll reveal ── */
+const revealObserver = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('visible');
+      revealObserver.unobserve(entry.target);
+    }
+  });
+}, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
+
+document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
+
+/* ── Animated counters ── */
+function animateCounter(el) {
+  const target = parseInt(el.dataset.target, 10);
+  const duration = 2000;
+  const step = 30;
+  const increment = target / (duration / step);
+  let current = 0;
+  const timer = setInterval(() => {
+    current += increment;
+    if (current >= target) {
+      current = target;
+      clearInterval(timer);
+    }
+    el.textContent = Math.floor(current).toLocaleString();
+  }, step);
+}
+
+const counterObserver = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.querySelectorAll('[data-target]').forEach(animateCounter);
+      counterObserver.unobserve(entry.target);
+    }
+  });
+}, { threshold: 0.5 });
+
+const statsEl = document.querySelector('.hero-stats');
+if (statsEl) counterObserver.observe(statsEl);
+
+/* ── Active nav link on scroll ── */
+const sections = document.querySelectorAll('section[id]');
+const navLinks = document.querySelectorAll('.nav-links a');
+
+const sectionObserver = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      const id = entry.target.id;
+      navLinks.forEach(link => {
+        link.classList.toggle('active', link.getAttribute('href') === `#${id}`);
+      });
+    }
+  });
+}, { threshold: 0.4 });
+
+sections.forEach(s => sectionObserver.observe(s));
+
+/* ── Smooth scroll for all anchor links ── */
+document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+  anchor.addEventListener('click', e => {
+    const target = document.querySelector(anchor.getAttribute('href'));
+    if (!target) return;
+    e.preventDefault();
+    const offset = 80;
+    const top = target.getBoundingClientRect().top + window.scrollY - offset;
+    window.scrollTo({ top, behavior: 'smooth' });
+  });
+});
+
+/* ── Contact form ── */
+const form = document.getElementById('contactForm');
+const formSuccess = document.getElementById('formSuccess');
+
+form.addEventListener('submit', e => {
+  e.preventDefault();
+  const btn = form.querySelector('button[type="submit"]');
+  const btnText = btn.querySelector('.btn-text');
+  const btnSpinner = btn.querySelector('.btn-spinner');
+
+  btn.disabled = true;
+  btnText.style.display = 'none';
+  btnSpinner.style.display = 'inline';
+
+  // Simulate async submit
+  setTimeout(() => {
+    btn.disabled = false;
+    btnText.style.display = 'inline';
+    btnSpinner.style.display = 'none';
+    form.reset();
+    formSuccess.classList.add('visible');
+    formSuccess.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }, 1800);
+});
+
+/* ── Parallax hero background elements ── */
+document.addEventListener('mousemove', e => {
+  const { innerWidth, innerHeight } = window;
+  const x = (e.clientX / innerWidth - 0.5) * 20;
+  const y = (e.clientY / innerHeight - 0.5) * 20;
+  const drops = document.querySelectorAll('.water-drop');
+  drops.forEach((drop, i) => {
+    const factor = (i + 1) * 0.4;
+    drop.style.transform = `translate(${x * factor}px, ${y * factor}px)`;
+  });
+});
+
+/* ── Cursor ripple on click ── */
+document.addEventListener('click', e => {
+  const ripple = document.createElement('div');
+  ripple.style.cssText = `
+    position: fixed;
+    left: ${e.clientX}px;
+    top: ${e.clientY}px;
+    width: 0;
+    height: 0;
+    border-radius: 50%;
+    background: rgba(30,64,175,0.15);
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+    z-index: 9999;
+    animation: rippleOut 0.6s ease-out forwards;
+  `;
+  document.body.appendChild(ripple);
+  setTimeout(() => ripple.remove(), 600);
+});
+
+/* Inject ripple keyframe */
+const style = document.createElement('style');
+style.textContent = `
+  @keyframes rippleOut {
+    to { width: 120px; height: 120px; opacity: 0; }
+  }
+  .nav-links a.active {
+    color: var(--accent-light) !important;
+  }
+`;
+document.head.appendChild(style);
+</script>
+</body>
+</html>
