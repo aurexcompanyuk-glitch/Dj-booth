@@ -11,6 +11,7 @@ export default defineConfig({
         main: 'index.html',
         cinematic: 'cinematic.html',
         car: 'car.html',
+        car2: 'car2.html',
       }
     }
   }
