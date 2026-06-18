@@ -13,6 +13,7 @@ export default defineConfig({
         car: 'car.html',
         car2: 'car2.html',
         car3: 'car3.html',
+        pickem: 'pickem.html',
       }
     }
   }
