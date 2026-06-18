@@ -244,7 +244,7 @@ export default function AppCar3() {
 
     const rgbeLoader = new RGBELoader()
     rgbeLoader.load(
-      'https://threejs.org/examples/textures/equirectangular/venice_sunset_1k.hdr',
+      './textures/venice_sunset_1k.hdr',
       (hdrTexture) => {
         if (disposed) { hdrTexture.dispose(); return }
         hdrTexture.mapping = THREE.EquirectangularReflectionMapping
@@ -275,7 +275,7 @@ export default function AppCar3() {
     // ── LOAD GLTF ─────────────────────────────────────────────────────────────
     const gltfLoader = new GLTFLoader()
     gltfLoader.load(
-      'https://threejs.org/examples/models/gltf/ferrari.glb',
+      './models/ferrari.glb',
       (gltf) => {
         if (disposed) return
         const model = gltf.scene
