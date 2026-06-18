@@ -11,11 +11,10 @@ function Panel({ children, bg, index }) {
 
   return (
     <div ref={ref} style={{ position: 'relative', overflow: 'hidden', minHeight: '80vh', display: 'flex', alignItems: 'center', background: bg }}>
-      {/* Wipe reveal from right */}
+      {/* Wipe reveal — overlay slides right as panel enters */}
       <motion.div style={{
-        position: 'absolute', inset: 0, background: '#070707',
-        clipPath: 'none', zIndex: 5,
-        x: clipLeft
+        position: 'absolute', inset: 0, background: '#070707', zIndex: 5,
+        translateX: clipLeft
       }} />
       <motion.div style={{ opacity, y, position: 'relative', zIndex: 2, width: '100%' }}>
         {children}
@@ -88,7 +87,7 @@ export default function CarCinemaScroll() {
           <div style={{ maxWidth: 1320, margin: '0 auto', padding: '7rem 2.5rem', display: 'grid', gridTemplateColumns: '1fr 1.2fr', gap: '6rem', alignItems: 'center' }}>
             {/* Left — number */}
             <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
-              <div style={{ fontFamily: 'monospace', fontSize: '9px', color: step.color.replace(')', ',0.5)').replace('rgb', 'rgba'), letterSpacing: '0.3em', textTransform: 'uppercase', marginBottom: '1.5rem' }}>{step.label}</div>
+              <div style={{ fontFamily: 'monospace', fontSize: '9px', color: 'rgba(201,168,76,0.5)', letterSpacing: '0.3em', textTransform: 'uppercase', marginBottom: '1.5rem' }}>{step.label}</div>
               <div style={{
                 fontFamily: "'Inter', sans-serif",
                 fontSize: 'clamp(80px, 14vw, 180px)',
