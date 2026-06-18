@@ -50,62 +50,6 @@ const SCENES = [
   },
 ]
 
-// ─── MATERIAL HELPERS ─────────────────────────────────────────────────────────
-function classifyMesh(name) {
-  const n = name.toLowerCase()
-  if (n.includes('glass') || n.includes('window') || n.includes('windshield') || n.includes('windscreen')) return 'glass'
-  if (n.includes('chrome') || n.includes('trim') || n.includes('exhaust') || n.includes('rim') || n.includes('wheel_rim')) return 'chrome'
-  if (n.includes('tyre') || n.includes('tire') || n.includes('rubber')) return 'rubber'
-  if (n.includes('interior') || n.includes('seat') || n.includes('dash') || n.includes('carpet')) return 'interior'
-  return 'body'
-}
-
-function makeMaterials(envMap) {
-  const body = new THREE.MeshPhysicalMaterial({
-    color: 0x1a1a2e,
-    metalness: 0.9,
-    roughness: 0.1,
-    clearcoat: 1.0,
-    clearcoatRoughness: 0.05,
-    envMap,
-    envMapIntensity: 1.5,
-  })
-
-  const glass = new THREE.MeshPhysicalMaterial({
-    color: 0x88aabb,
-    transmission: 1,
-    transparent: true,
-    opacity: 0.3,
-    ior: 1.5,
-    roughness: 0,
-    metalness: 0,
-    envMap,
-    envMapIntensity: 1.0,
-  })
-
-  const chrome = new THREE.MeshPhysicalMaterial({
-    color: 0xcccccc,
-    metalness: 1,
-    roughness: 0.05,
-    envMap,
-    envMapIntensity: 2.0,
-  })
-
-  const rubber = new THREE.MeshStandardMaterial({
-    color: 0x222222,
-    roughness: 0.9,
-    metalness: 0,
-  })
-
-  const interior = new THREE.MeshStandardMaterial({
-    color: 0x2a2020,
-    roughness: 0.7,
-    metalness: 0.1,
-  })
-
-  return { body, glass, chrome, rubber, interior }
-}
-
 // ─── MAIN ────────────────────────────────────────────────────────────────────
 export default function AppCar3() {
   const mountRef = useRef(null)
@@ -255,11 +199,10 @@ export default function AppCar3() {
         threeScene.environment = envMap
 
         // If car already loaded, apply materials now
-        if (carGroup) applyMaterials(carGroup, envMap)
+        if (carGroup) applyEnvMap(carGroup, envMap)
       },
       undefined,
       () => {
-        // HDRI failed — fall back to a basic PMREMed ambient scene
         if (disposed) return
         const fallback = new THREE.Scene()
         fallback.add(Object.assign(new THREE.Mesh(
@@ -268,7 +211,7 @@ export default function AppCar3() {
         )))
         envMap = pmrem.fromScene(fallback).texture
         threeScene.environment = envMap
-        if (carGroup) applyMaterials(carGroup, envMap)
+        if (carGroup) applyEnvMap(carGroup, envMap)
       }
     )
 
@@ -280,13 +223,13 @@ export default function AppCar3() {
         if (disposed) return
         const model = gltf.scene
 
-        // Centre & scale
+        // Centre horizontally, sit on floor (y=0)
         const box = new THREE.Box3().setFromObject(model)
         const centre = box.getCenter(new THREE.Vector3())
-        model.position.sub(centre)
-        // Place wheels on floor: shift up so bottom of bounding box is at y=0
-        const size = box.getSize(new THREE.Vector3())
-        model.position.y = size.y / 2 - centre.y
+        const min = box.min
+        model.position.x -= centre.x
+        model.position.z -= centre.z
+        model.position.y -= min.y  // sit wheels on y=0 floor
 
         // Wrap in a group so we can manipulate easily
         carGroup = new THREE.Group()
@@ -301,9 +244,8 @@ export default function AppCar3() {
           }
         })
 
-        // Apply materials (env map may not be ready yet — that's fine, we'll
-        // call again from the RGBELoader callback if needed)
-        if (envMap) applyMaterials(carGroup, envMap)
+        // Apply env map to existing materials (don't replace them)
+        if (envMap) applyEnvMap(carGroup, envMap)
 
         setLoading(false)
       },
@@ -314,17 +256,13 @@ export default function AppCar3() {
       }
     )
 
-    function applyMaterials(group, env) {
-      const mats = makeMaterials(env)
+    function applyEnvMap(group, env) {
       group.traverse((node) => {
         if (!node.isMesh) return
-        const type = classifyMesh(node.name)
-        switch (type) {
-          case 'glass':    node.material = mats.glass;    break
-          case 'chrome':   node.material = mats.chrome;   break
-          case 'rubber':   node.material = mats.rubber;   break
-          case 'interior': node.material = mats.interior; break
-          default:         node.material = mats.body;     break
+        if (node.material) {
+          node.material.envMap = env
+          node.material.envMapIntensity = 1.5
+          node.material.needsUpdate = true
         }
       })
     }
