@@ -12,6 +12,7 @@ export default defineConfig({
         cinematic: 'cinematic.html',
         car: 'car.html',
         car2: 'car2.html',
+        car3: 'car3.html',
       }
     }
   }
