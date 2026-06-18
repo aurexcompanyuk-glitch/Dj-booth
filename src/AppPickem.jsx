@@ -1,9 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { motion, AnimatePresence, useScroll, useTransform, useInView } from 'framer-motion'
 import * as THREE from 'three'
-import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js'
-import { RenderPass } from 'three/addons/postprocessing/RenderPass.js'
-import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js'
 import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js'
 
 // ─── FLAVOURS ────────────────────────────────────────────────────────────────
@@ -45,7 +42,9 @@ function ThreeHero({ activeFlavour }) {
     let disposed = false
     let W = el.clientWidth, H = el.clientHeight
 
-    const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true })
+    let renderer, raf, onResize
+    try {
+    renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, powerPreference: 'high-performance' })
     renderer.setSize(W, H)
     renderer.setPixelRatio(Math.min(devicePixelRatio, 2))
     renderer.toneMapping = THREE.ACESFilmicToneMapping
@@ -58,22 +57,20 @@ function ThreeHero({ activeFlavour }) {
     camera.position.set(0, 0, 8)
 
     // Environment
-    const pmrem = new THREE.PMREMGenerator(renderer)
-    scene.environment = pmrem.fromScene(new RoomEnvironment(), 0.04).texture
-    pmrem.dispose()
-
-    // Bloom
-    const composer = new EffectComposer(renderer)
-    composer.addPass(new RenderPass(scene, camera))
-    const bloom = new UnrealBloomPass(new THREE.Vector2(W, H), 0.8, 0.4, 0.1)
-    composer.addPass(bloom)
+    try {
+      const pmrem = new THREE.PMREMGenerator(renderer)
+      scene.environment = pmrem.fromScene(new RoomEnvironment(), 0.04).texture
+      pmrem.dispose()
+    } catch(e) {}
 
     // Lights
-    scene.add(new THREE.AmbientLight(0xffffff, 1.5))
-    const key = new THREE.DirectionalLight(0xffffff, 3)
+    scene.add(new THREE.AmbientLight(0xffffff, 2.0))
+    const key = new THREE.DirectionalLight(0xffffff, 3.5)
     key.position.set(5, 8, 5)
     scene.add(key)
-    scene.add(Object.assign(new THREE.DirectionalLight(0x8888ff, 1.5), { position: new THREE.Vector3(-5, -3, -5) }))
+    const fill = new THREE.DirectionalLight(0x8888ff, 1.5)
+    fill.position.set(-5, -3, -5)
+    scene.add(fill)
 
     // ── TOOTHPICK ────────────────────────────────────────────────────────────
     const pickGroup = new THREE.Group()
@@ -161,7 +158,6 @@ function ThreeHero({ activeFlavour }) {
     scene.add(ring2)
 
     // ── ANIMATE ──────────────────────────────────────────────────────────────
-    let raf
     const clock = new THREE.Clock()
     let currentColor = new THREE.Color(FLAVOURS[0].particle)
     let targetColor = new THREE.Color(FLAVOURS[0].particle)
@@ -207,25 +203,28 @@ function ThreeHero({ activeFlavour }) {
       }
       pGeo.attributes.position.needsUpdate = true
 
-      composer.render()
+      renderer.render(scene, camera)
     }
     animate()
 
-    const onResize = () => {
+    onResize = () => {
       W = el.clientWidth; H = el.clientHeight
       renderer.setSize(W, H)
-      composer.setSize(W, H)
       camera.aspect = W / H
       camera.updateProjectionMatrix()
     }
     window.addEventListener('resize', onResize)
 
+    } catch(e) { console.error('ThreeHero init failed:', e) }
+
     return () => {
       disposed = true
       cancelAnimationFrame(raf)
       window.removeEventListener('resize', onResize)
-      renderer.dispose()
-      if (el.contains(renderer.domElement)) el.removeChild(renderer.domElement)
+      if (renderer) {
+        renderer.dispose()
+        if (el.contains(renderer.domElement)) el.removeChild(renderer.domElement)
+      }
     }
   }, [])
 
