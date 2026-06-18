@@ -10,6 +10,7 @@ export default defineConfig({
       input: {
         main: 'index.html',
         cinematic: 'cinematic.html',
+        car: 'car.html',
       }
     }
   }
