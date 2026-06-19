@@ -14,6 +14,9 @@ export default defineConfig({
         car2: 'car2.html',
         car3: 'car3.html',
         pickem: 'pickem.html',
+        saas: 'saas.html',
+        portfolio: 'portfolio.html',
+        pricing: 'pricing.html',
       }
     }
   }
