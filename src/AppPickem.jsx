@@ -158,46 +158,67 @@ function PackVisual({ flavour, size = 1, style }) {
   )
 }
 
+// ─── ANIMATED STICK (own component so hooks are valid) ─────────────────────────
+function AnimatedStick({ s, scrollYProgress }) {
+  const rad = (s.angle * Math.PI) / 180
+  const tx  = Math.cos(rad) * s.dist
+  const ty  = Math.sin(rad) * s.dist
+  const stickX  = useTransform(scrollYProgress, [0.22 + s.delay, 0.55 + s.delay * 0.5], [0, tx])
+  const stickY  = useTransform(scrollYProgress, [0.22 + s.delay, 0.55 + s.delay * 0.5], [0, ty])
+  const stickOp = useTransform(scrollYProgress, [0.20, 0.24, 0.85, 0.98], [0, 1, 1, 0])
+  const stickRot= useTransform(scrollYProgress, [0.22, 0.55], [0, s.angle + 90])
+  return (
+    <motion.div style={{
+      position:'absolute', x: stickX, y: stickY,
+      rotate: stickRot, opacity: stickOp,
+      display:'flex', flexDirection:'column', alignItems:'center', gap:4,
+      pointerEvents:'none', zIndex:10,
+    }}>
+      <div style={{ width: 4, height: 90,
+        background: `linear-gradient(to bottom, ${s.color}, ${s.color}88)`,
+        borderRadius: 3,
+        boxShadow: `0 0 12px ${s.color}, 0 0 24px ${s.color}66` }} />
+      {s.flavour && (
+        <div style={{ fontFamily: serif, fontSize: 9, fontWeight: 700,
+          color: s.color, textAlign:'center', lineHeight: 1.2,
+          whiteSpace:'pre-line', textShadow:`0 0 12px ${s.color}` }}>
+          {s.flavour}
+        </div>
+      )}
+    </motion.div>
+  )
+}
+
 // ─── HERO SCROLL SECTION ───────────────────────────────────────────────────────
-// Scroll-scrubbed: pack starts centered → shakes → EXPLODES → sticks radiate out
 function HeroScrollSection() {
   const containerRef = useRef()
   const { scrollYProgress } = useScroll({ target: containerRef, offset:['start start','end end'] })
 
-  // Phase 0→0.12: intro float, title appears
-  // Phase 0.12→0.22: pack shakes / charges up
-  // Phase 0.22→0.55: EXPLOSION — sticks fly out, pack scales up then settles
-  // Phase 0.55→1.0: sticks settle, labels readable, CTA appears
+  const packScale   = useTransform(scrollYProgress, [0, 0.10, 0.20, 0.28, 0.50], [0.7, 1.0, 1.05, 1.3, 1.1])
+  const packY       = useTransform(scrollYProgress, [0, 0.10, 0.50, 0.90], ['8vh', '0vh', '-6vh', '-12vh'])
+  const packOpacity = useTransform(scrollYProgress, [0.80, 0.95], [1, 0])
+  const packRotate  = useTransform(scrollYProgress, [0.12, 0.15, 0.17, 0.19, 0.22], [0, -4, 4, -3, 0])
+  const bgColor     = useTransform(scrollYProgress, [0, 0.3, 1], ['#0a0a0a', '#0c0014', '#040008'])
 
-  const packScale      = useTransform(scrollYProgress, [0, 0.10, 0.20, 0.28, 0.50], [0.7, 1.0, 1.05, 1.3, 1.1])
-  const packY          = useTransform(scrollYProgress, [0, 0.10, 0.50, 0.90], ['8vh', '0vh', '-6vh', '-12vh'])
-  const packOpacity    = useTransform(scrollYProgress, [0.80, 0.95], [1, 0])
-  const packRotate     = useTransform(scrollYProgress, [0.12, 0.15, 0.17, 0.19, 0.22], [0, -4, 4, -3, 0])
-  const bgProgress     = useTransform(scrollYProgress, [0, 0.3, 0.6, 1], ['#0a0a0a','#0c0014','#060012','#040008'])
-
-  const titleY    = useTransform(scrollYProgress, [0, 0.08], ['40px', '0px'])
-  const titleOp   = useTransform(scrollYProgress, [0, 0.08, 0.70, 0.85], [0, 1, 1, 0])
-
+  const titleY  = useTransform(scrollYProgress, [0, 0.08], ['40px', '0px'])
+  const titleOp = useTransform(scrollYProgress, [0, 0.08, 0.70, 0.85], [0, 1, 1, 0])
   const ctaOp   = useTransform(scrollYProgress, [0.60, 0.72], [0, 1])
   const ctaY    = useTransform(scrollYProgress, [0.60, 0.72], ['30px', '0px'])
+  const hintOp  = useTransform(scrollYProgress, [0, 0.06, 0.18], [1, 1, 0])
 
-  // Flash on explosion
-  const flashOp = useTransform(scrollYProgress, [0.21, 0.23, 0.27], [0, 0.85, 0])
-
-  // Shockwave ring
+  const flashOp  = useTransform(scrollYProgress, [0.21, 0.23, 0.27], [0, 0.85, 0])
   const ringScale = useTransform(scrollYProgress, [0.22, 0.45], [0.2, 4])
-  const ringOp    = useTransform(scrollYProgress, [0.22, 0.26, 0.50], [0, 0.6, 0])
+  const ringOp   = useTransform(scrollYProgress, [0.22, 0.26, 0.50], [0, 0.6, 0])
 
   return (
     <div ref={containerRef} style={{ height:'500vh', position:'relative' }}>
       <motion.div style={{
         position:'sticky', top:0, height:'100vh', overflow:'hidden',
-        background: bgProgress, display:'flex', alignItems:'center', justifyContent:'center',
+        background: bgColor, display:'flex', alignItems:'center', justifyContent:'center',
       }}>
-        {/* star-field background dots */}
         <Stars />
 
-        {/* explosion flash */}
+        {/* flash */}
         <motion.div style={{ position:'absolute', inset:0, background:'#fff',
           opacity: flashOp, pointerEvents:'none', zIndex:20 }} />
 
@@ -208,58 +229,20 @@ function HeroScrollSection() {
           pointerEvents:'none', zIndex:15,
         }} />
 
-        {/* radiating toothpicks */}
-        {STICKS.map((s, i) => {
-          const rad = (s.angle * Math.PI) / 180
-          const tx  = Math.cos(rad) * s.dist
-          const ty  = Math.sin(rad) * s.dist
-          const stickX  = useTransform(scrollYProgress, [0.22 + s.delay, 0.55 + s.delay * 0.5], [0, tx])
-          const stickY  = useTransform(scrollYProgress, [0.22 + s.delay, 0.55 + s.delay * 0.5], [0, ty])
-          const stickOp = useTransform(scrollYProgress, [0.20, 0.24, 0.85, 0.98], [0, 1, 1, 0])
-          const stickRot= useTransform(scrollYProgress, [0.22, 0.55], [0, s.angle + 90])
-          return (
-            <motion.div key={i} style={{
-              position:'absolute', x: stickX, y: stickY,
-              rotate: stickRot, opacity: stickOp,
-              display:'flex', flexDirection:'column', alignItems:'center', gap:4,
-              pointerEvents:'none', zIndex:10,
-            }}>
-              {/* stick */}
-              <div style={{ width: 4, height: 90,
-                background: `linear-gradient(to bottom, ${s.color}, ${s.color}88)`,
-                borderRadius: 3,
-                boxShadow: `0 0 12px ${s.color}, 0 0 24px ${s.color}66` }} />
-              {/* label */}
-              {s.flavour && (
-                <div style={{ fontFamily: serif, fontSize: 9, fontWeight: 700,
-                  color: s.color, textAlign:'center', lineHeight: 1.2,
-                  whiteSpace:'pre-line', textShadow:`0 0 12px ${s.color}` }}>
-                  {s.flavour}
-                </div>
-              )}
-            </motion.div>
-          )
-        })}
+        {/* radiating sticks — each in its own component */}
+        {STICKS.map((s, i) => (
+          <AnimatedStick key={i} s={s} scrollYProgress={scrollYProgress} />
+        ))}
 
         {/* CENTER PACK */}
         <motion.div style={{
           position:'absolute', scale: packScale, y: packY,
           opacity: packOpacity, rotate: packRotate, zIndex:12,
         }}>
-          {/* glow aura behind pack */}
-          <motion.div style={{
-            position:'absolute', inset:'-40px', borderRadius:50,
-            background: useTransform(scrollYProgress,
-              [0, 0.22, 0.3],
-              ['radial-gradient(circle, #c026d322 0%, transparent 70%)',
-               'radial-gradient(circle, #c026d388 0%, transparent 60%)',
-               'radial-gradient(circle, #c026d344 0%, transparent 70%)']),
-            filter:'blur(20px)',
-          }} />
           <PackVisual flavour="cola" size={1.6} />
         </motion.div>
 
-        {/* TITLE — above */}
+        {/* TITLE */}
         <motion.div style={{
           position:'absolute', top:'10vh', left:0, right:0,
           textAlign:'center', y: titleY, opacity: titleOp, zIndex:16,
@@ -279,8 +262,7 @@ function HeroScrollSection() {
         {/* SCROLL HINT */}
         <motion.div style={{
           position:'absolute', bottom:'6vh', left:'50%', transform:'translateX(-50%)',
-          opacity: useTransform(scrollYProgress, [0, 0.06, 0.18], [1, 1, 0]),
-          zIndex:16,
+          opacity: hintOp, zIndex:16,
         }}>
           <div style={{ display:'flex', flexDirection:'column', alignItems:'center', gap:8 }}>
             <div style={{ fontFamily: sans, fontSize:10, color:'#666', letterSpacing:'0.25em' }}>SCROLL TO OPEN</div>
@@ -290,7 +272,7 @@ function HeroScrollSection() {
           </div>
         </motion.div>
 
-        {/* CTA after explosion settles */}
+        {/* CTA */}
         <motion.div style={{
           position:'absolute', bottom:'12vh', left:0, right:0,
           display:'flex', flexDirection:'column', alignItems:'center', gap:20,
@@ -315,18 +297,14 @@ function HeroScrollSection() {
           </div>
         </motion.div>
 
-        {/* scroll progress bar */}
-        <motion.div style={{
-          position:'absolute', left:0, top:0, width:3, height:'100vh',
-          background:'#1a1a1a', zIndex:20,
-        }}>
+        {/* progress bar */}
+        <div style={{ position:'absolute', left:0, top:0, width:3, height:'100vh',
+          background:'#1a1a1a', zIndex:20 }}>
           <motion.div style={{
-            width:'100%', transformOrigin:'top',
-            scaleY: scrollYProgress,
-            background:'linear-gradient(to bottom, #c026d3, #7c3aed)',
-            height:'100%',
+            width:'100%', transformOrigin:'top', scaleY: scrollYProgress,
+            background:'linear-gradient(to bottom, #c026d3, #7c3aed)', height:'100%',
           }} />
-        </motion.div>
+        </div>
       </motion.div>
     </div>
   )
