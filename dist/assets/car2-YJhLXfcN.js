@@ -1,4 +1,4 @@
-import{A as e,M as t,j as n,k as r,t as i}from"./proxy-DjAWMiuf.js";import{i as a,n as o,t as s}from"./use-in-view-DaImG24V.js";import{A as c,B as l,D as u,F as d,G as f,K as p,L as m,M as ee,N as h,O as g,P as _,R as v,S as y,T as b,U as x,V as S,W as C,_ as w,a as T,d as E,f as D,g as O,h as k,i as A,j,k as M,l as N,m as P,n as F,o as I,p as L,r as te,t as R,u as z,v as B,w as V,x as H,z as U}from"./three.module-CoMGE67d.js";var W=t(n()),G=e(),K={name:`CopyShader`,uniforms:{tDiffuse:{value:null},opacity:{value:1}},vertexShader:`
+import{A as e,M as t,j as n,k as r,t as i}from"./proxy-DjAWMiuf.js";import{t as a}from"./use-scroll-DPSJqH0t.js";import{n as o,t as s}from"./use-in-view-Cyz_D21k.js";import{A as c,B as l,D as u,F as d,G as f,K as p,L as m,M as ee,N as h,O as g,P as _,R as v,S as y,T as b,U as x,V as S,W as C,_ as w,a as T,d as E,f as D,g as O,h as k,i as A,j,k as M,l as N,m as P,n as F,o as I,p as L,r as te,t as R,u as z,v as B,w as V,x as H,z as U}from"./three.module-CoMGE67d.js";var W=t(n()),G=e(),K={name:`CopyShader`,uniforms:{tDiffuse:{value:null},opacity:{value:1}},vertexShader:`
 
 		varying vec2 vUv;
 
