@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect, useCallback } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 
-export default function InputBar({ onSend, disabled, ttsEnabled, onTtsToggle }) {
+export default function InputBar({ onSend, disabled, ttsEnabled, onTtsToggle, onListenStart, onListenEnd }) {
   const [text, setText] = useState('')
   const [listening, setListening] = useState(false)
   const inputRef = useRef(null)
@@ -37,11 +37,13 @@ export default function InputBar({ onSend, disabled, ttsEnabled, onTtsToggle }) 
     if (listening) {
       rec.stop()
       setListening(false)
+      onListenEnd?.()
     } else {
       rec.start()
       setListening(true)
+      onListenStart?.()
     }
-  }, [listening])
+  }, [listening, onListenStart, onListenEnd])
 
   const submit = useCallback(() => {
     const trimmed = text.trim()

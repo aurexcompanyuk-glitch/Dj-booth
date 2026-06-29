@@ -9,7 +9,7 @@ const STATUS_COLOR = {
   INITIALIZING: '#ffd600',
 }
 
-export default function StatusBar({ status, connected }) {
+export default function StatusBar({ status, connected, wakeListening }) {
   const [time, setTime] = useState(new Date())
 
   useEffect(() => {
@@ -33,6 +33,15 @@ export default function StatusBar({ status, connected }) {
           transition={{ duration: 1.2, repeat: Infinity }}
         />
         <span style={{ ...styles.statusText, color }}>{status}</span>
+        {wakeListening && (
+          <motion.span
+            style={styles.wakeTag}
+            animate={{ opacity: [1, 0.4, 1] }}
+            transition={{ duration: 1, repeat: Infinity }}
+          >
+            ● WAKE WORD ACTIVE
+          </motion.span>
+        )}
       </div>
 
       <div style={styles.right}>
@@ -88,6 +97,13 @@ const styles = {
     fontSize: '11px',
     fontWeight: 700,
     letterSpacing: '0.15em',
+  },
+  wakeTag: {
+    fontFamily: 'Orbitron, sans-serif',
+    fontSize: '9px',
+    color: '#ff6d00',
+    letterSpacing: '0.15em',
+    marginLeft: '10px',
   },
   right: {
     display: 'flex',
