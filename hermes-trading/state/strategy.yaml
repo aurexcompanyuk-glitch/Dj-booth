@@ -1,0 +1,24 @@
+version: "01"
+entry:
+  indicators:
+    - rsi
+    - macd
+    - bollinger
+    - volume
+  rsi_oversold: 30
+  rsi_overbought: 70
+  macd_signal: cross
+  bollinger_squeeze: true
+  volume_spike_multiplier: 1.5
+  timeframe: "5m"
+  direction: both               # long and short
+  confidence_threshold: 0.60
+  regime_filter: true           # skip trades in choppy markets
+stop_loss_pct: 2.0
+take_profit_pct: 5.0
+trailing_stop: false
+trailing_stop_distance: 1.0
+position_size_r: 0.50
+leverage: 10
+max_open_positions: 1
+cooldown_bars: 3                # bars to wait after a loss before re-entering
