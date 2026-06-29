@@ -1,5 +1,15 @@
 {
+  "name": "dj-booth",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "jarvis": "concurrently \"npm run jarvis:server\" \"npm run jarvis:client\"",
+    "jarvis:server": "cd jarvis/server && npm start",
+    "jarvis:client": "cd jarvis/client && npm run dev",
+    "jarvis:install": "cd jarvis/server && npm install && cd ../client && npm install"
+  },
   "dependencies": {
-    "framer-motion": "^12.40.0"
+    "framer-motion": "^12.40.0",
+    "concurrently": "^8.2.2"
   }
 }

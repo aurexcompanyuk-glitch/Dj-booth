@@ -1,0 +1,19 @@
+{
+  "name": "jarvis-server",
+  "version": "1.0.0",
+  "description": "Jarvis AI backend — bridges WebSocket clients to Hermes agent or OpenAI",
+  "main": "server.js",
+  "type": "module",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "ws": "^8.16.0",
+    "openai": "^4.28.0",
+    "dotenv": "^16.4.1",
+    "cors": "^2.8.5",
+    "node-pty": "^1.0.0"
+  }
+}
