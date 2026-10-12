@@ -1,0 +1,16 @@
+# A program file is a signed-off statement of authorization.
+# A human must author/approve this; the agent never invents its own scope.
+program: acme-public-bbp
+engagement_url: https://hackerone.com/acme
+in_scope:
+  - "*.acme.com"                    # all subdomains
+  - "acme.com"                      # apex only (add +subs to include subdomains)
+  - "https://api.acme.com/v2/"      # path-scoped: only this API version
+  - "198.51.100.0/24"               # an authorized IP range
+out_of_scope:
+  - "legacy.acme.com+subs"          # legacy host and everything under it
+  - "https://api.acme.com/v2/internal"  # internal path carved out
+rules:
+  max_requests_per_second: 5
+  max_concurrency: 4
+  respect_robots: true
