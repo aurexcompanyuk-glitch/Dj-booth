@@ -5,18 +5,21 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bowlby+One&family=Instrument+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap">
 <style>
-/* Layout: one centred listening-booth column; a spinning record is the clock, sleeve stickers grade the answers. Committed single dark look (a booth at night). */
+/* Layout: one centred listening-booth column. A turntable is the clock, a crate strip shows how deep you dug, sleeve stickers grade answers. Committed single dark look (a booth at night). */
 :root {
-  --bg: #17121b;          /* smoked plum booth */
+  --bg: #150f19;
   --panel: #221a27;
   --panel-2: #2c2232;
   --line: #3e3246;
   --fg: #f1e9e2;
   --muted: #a99bab;
-  --accent: #e8b23a;      /* mustard label */
+  --accent: #e8b23a;
   --accent-ink: #1c1408;
-  --vinyl: #0e0b10;
+  --vinyl: #0d0a0f;
   --groove: #1d1720;
+  --plinth-a: #3a2b2a;
+  --plinth-b: #241a1c;
+  --metal: #cfc6c0;
   --danger: #ff6b6b;
   --t-hit: #8b97a8;
   --t-album: #3fb8a8;
@@ -24,6 +27,7 @@
   --t-white: #f4f1ec;
   --t-dub: #b48cff;
   --t-miss: #5a4d5e;
+  --glow: var(--accent);
   --display: "Bowlby One", "Arial Black", Impact, sans-serif;
   --body: "Instrument Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
   --mono: "JetBrains Mono", ui-monospace, Menlo, Consolas, monospace;
@@ -35,7 +39,6 @@ html, body { min-height: 100%; }
 body {
   margin: 0;
   background: var(--bg);
-  background-image: radial-gradient(ellipse 80% 50% at 50% -10%, color-mix(in srgb, var(--accent) 12%, transparent), transparent 70%);
   color: var(--fg);
   font-family: var(--body);
   font-size: 16px;
@@ -44,8 +47,26 @@ body {
   padding-right: max(16px, env(safe-area-inset-right, 0px));
   padding-block: 20px 40px;
   -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
 }
-.app { max-width: 560px; margin: 0 auto; display: grid; gap: 20px; }
+/* ambient booth lights */
+.lights { position: fixed; inset: 0; pointer-events: none; z-index: 0; overflow: hidden; }
+.orb { position: absolute; width: 60vmax; height: 60vmax; border-radius: 50%; filter: blur(70px); opacity: .22; transition: background 1s ease, opacity .6s ease; }
+.orb.o1 { background: var(--glow); top: -30vmax; left: -20vmax; animation: drift1 22s ease-in-out infinite alternate; }
+.orb.o2 { background: var(--t-dub); bottom: -35vmax; right: -25vmax; opacity: .16; animation: drift2 26s ease-in-out infinite alternate; }
+.orb.o3 { background: var(--t-album); top: 40%; left: 50%; width: 40vmax; height: 40vmax; opacity: .08; animation: drift3 30s ease-in-out infinite alternate; }
+.lights.pulse .orb.o1 { opacity: .45; }
+@keyframes drift1 { to { transform: translate(18vmax, 10vmax); } }
+@keyframes drift2 { to { transform: translate(-14vmax, -12vmax); } }
+@keyframes drift3 { to { transform: translate(-30vmax, 8vmax); } }
+#fx { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events: none; z-index: 50; }
+.flashbang { position: fixed; inset: 0; pointer-events: none; z-index: 49; background: radial-gradient(circle at 50% 40%, var(--t-dub), transparent 70%); opacity: 0; }
+.flashbang.on { animation: bang .9s ease-out; }
+@keyframes bang { 0% { opacity: .75; } 100% { opacity: 0; } }
+
+.app { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; display: grid; gap: 20px; }
+.app.shake { animation: shake .5s cubic-bezier(.36,.07,.19,.97); }
+@keyframes shake { 10%,90% { transform: translateX(-2px); } 20%,80% { transform: translateX(4px); } 30%,50%,70% { transform: translateX(-7px); } 40%,60% { transform: translateX(7px); } }
 h1, h2, h3 { margin: 0; text-wrap: balance; font-weight: 400; }
 p { margin: 0; }
 button { font: inherit; color: inherit; cursor: pointer; }
@@ -53,32 +74,46 @@ button { font: inherit; color: inherit; cursor: pointer; }
 
 .topbar { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
 .brand { font-family: var(--display); font-size: 18px; letter-spacing: .02em; display: flex; align-items: center; gap: 10px; background: none; border: 0; padding: 0; }
-.brand .dot { width: 22px; height: 22px; border-radius: 50%; background: radial-gradient(circle, var(--accent) 0 28%, var(--vinyl) 30% 100%); box-shadow: 0 0 0 1px var(--line); }
+.brand .dot { width: 24px; height: 24px; border-radius: 50%; background: radial-gradient(circle, var(--accent) 0 28%, var(--vinyl) 30% 100%); box-shadow: 0 0 0 1px var(--line); animation: spin 4s linear infinite; }
 .iconbtn { background: var(--panel); border: 1px solid var(--line); border-radius: 999px; padding: 6px 12px; font-size: 13px; color: var(--muted); }
 .iconbtn:hover { color: var(--fg); }
 
 /* ---------- Home ---------- */
-.hero { display: grid; gap: 14px; padding-top: 8px; }
-.hero h1 { font-family: var(--display); font-size: clamp(44px, 13vw, 76px); line-height: .92; letter-spacing: -.01em; }
+.hero { position: relative; display: grid; gap: 14px; padding-top: 8px; }
+.hero-disc { position: absolute; right: -90px; top: -10px; width: 230px; height: 230px; border-radius: 50%; z-index: -1; opacity: .9;
+  background:
+    radial-gradient(circle, var(--accent) 0 15%, var(--vinyl) 15.5% 17%, transparent 17%),
+    conic-gradient(from 0deg, transparent 0 10%, rgba(255,255,255,.08) 14%, transparent 20% 60%, rgba(255,255,255,.06) 64%, transparent 70%),
+    repeating-radial-gradient(circle, var(--vinyl) 0 2px, var(--groove) 2px 3px);
+  box-shadow: 0 20px 60px rgba(0,0,0,.5);
+  animation: spin 6s linear infinite; }
+.hero h1 { font-family: var(--display); font-size: clamp(44px, 13vw, 76px); line-height: .92; letter-spacing: -.01em; text-shadow: 0 4px 30px rgba(0,0,0,.6); }
 .hero h1 span { color: var(--accent); }
 .hero .lede { color: var(--muted); font-size: 17px; max-width: 46ch; }
 .eyebrow { font-family: var(--mono); font-size: 12px; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); }
 
 .ladder { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; }
-.sleeve { border-radius: 10px; padding: 10px 8px 9px; background: var(--panel); border: 1px solid var(--line); display: grid; gap: 6px; justify-items: center; text-align: center; min-width: 0; }
-.sleeve .mini { width: 34px; height: 34px; border-radius: 50%; background: radial-gradient(circle, var(--c) 0 30%, var(--vinyl) 32% 100%); box-shadow: inset 0 0 0 3px var(--groove); }
+.sleeve { position: relative; overflow: hidden; border-radius: 10px; padding: 46px 6px 9px; background: linear-gradient(160deg, color-mix(in srgb, var(--c) 30%, var(--panel)), var(--panel) 70%); border: 1px solid color-mix(in srgb, var(--c) 40%, var(--line)); display: grid; gap: 4px; justify-items: center; text-align: center; min-width: 0; }
+.sleeve .mini { position: absolute; top: 6px; left: 50%; width: 38px; height: 38px; margin-left: -19px; border-radius: 50%; background: radial-gradient(circle, var(--c) 0 28%, var(--vinyl) 30% 100%); box-shadow: inset 0 0 0 3px var(--groove), 0 4px 10px rgba(0,0,0,.4); animation: peek 3.2s ease-in-out infinite; animation-delay: calc(var(--i) * .25s); }
+@keyframes peek { 0%,100% { transform: translateY(0) rotate(0); } 50% { transform: translateY(-4px) rotate(180deg); } }
 .sleeve b { font-family: var(--mono); font-size: 15px; color: var(--c); }
 .sleeve small { font-size: 11px; line-height: 1.2; color: var(--muted); }
 
 .modes { display: grid; gap: 12px; }
-.mode { text-align: left; border-radius: 16px; padding: 18px 18px 16px; border: 1px solid var(--line); background: var(--panel); display: grid; gap: 4px; transition: transform .15s ease, border-color .15s ease; }
-.mode:hover { transform: translateY(-2px); border-color: var(--accent); }
-.mode.primary { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
+.mode { position: relative; overflow: hidden; text-align: left; border-radius: 16px; padding: 18px 18px 16px; border: 1px solid var(--line); background: var(--panel); display: grid; gap: 4px; transition: transform .15s ease, border-color .15s ease, box-shadow .15s ease; }
+.mode:hover { transform: translateY(-2px); border-color: var(--accent); box-shadow: 0 10px 30px rgba(0,0,0,.35); }
+.mode.primary { background: linear-gradient(135deg, var(--accent), color-mix(in srgb, var(--accent) 70%, var(--t-dub))); color: var(--accent-ink); border-color: var(--accent); }
 .mode .m-title { font-family: var(--display); font-size: 24px; line-height: 1.1; }
-.mode .m-sub { font-size: 14px; opacity: .8; }
-.mode .m-meta { font-family: var(--mono); font-size: 12px; letter-spacing: .06em; text-transform: uppercase; opacity: .7; }
+.mode .m-sub { font-size: 14px; opacity: .85; }
+.mode .m-meta { font-family: var(--mono); font-size: 12px; letter-spacing: .06em; text-transform: uppercase; opacity: .75; }
+.mode .m-art { position: absolute; right: -14px; bottom: -22px; font-size: 76px; opacity: .22; transform: rotate(-12deg); pointer-events: none; }
 .done-row { display: flex; gap: 10px; flex-wrap: wrap; }
 .done-row .btn { flex: 1 1 140px; }
+
+.shelf { display: flex; gap: 6px; overflow: hidden; mask-image: linear-gradient(90deg, transparent, #000 10%, #000 90%, transparent); -webkit-mask-image: linear-gradient(90deg, transparent, #000 10%, #000 90%, transparent); }
+.shelf-track { display: flex; gap: 6px; animation: scroll 40s linear infinite; }
+.shelf-item { flex: none; width: 54px; height: 54px; border-radius: 8px; display: grid; place-items: center; font-size: 26px; background: linear-gradient(150deg, color-mix(in srgb, var(--c) 45%, var(--panel)), var(--panel-2)); border: 1px solid var(--line); }
+@keyframes scroll { to { transform: translateX(-50%); } }
 
 .stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
 .stat { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 10px 12px; }
@@ -89,53 +124,81 @@ button { font: inherit; color: inherit; cursor: pointer; }
 .howto strong { color: var(--fg); font-weight: 600; }
 
 /* ---------- Buttons ---------- */
-.btn { border-radius: 12px; padding: 13px 18px; border: 1px solid var(--line); background: var(--panel-2); font-weight: 600; font-size: 15px; }
+.btn { border-radius: 12px; padding: 13px 18px; border: 1px solid var(--line); background: var(--panel-2); font-weight: 600; font-size: 15px; transition: transform .1s ease; }
 .btn:hover { border-color: var(--muted); }
+.btn:active { transform: scale(.97); }
 .btn.go { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
 .btn.ghost { background: transparent; }
 .btn:disabled { opacity: .45; cursor: not-allowed; }
 
 /* ---------- Play ---------- */
-.hud { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.hud { position: relative; display: flex; align-items: center; justify-content: space-between; gap: 12px; }
 .pips { display: flex; gap: 6px; flex-wrap: wrap; }
-.pip { width: 14px; height: 14px; border-radius: 50%; background: var(--panel-2); border: 1px solid var(--line); }
-.pip.now { border-color: var(--accent); box-shadow: 0 0 0 2px color-mix(in srgb, var(--accent) 35%, transparent); }
+.pip { width: 16px; height: 16px; border-radius: 50%; background: var(--panel-2); border: 1px solid var(--line); transition: background .3s, transform .3s; }
+.pip.now { border-color: var(--accent); box-shadow: 0 0 0 2px color-mix(in srgb, var(--accent) 35%, transparent); transform: scale(1.15); }
 .pip.t0 { background: var(--t-hit); border-color: var(--t-hit); }
 .pip.t1 { background: var(--t-album); border-color: var(--t-album); }
 .pip.t2 { background: var(--t-bside); border-color: var(--t-bside); }
 .pip.t3 { background: var(--t-white); border-color: var(--t-white); }
-.pip.t4 { background: var(--t-dub); border-color: var(--t-dub); }
+.pip.t4 { background: var(--t-dub); border-color: var(--t-dub); box-shadow: 0 0 10px var(--t-dub); }
 .pip.miss { background: var(--t-miss); border-color: var(--t-miss); }
-.score { font-family: var(--mono); font-size: 20px; font-variant-numeric: tabular-nums; }
+.score { position: relative; font-family: var(--mono); font-size: 22px; font-variant-numeric: tabular-nums; }
 .score small { font-size: 12px; color: var(--muted); margin-right: 6px; letter-spacing: .08em; }
+.floater { position: absolute; right: 0; top: -4px; font-family: var(--mono); font-weight: 700; font-size: 18px; color: var(--c); pointer-events: none; animation: floatUp 1.1s ease-out forwards; white-space: nowrap; text-shadow: 0 2px 10px rgba(0,0,0,.6); }
+@keyframes floatUp { from { transform: translateY(0); opacity: 1; } to { transform: translateY(-38px); opacity: 0; } }
 
-.deck { display: grid; justify-items: center; gap: 14px; padding: 6px 0 2px; }
-.turntable { position: relative; width: min(230px, 62vw); aspect-ratio: 1; max-width: 100%; }
-.turntable svg.ring { position: absolute; inset: 0; width: 100%; height: 100%; transform: rotate(-90deg); }
-.ring .track { fill: none; stroke: var(--panel-2); stroke-width: 5; }
-.ring .bar { fill: none; stroke: var(--accent); stroke-width: 5; stroke-linecap: round; transition: stroke .3s; }
-.ring .bar.low { stroke: var(--danger); }
-.disc { position: absolute; inset: 9%; border-radius: 50%;
+.deck { display: grid; justify-items: center; gap: 14px; padding: 4px 0 2px; }
+.plinth { position: relative; width: min(320px, 86vw); max-width: 100%; aspect-ratio: 1.18; border-radius: 18px; background: linear-gradient(160deg, var(--plinth-a), var(--plinth-b)); box-shadow: 0 20px 50px rgba(0,0,0,.5), inset 0 1px 0 rgba(255,255,255,.08); border: 1px solid var(--line); }
+.plinth::before { content: ""; position: absolute; inset: 0; border-radius: inherit; background: repeating-linear-gradient(90deg, rgba(255,255,255,.015) 0 2px, transparent 2px 6px); pointer-events: none; }
+.turntable { position: absolute; left: 6%; top: 8%; width: 72%; aspect-ratio: 1; }
+.turntable svg.ring { position: absolute; inset: -3%; width: 106%; height: 106%; transform: rotate(-90deg); }
+.ring .track { fill: none; stroke: rgba(0,0,0,.35); stroke-width: 3; }
+.ring .bar { fill: none; stroke: var(--accent); stroke-width: 3; stroke-linecap: round; transition: stroke .3s; filter: drop-shadow(0 0 4px var(--accent)); }
+.ring .bar.low { stroke: var(--danger); filter: drop-shadow(0 0 6px var(--danger)); }
+.platter { position: absolute; inset: 2%; border-radius: 50%; background: radial-gradient(circle, #3a3438, #1a161a 70%); box-shadow: 0 6px 18px rgba(0,0,0,.6); }
+.disc { position: absolute; inset: 6%; border-radius: 50%;
   background:
     radial-gradient(circle, transparent 0 31%, var(--vinyl) 31.5% 34%, transparent 34%),
-    conic-gradient(from 20deg, transparent 0 10%, rgba(255,255,255,.07) 14%, transparent 20% 60%, rgba(255,255,255,.05) 64%, transparent 70%),
+    conic-gradient(from 20deg, transparent 0 10%, rgba(255,255,255,.08) 14%, transparent 20% 60%, rgba(255,255,255,.06) 64%, transparent 70%),
     repeating-radial-gradient(circle, var(--vinyl) 0 2px, var(--groove) 2px 3px);
-  box-shadow: 0 14px 40px rgba(0,0,0,.45), inset 0 0 0 2px var(--groove);
+  box-shadow: inset 0 0 0 2px var(--groove);
 }
-.disc::after { content: ""; position: absolute; inset: 34%; border-radius: 50%; background: var(--label, var(--accent)); box-shadow: inset 0 0 0 4px rgba(0,0,0,.18); }
+.disc::after { content: ""; position: absolute; inset: 33%; border-radius: 50%; background: radial-gradient(circle, transparent 0 7%, var(--label, var(--accent)) 8%); box-shadow: inset 0 0 0 4px rgba(0,0,0,.18); transition: background .4s; }
+.disc::before { content: ""; position: absolute; left: 50%; top: 36%; width: 3px; height: 9%; margin-left: -1.5px; background: rgba(0,0,0,.3); border-radius: 2px; z-index: 1; }
 .spinning .disc { animation: spin 1.8s linear infinite; }
+.fast .disc { animation-duration: .7s; }
 @keyframes spin { to { transform: rotate(360deg); } }
-.clock { position: absolute; inset: 0; display: grid; place-items: center; font-family: var(--mono); font-weight: 700; font-size: clamp(22px, 7vw, 30px); color: var(--accent-ink); font-variant-numeric: tabular-nums; pointer-events: none; }
+.clock { position: absolute; inset: 0; display: grid; place-items: center; font-family: var(--mono); font-weight: 700; font-size: clamp(20px, 6.5vw, 28px); color: var(--accent-ink); font-variant-numeric: tabular-nums; pointer-events: none; }
+.arm { position: absolute; right: 6%; top: 6%; width: 30%; height: 80%; transform-origin: 70% 12%; transform: rotate(-26deg); transition: transform .6s cubic-bezier(.3,1.4,.5,1); pointer-events: none; }
+.spinning ~ .arm { transform: rotate(4deg); }
+.arm .base { fill: var(--metal); }
+.arm .rod { stroke: var(--metal); stroke-width: 5; fill: none; stroke-linecap: round; }
+.arm .head { fill: var(--panel-2); stroke: var(--metal); stroke-width: 2; }
+.knob { position: absolute; right: 7%; bottom: 8%; display: grid; gap: 6px; justify-items: center; }
+.led { width: 10px; height: 10px; border-radius: 50%; background: #3a2626; box-shadow: inset 0 0 0 1px rgba(0,0,0,.4); transition: background .3s, box-shadow .3s; }
+.spinning ~ .knob .led { background: var(--danger); box-shadow: 0 0 10px var(--danger); }
+.knob span { font-family: var(--mono); font-size: 10px; color: var(--muted); letter-spacing: .08em; }
+.timebump { position: absolute; left: 42%; top: 40%; transform: translate(-50%, -50%); font-family: var(--mono); font-weight: 700; font-size: 22px; pointer-events: none; animation: floatUp 1s ease-out forwards; text-shadow: 0 2px 10px rgba(0,0,0,.8); z-index: 3; }
 
-.prompt-card { width: 100%; text-align: center; display: grid; gap: 6px; }
+.eq { display: flex; align-items: flex-end; gap: 3px; height: 28px; width: min(320px, 86vw); max-width: 100%; }
+.eq span { flex: 1; height: 100%; border-radius: 2px 2px 0 0; background: linear-gradient(to top, var(--t-album), var(--accent) 60%, var(--t-dub)); transform-origin: bottom; transform: scaleY(.12); opacity: .7; }
+.eq.live span { animation: eqb var(--d) ease-in-out infinite alternate; }
+@keyframes eqb { 0% { transform: scaleY(.1); } 100% { transform: scaleY(var(--h)); } }
+
+.prompt-card { width: 100%; text-align: center; display: grid; gap: 8px; justify-items: center; }
+.cat-badge { width: 64px; height: 64px; border-radius: 18px; display: grid; place-items: center; font-size: 36px; background: linear-gradient(150deg, color-mix(in srgb, var(--glow) 40%, var(--panel)), var(--panel-2)); border: 1px solid var(--line); box-shadow: 0 8px 24px rgba(0,0,0,.35); animation: pop .45s cubic-bezier(.2,1.6,.4,1) both; }
+@keyframes pop { from { transform: scale(.3) rotate(-20deg); opacity: 0; } to { transform: scale(1) rotate(0); opacity: 1; } }
 .prompt-card .cat { font-family: var(--mono); font-size: 12px; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); }
-.prompt-card h2 { font-family: var(--display); font-size: clamp(26px, 7.5vw, 36px); line-height: 1.08; }
+.prompt-card h2 { font-family: var(--display); font-size: clamp(26px, 7.5vw, 36px); line-height: 1.08; animation: rise .4s ease both; }
+@keyframes rise { from { transform: translateY(10px); opacity: 0; } to { transform: none; opacity: 1; } }
 
 form.answer { display: flex; gap: 8px; width: 100%; }
-form.answer input { flex: 1; min-width: 0; font: inherit; font-size: 18px; color: var(--fg); background: var(--panel); border: 2px solid var(--line); border-radius: 12px; padding: 12px 14px; }
-form.answer input:focus { outline: none; border-color: var(--accent); }
+form.answer input { flex: 1; min-width: 0; font: inherit; font-size: 18px; color: var(--fg); background: var(--panel); border: 2px solid var(--line); border-radius: 12px; padding: 12px 14px; transition: border-color .2s, box-shadow .2s; }
+form.answer input:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 4px color-mix(in srgb, var(--accent) 20%, transparent); }
 form.answer input:disabled { opacity: .6; }
-.row-actions { display: flex; justify-content: space-between; gap: 10px; width: 100%; flex-wrap: wrap; }
+form.answer.wrong input { animation: nope .35s; border-color: var(--danger); }
+@keyframes nope { 25% { transform: translateX(-6px); } 50% { transform: translateX(6px); } 75% { transform: translateX(-3px); } }
+.row-actions { display: flex; justify-content: space-between; align-items: center; gap: 10px; width: 100%; flex-wrap: wrap; }
 .hint { font-size: 13px; color: var(--muted); }
 
 .flash { min-height: 24px; font-size: 14px; text-align: center; color: var(--muted); }
@@ -144,69 +207,101 @@ form.answer input:disabled { opacity: .6; }
 
 .pulled { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; min-height: 34px; }
 .chip { display: inline-flex; align-items: center; gap: 6px; padding: 5px 10px 5px 6px; border-radius: 999px; background: var(--panel); border: 1px solid var(--line); font-size: 14px; }
-.chip i { width: 14px; height: 14px; border-radius: 50%; background: var(--c); flex: none; }
+.chip i { width: 14px; height: 14px; border-radius: 50%; background: var(--c); flex: none; box-shadow: 0 0 6px var(--c); }
 .chip.empty { color: var(--muted); border-style: dashed; padding-left: 10px; }
+.chip.new { animation: pop .4s cubic-bezier(.2,1.6,.4,1) both; }
 
 /* ---------- Reveal ---------- */
 .reveal { width: 100%; display: grid; gap: 14px; justify-items: center; text-align: center; }
-.sticker { display: grid; gap: 2px; justify-items: center; padding: 14px 22px 12px; border-radius: 14px; background: var(--c); color: var(--accent-ink); transform: rotate(-3deg); box-shadow: 0 10px 30px rgba(0,0,0,.35); animation: slap .35s cubic-bezier(.2,1.6,.4,1) both; }
-.sticker .tier { font-family: var(--display); font-size: 26px; line-height: 1; }
+.sticker { display: grid; gap: 2px; justify-items: center; padding: 14px 24px 12px; border-radius: 14px; background: var(--c); color: var(--accent-ink); transform: rotate(-3deg); box-shadow: 0 10px 40px color-mix(in srgb, var(--c) 45%, transparent); animation: slap .4s cubic-bezier(.2,1.6,.4,1) both; }
+.sticker .tier { font-family: var(--display); font-size: 28px; line-height: 1; }
 .sticker .pts { font-family: var(--mono); font-weight: 700; font-size: 15px; }
-.sticker.miss { background: var(--panel-2); color: var(--fg); border: 1px dashed var(--muted); }
-@keyframes slap { from { transform: rotate(-12deg) scale(1.6); opacity: 0; } to { transform: rotate(-3deg) scale(1); opacity: 1; } }
+.sticker.miss { background: var(--panel-2); color: var(--fg); border: 1px dashed var(--muted); box-shadow: none; }
+.sticker.t4 { background: linear-gradient(120deg, var(--t-dub), #ff9bd2, var(--t-album), var(--t-dub)); background-size: 300% 100%; animation: slap .4s cubic-bezier(.2,1.6,.4,1) both, holo 2.5s linear infinite; }
+@keyframes holo { to { background-position: 300% 0; } }
+@keyframes slap { from { transform: rotate(-14deg) scale(1.8); opacity: 0; } to { transform: rotate(-3deg) scale(1); opacity: 1; } }
 .yours { font-size: 17px; }
 .yours b { font-weight: 700; }
+
+.gauge { width: 100%; background: var(--panel); border: 1px solid var(--line); border-radius: 14px; padding: 12px 14px 10px; display: grid; gap: 8px; text-align: left; }
+.gauge .lbl { display: flex; justify-content: space-between; font-family: var(--mono); font-size: 11px; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); }
+.strip-wrap { position: relative; padding-top: 22px; }
+.strip { position: relative; display: flex; gap: 1px; height: 46px; align-items: flex-end; }
+.strip i { flex: 1; min-width: 0; height: 62%; border-radius: 1px; background: var(--c); opacity: .28; transform-origin: bottom; }
+.strip i.lit { opacity: .85; }
+.strip i.me { height: 100%; opacity: 1; box-shadow: 0 0 8px var(--c); }
+.strip.anim i { animation: grow .5s ease both; animation-delay: calc(var(--k) * 6ms); }
+@keyframes grow { from { transform: scaleY(0); } to { transform: scaleY(1); } }
+.pin { position: absolute; top: 0; transform: translateX(-50%); font-family: var(--mono); font-size: 11px; font-weight: 700; background: var(--c); color: var(--accent-ink); padding: 1px 6px; border-radius: 6px; white-space: nowrap; animation: drop .5s .5s cubic-bezier(.2,1.6,.4,1) both; }
+.pin::after { content: ""; position: absolute; left: 50%; bottom: -5px; margin-left: -5px; border: 5px solid transparent; border-bottom: 0; border-top-color: var(--c); }
+@keyframes drop { from { transform: translate(-50%, -16px); opacity: 0; } to { transform: translate(-50%, 0); opacity: 1; } }
+.gauge .note { font-size: 13px; color: var(--muted); }
+
 .crate { width: 100%; background: var(--panel); border: 1px solid var(--line); border-radius: 14px; padding: 12px 14px; display: grid; gap: 10px; text-align: left; }
 .crate .lbl { font-family: var(--mono); font-size: 11px; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); }
 .crate .list { display: flex; flex-wrap: wrap; gap: 6px; }
 
 /* ---------- Summary ---------- */
 .total { text-align: center; display: grid; gap: 4px; }
-.total .big { font-family: var(--display); font-size: clamp(56px, 18vw, 88px); line-height: 1; color: var(--accent); font-variant-numeric: tabular-nums; }
+.total .big { font-family: var(--display); font-size: clamp(60px, 20vw, 96px); line-height: 1; color: var(--accent); font-variant-numeric: tabular-nums; text-shadow: 0 0 40px color-mix(in srgb, var(--accent) 50%, transparent); }
 .total .sub { color: var(--muted); }
-.tracklist { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; }
-.tracklist li { display: grid; grid-template-columns: 28px 1fr auto; gap: 10px; align-items: center; background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 10px 12px; }
-.tracklist .no { font-family: var(--mono); font-size: 12px; color: var(--muted); }
-.tracklist .t { min-width: 0; }
-.tracklist .t small { display: block; color: var(--muted); font-size: 12px; }
-.tracklist .t span { overflow-wrap: anywhere; }
-.tag { font-family: var(--mono); font-size: 12px; padding: 3px 8px; border-radius: 6px; background: var(--c); color: var(--accent-ink); white-space: nowrap; }
-.tag.miss { background: var(--panel-2); color: var(--muted); }
+.wall { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 10px; }
+.cover { position: relative; overflow: hidden; aspect-ratio: 1; max-width: 100%; border-radius: 10px; padding: 12px; display: flex; flex-direction: column; justify-content: space-between; min-width: 0;
+  background: linear-gradient(150deg, color-mix(in srgb, var(--c) 80%, #000), color-mix(in srgb, var(--c) 35%, var(--bg)));
+  color: var(--accent-ink); box-shadow: 0 8px 22px rgba(0,0,0,.4); animation: deal .45s cubic-bezier(.2,1.3,.4,1) both; animation-delay: calc(var(--i) * 90ms); }
+.cover::before { content: ""; position: absolute; right: -32%; top: 14%; width: 80%; aspect-ratio: 1; border-radius: 50%; background: radial-gradient(circle, var(--c) 0 18%, var(--vinyl) 19% 100%); box-shadow: inset 0 0 0 6px var(--groove); opacity: .55; z-index: 0; }
+.cover > * { position: relative; z-index: 1; min-width: 0; }
+.cover .em { font-size: 34px; line-height: 1; }
+.cover .ttl { font-family: var(--display); font-size: 17px; line-height: 1.05; overflow-wrap: anywhere; }
+.cover .meta { font-family: var(--mono); font-size: 11px; font-weight: 700; letter-spacing: .04em; }
+.cover.miss { background: linear-gradient(150deg, var(--panel-2), var(--panel)); color: var(--muted); }
+.cover.miss::before { opacity: .2; }
+.cover .q { font-size: 11px; line-height: 1.2; opacity: .8; }
+@keyframes deal { from { transform: translateY(20px) rotate(-6deg) scale(.9); opacity: 0; } to { transform: none; opacity: 1; } }
+
 .share { display: grid; gap: 8px; }
 .share pre { margin: 0; background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px; font-family: var(--mono); font-size: 13px; white-space: pre-wrap; user-select: all; }
 .actions { display: flex; gap: 10px; flex-wrap: wrap; }
 .actions .btn { flex: 1 1 150px; }
 
 @media (prefers-reduced-motion: reduce) {
-  .spinning .disc { animation: none; }
-  .sticker { animation: none; }
-  .mode { transition: none; }
+  *, *::before, *::after { animation: none !important; transition: none !important; }
 }
 </style>
 
-<div class="app">
+<div class="lights" id="lights" aria-hidden="true"><div class="orb o1"></div><div class="orb o2"></div><div class="orb o3"></div></div>
+<div class="flashbang" id="flashbang" aria-hidden="true"></div>
+<canvas id="fx" aria-hidden="true"></canvas>
+
+<div class="app" id="app">
   <header class="topbar">
     <button class="brand" id="homeBtn" type="button" aria-label="Back to start"><span class="dot"></span>Crate Digger</button>
     <button class="iconbtn" id="soundBtn" type="button" aria-pressed="true">Sound on</button>
   </header>
 
   <!-- HOME -->
-  <section id="home" class="hero-wrap" style="display:grid;gap:22px">
+  <section id="home" style="display:grid;gap:22px">
     <div class="hero">
+      <div class="hero-disc" aria-hidden="true"></div>
       <div class="eyebrow" id="dateLine">Today's dig</div>
       <h1>Pull the record <span>nobody else</span> would.</h1>
       <p class="lede">Every prompt has a crate full of right answers. The obvious ones sit on top. Dig deeper and you score more.</p>
     </div>
 
     <div class="ladder" aria-label="Scoring tiers">
-      <div class="sleeve" style="--c:var(--t-hit)"><span class="mini"></span><b>10</b><small>Chart Hit</small></div>
-      <div class="sleeve" style="--c:var(--t-album)"><span class="mini"></span><b>30</b><small>Album Track</small></div>
-      <div class="sleeve" style="--c:var(--t-bside)"><span class="mini"></span><b>60</b><small>B-Side</small></div>
-      <div class="sleeve" style="--c:var(--t-white)"><span class="mini"></span><b>85</b><small>White Label</small></div>
-      <div class="sleeve" style="--c:var(--t-dub)"><span class="mini"></span><b>100</b><small>Dubplate</small></div>
+      <div class="sleeve" style="--c:var(--t-hit);--i:0"><span class="mini"></span><b>10</b><small>Chart Hit</small></div>
+      <div class="sleeve" style="--c:var(--t-album);--i:1"><span class="mini"></span><b>30</b><small>Album Track</small></div>
+      <div class="sleeve" style="--c:var(--t-bside);--i:2"><span class="mini"></span><b>60</b><small>B-Side</small></div>
+      <div class="sleeve" style="--c:var(--t-white);--i:3"><span class="mini"></span><b>85</b><small>White Label</small></div>
+      <div class="sleeve" style="--c:var(--t-dub);--i:4"><span class="mini"></span><b>100</b><small>Dubplate</small></div>
     </div>
 
     <div class="modes" id="modes"></div>
+
+    <div style="display:grid;gap:8px">
+      <span class="eyebrow" id="crateCount">In the crates</span>
+      <div class="shelf" aria-hidden="true"><div class="shelf-track" id="shelf"></div></div>
+    </div>
 
     <div class="stats">
       <div class="stat"><b id="stStreak">0</b><span>Day streak</span></div>
@@ -222,23 +317,35 @@ form.answer input:disabled { opacity: .6; }
   </section>
 
   <!-- PLAY -->
-  <section id="play" hidden style="display:grid;gap:18px">
+  <section id="play" hidden style="display:grid;gap:16px">
     <div class="hud">
       <div class="pips" id="pips"></div>
-      <div class="score"><small>PTS</small><span id="scoreNow">0</span></div>
+      <div class="score" id="scoreBox"><small>PTS</small><span id="scoreNow">0</span></div>
     </div>
 
     <div class="deck">
-      <div class="turntable" id="turntable">
-        <svg class="ring" viewBox="0 0 100 100" aria-hidden="true">
-          <circle class="track" cx="50" cy="50" r="46"></circle>
-          <circle class="bar" id="ringBar" cx="50" cy="50" r="46" pathLength="100" stroke-dasharray="100" stroke-dashoffset="0"></circle>
+      <div class="plinth" id="plinth">
+        <div class="turntable" id="turntable">
+          <svg class="ring" viewBox="0 0 100 100" aria-hidden="true">
+            <circle class="track" cx="50" cy="50" r="48"></circle>
+            <circle class="bar" id="ringBar" cx="50" cy="50" r="48" pathLength="100" stroke-dasharray="100" stroke-dashoffset="0"></circle>
+          </svg>
+          <div class="platter"></div>
+          <div class="disc" id="disc"></div>
+          <div class="clock" id="clock" aria-live="off">25</div>
+        </div>
+        <svg class="arm" viewBox="0 0 60 160" aria-hidden="true">
+          <circle class="base" cx="42" cy="18" r="13"></circle>
+          <circle cx="42" cy="18" r="5" fill="#555"></circle>
+          <path class="rod" d="M42 18 L44 110 L30 134"></path>
+          <rect class="head" x="18" y="128" width="18" height="24" rx="3" transform="rotate(30 27 140)"></rect>
         </svg>
-        <div class="disc" id="disc"></div>
-        <div class="clock" id="clock" aria-live="off">25</div>
+        <div class="knob"><div class="led"></div><span>33⅓</span></div>
       </div>
+      <div class="eq" id="eq" aria-hidden="true"></div>
 
       <div class="prompt-card">
+        <div class="cat-badge" id="catBadge">🌍</div>
         <div class="cat" id="roundLabel">Track 1 of 7</div>
         <h2 id="promptText">Name a country in Africa</h2>
       </div>
@@ -272,70 +379,86 @@ form.answer input:disabled { opacity: .6; }
    CRATES — each list runs from the most obvious answer to the
    most obscure. Position in the list sets the rarity tier.
    "a|b|c" = display name first, then accepted aliases.
+   strip = filler words people add ("swiss cheese", "border collie dog").
    ============================================================ */
 const CRATES = [
-{ id:"africa", cat:"Geography", prompt:"Name a country in Africa", a:[
+{ id:"africa", em:"🌍", cat:"Geography", prompt:"Name a country in Africa", strip:["republic of"], a:[
 "Egypt","Nigeria","South Africa","Kenya","Morocco","Ethiopia","Ghana","Madagascar","Algeria","Tunisia","Libya","Sudan","Somalia","Uganda","Tanzania","Zimbabwe","Rwanda","Democratic Republic of the Congo|DRC|DR Congo|Congo-Kinshasa|Zaire","Republic of the Congo|Congo|Congo-Brazzaville","Senegal","Cameroon","Angola","Mozambique","Zambia","Namibia","Botswana","Mali","Ivory Coast|Côte d'Ivoire|Cote d'Ivoire","Liberia","Sierra Leone","Niger","Chad","Malawi","South Sudan","Burkina Faso","Gabon","Mauritania","Benin","Togo","Guinea","Gambia|The Gambia","Eritrea","Djibouti","Lesotho","Eswatini|Swaziland","Burundi","Central African Republic|CAR","Mauritius","Seychelles","Cape Verde|Cabo Verde","Equatorial Guinea","Guinea-Bissau","Comoros","São Tomé and Príncipe|Sao Tome and Principe|Sao Tome"
 ]},
-{ id:"states", cat:"Geography", prompt:"Name a US state", a:[
-"California","Texas","Florida","New York","Alaska","Hawaii","Ohio","Washington","Georgia","Arizona","Nevada","Colorado","Michigan","Illinois","Oregon","Utah","Virginia","Pennsylvania","New Jersey","Massachusetts","North Carolina","Tennessee","Louisiana","Kentucky","Montana","Wyoming","Idaho","Kansas","Oklahoma","Alabama","Mississippi","Minnesota","Wisconsin","Indiana","Iowa","Missouri","Nebraska","Maine","Vermont","New Mexico","South Carolina","North Dakota","South Dakota","Arkansas","West Virginia","Maryland","Connecticut","New Hampshire","Rhode Island","Delaware"
+{ id:"asia", em:"🏯", cat:"Geography", prompt:"Name a country in Asia", strip:["republic of"], a:[
+"China","Japan","India","South Korea|Korea","Thailand","Vietnam","North Korea","Indonesia","Philippines","Russia","Pakistan","Malaysia","Singapore","Iran","Iraq","Saudi Arabia","Afghanistan","Nepal","Israel","Turkey|Türkiye|Turkiye","Bangladesh","Sri Lanka","Mongolia","Taiwan","United Arab Emirates|UAE","Cambodia","Myanmar|Burma","Qatar","Syria","Laos","Kazakhstan","Jordan","Lebanon","Bhutan","Maldives","Kuwait","Uzbekistan","Yemen","Oman","Bahrain","Palestine","Georgia","Armenia","Azerbaijan","Kyrgyzstan","Tajikistan","Turkmenistan","Brunei","East Timor|Timor-Leste","Cyprus"
 ]},
-{ id:"instruments", cat:"Music", prompt:"Name a musical instrument", a:[
-"Guitar","Piano","Drums|Drum kit|Drum","Violin","Flute","Trumpet","Saxophone|Sax","Bass guitar|Bass","Cello","Clarinet","Harp","Ukulele","Trombone","Keyboard","Harmonica","Accordion","Tuba","Banjo","Xylophone","Oboe","Tambourine","Recorder","French horn|Horn","Viola","Double bass|Upright bass|Contrabass","Organ","Triangle","Mandolin","Bagpipes","Synthesizer|Synth|Synthesiser","Bassoon","Piccolo","Cymbals|Cymbal","Harpsichord","Glockenspiel","Marimba","Sitar","Didgeridoo","Timpani|Kettle drum","Bongos|Bongo","Cowbell","Kazoo","Maracas","Castanets","Euphonium","Steel drum|Steelpan|Steel pan","Lute","Theremin","Cajón|Cajon","Tabla","Djembe","Ocarina","Zither","Koto","Shamisen","Balalaika","Erhu","Bouzouki","Hurdy-gurdy","Kalimba","Mbira","Oud","Vibraphone","Celesta","Sousaphone","Flugelhorn","Bodhrán|Bodhran","Dulcimer","Handpan|Hang drum","Melodica","Shakuhachi","Guzheng","Duduk","Kora","Glass harmonica","Ondes Martenot","Stylophone","Lyre","Sackbut","Crumhorn","Theorbo"
+{ id:"states", em:"🗽", cat:"Geography", prompt:"Name a US state or territory", strip:["state","state of"], a:[
+"California","Texas","Florida","New York","Alaska","Hawaii","Ohio","Washington","Georgia","Arizona","Nevada","Colorado","Michigan","Illinois","Oregon","Utah","Virginia","Pennsylvania","New Jersey","Massachusetts","North Carolina","Tennessee","Louisiana","Kentucky","Montana","Wyoming","Idaho","Kansas","Oklahoma","Alabama","Mississippi","Minnesota","Wisconsin","Indiana","Iowa","Missouri","Nebraska","Maine","Vermont","New Mexico","South Carolina","Puerto Rico","North Dakota","South Dakota","Arkansas","West Virginia","Maryland","Connecticut","New Hampshire","Rhode Island","Delaware","Washington, D.C.|Washington DC|DC|District of Columbia","Guam","US Virgin Islands|Virgin Islands","American Samoa","Northern Mariana Islands"
 ]},
-{ id:"elements", cat:"Science", prompt:"Name a chemical element", a:[
+{ id:"eurocaps", em:"🏰", cat:"Geography", prompt:"Name a European capital city", strip:["city"], a:[
+"Paris","London","Rome|Roma","Berlin","Madrid","Amsterdam","Dublin","Lisbon","Vienna","Athens","Brussels","Prague","Copenhagen","Stockholm","Oslo","Warsaw","Budapest","Helsinki","Moscow","Kyiv|Kiev","Reykjavík|Reykjavik","Bern|Berne","Edinburgh","Bucharest","Belgrade","Sofia","Zagreb","Cardiff","Bratislava","Ljubljana","Tallinn","Riga","Vilnius","Luxembourg","Monaco","Valletta","Minsk","Belfast","Tirana","Sarajevo","Skopje","Podgorica","Chișinău|Chisinau","Andorra la Vella","San Marino","Vaduz","Vatican City","Nicosia","Pristina","Ankara","Tbilisi","Yerevan","Baku","Tórshavn|Torshavn"
+]},
+{ id:"genres", em:"🎧", cat:"Music", prompt:"Name a music genre", strip:["music"], a:[
+"Rock","Pop","Hip hop|Hip-hop|Rap","Jazz","Country","Classical","Blues","R&B|RnB|Rhythm and blues","EDM|Electronic|Electronic dance music|Dance","Heavy metal|Metal","Reggae","Punk|Punk rock","Techno","House","Soul","Funk","Disco","Folk","Indie|Indie rock","Dubstep","Drum and bass|DnB|Drum n bass","Trance","K-pop|Kpop","Gospel","Grunge","Reggaeton","Latin","Salsa","Ska","Opera","Alternative|Alt rock|Alternative rock","Emo","Trap","UK garage|Garage","Grime","Drill","Afrobeats","Dancehall","Ambient","Lo-fi|Lofi","Synthwave","Industrial","Hardstyle","Jungle","Breakbeat","Acid house","Deep house","Tech house","Progressive house","Electro","Big beat","Trip hop","Bossa nova","Samba","Tango","Flamenco","Bluegrass","Swing","Bebop","Big band","Motown","Doo-wop","Rockabilly","Surf rock","Psychedelic rock|Psychedelia","Progressive rock|Prog rock|Prog","Glam rock","Hard rock","Soft rock","Yacht rock","Shoegaze","Britpop","New wave","Post-punk","Hardcore punk|Hardcore","Death metal","Black metal","Thrash metal|Thrash","Doom metal","Nu metal","Metalcore","Pop punk","J-pop","Mandopop|C-pop","Cantopop","Bollywood|Filmi","Bhangra","Qawwali","Afrobeat","Highlife","Amapiano","Gqom","Kwaito","Soukous","Mbalax","Raï|Rai","Fado","Chanson","Schlager","Polka","Klezmer","Zydeco","Cajun","Tejano","Mariachi","Norteño|Norteno","Cumbia","Bachata","Merengue","Kompa","Soca","Calypso","Zouk","Baile funk|Funk carioca","Forró|Forro","Axé|Axe","Vaporwave","Chillwave","Hyperpop","Glitch","IDM","Witch house","Footwork|Juke","Jersey club","Baltimore club","Ghetto house","Hi-NRG","Italo disco","Eurobeat","Eurodance","Gabber","Happy hardcore","Speedcore","Breakcore","Liquid funk","Neurofunk","Jump-up","UK funky","Bassline","2-step|Two-step","Dub","Lovers rock","Rocksteady","Mento","Dembow","Moombahton","Phonk","Plugg","Cloud rap","Crunk","Chopped and screwed","Hyphy","G-funk","Boom bap","Horrorcore","Bounce","Gregorian chant","Baroque","Minimalism","Musique concrète|Musique concrete","Krautrock","Zeuhl","Math rock","Post-rock","Noise rock","Sludge metal","Djent","Mathcore","Grindcore","Crust punk","Riot grrrl","Oi!","Sea shanty|Shanty","Barbershop","Gamelan","Enka","City pop","Shibuya-kei","Trot","Dangdut","Kroncong","Luk thung","Throat singing|Tuvan throat singing","Joik|Yoik","Mugham","Rebetiko","Gnawa","Desert blues|Tuareg","Isicathamiya","Mbube","Benga","Taarab","Chimurenga"
+]},
+{ id:"instruments", em:"🎷", cat:"Music", prompt:"Name a musical instrument", strip:["instrument"], a:[
+"Guitar","Piano","Drums|Drum kit|Drum","Violin","Flute","Trumpet","Saxophone|Sax","Bass guitar|Bass","Electric guitar","Cello","Clarinet","Harp","Ukulele","Trombone","Keyboard","Acoustic guitar","Harmonica","Accordion","Tuba","Banjo","Xylophone","Oboe","Tambourine","Recorder","French horn|Horn","Viola","Double bass|Upright bass|Contrabass","Organ","Triangle","Mandolin","Bagpipes","Synthesizer|Synth|Synthesiser","Grand piano","Snare drum|Snare","Bassoon","Piccolo","Cymbals|Cymbal","Harpsichord","Turntables|Turntable|Decks","Glockenspiel","Marimba","Sitar","Didgeridoo","Timpani|Kettle drum","Bongos|Bongo","Cowbell","Kazoo","Maracas","Castanets","Drum machine","Bass drum","Pan flute|Pan pipes|Panpipes","Gong","Bells|Bell","Euphonium","Steel drum|Steelpan|Steel pan","Congas|Conga","Lute","Theremin","Keytar","Cajón|Cajon","Tubular bells|Chimes","Tabla","Djembe","Ocarina","Sampler","Tin whistle|Penny whistle","Zither","Cornet","Bugle","Koto","Shamisen","Balalaika","Erhu","Bouzouki","Hurdy-gurdy","Kalimba","Mbira","Oud","Vibraphone","Celesta","Sousaphone","Flugelhorn","Washboard","Spoons","Jaw harp|Jew's harp|Mouth harp","Slide whistle","Bodhrán|Bodhran","Dulcimer","Handpan|Hang drum","Melodica","Concertina","Hammond organ","Rhodes|Fender Rhodes","Clavinet","Mellotron","Autoharp","Pedal steel guitar|Steel guitar","Dobro|Resonator guitar","Cor anglais|English horn","Contrabassoon","Shakuhachi","Guzheng","Pipa","Duduk","Kora","Charango","Bandoneón|Bandoneon","Güiro|Guiro","Cabasa","Agogô|Agogo","Berimbau","Surdo","Cuíca|Cuica","Darbuka|Doumbek","Riq","Taiko","Talking drum","Udu","Santoor","Sarangi","Sarod","Veena","Tanpura|Tambura","Mridangam","Sheng","Suona","Hulusi","Gayageum","Kantele","Nyckelharpa","Hardanger fiddle","Uilleann pipes","Bombarde","Cimbalom","Qanun|Kanun","Ney","Saz|Bağlama|Baglama","Kamancheh","Gusli","Domra","Bayan","Alphorn","Shofar","Conch|Conch shell","Mellophone","Clavichord","Glass harmonica|Glass armonica","Ondes Martenot","Stylophone","Omnichord","Otamatone","Waterphone","Laser harp","Lyre","Rebec","Viola da gamba","Sackbut","Crumhorn","Serpent","Ophicleide","Heckelphone","Sarrusophone","Octobass","Theorbo"
+]},
+{ id:"beatles", em:"🎸", cat:"Music", prompt:"Name a Beatles song", strip:["song","by the beatles"], a:[
+"Hey Jude","Let It Be","Yesterday","Here Comes the Sun","Yellow Submarine","Come Together","Help!","All You Need Is Love","Twist and Shout","A Hard Day's Night","I Want to Hold Your Hand","Penny Lane","Strawberry Fields Forever|Strawberry Fields","Eleanor Rigby","Blackbird","Love Me Do","She Loves You","Can't Buy Me Love","Something","Lucy in the Sky with Diamonds","Ob-La-Di, Ob-La-Da|Obladi Oblada","Get Back","Revolution","Day Tripper","While My Guitar Gently Weeps","In My Life","Michelle","Norwegian Wood (This Bird Has Flown)","The Long and Winding Road","Hello, Goodbye","Paperback Writer","Ticket to Ride","Drive My Car","With a Little Help from My Friends","Sgt. Pepper's Lonely Hearts Club Band|Sgt Pepper|Sergeant Pepper","Across the Universe","Helter Skelter","I Saw Her Standing There","Eight Days a Week","Nowhere Man","Back in the U.S.S.R.|Back in the USSR","All My Loving","Taxman","A Day in the Life","Got to Get You into My Life","I Am the Walrus","Here, There and Everywhere","Octopus's Garden","Dear Prudence","Magical Mystery Tour","Golden Slumbers","Carry That Weight","The End","Because","Oh! Darling","Maxwell's Silver Hammer","I Want You (She's So Heavy)","Sun King","Polythene Pam","Mean Mr. Mustard","Her Majesty","Rain","The Ballad of John and Yoko","Lady Madonna","Hey Bulldog","Tomorrow Never Knows","I'm Only Sleeping","And Your Bird Can Sing","Doctor Robert","For No One","Good Day Sunshine","Love You To","Within You Without You","Being for the Benefit of Mr. Kite!|Mr Kite","Fixing a Hole","Getting Better","She's Leaving Home","Lovely Rita","Good Morning Good Morning","When I'm Sixty-Four|When I'm 64","Martha My Dear","Glass Onion","Rocky Raccoon","Julia","Piggies","Savoy Truffle","Cry Baby Cry","Revolution 9","Happiness Is a Warm Gun","Don't Let Me Down","Two of Us","Dig a Pony","I've Got a Feeling","One After 909","For You Blue","Dig It","Maggie Mae","I Me Mine","I Should Have Known Better","If I Fell","And I Love Her","Things We Said Today","No Reply","I'm a Loser","Baby's in Black","Rock and Roll Music","I Feel Fine","She's a Woman","You've Got to Hide Your Love Away","The Night Before","Another Girl","I've Just Seen a Face","Run for Your Life","Think for Yourself","The Word","What Goes On","Girl","Wait","If I Needed Someone","You Won't See Me","We Can Work It Out","I'm Looking Through You","From Me to You","Please Please Me","P.S. I Love You","Misery","Anna (Go to Him)","Chains","Boys","Ask Me Why","Baby It's You","Do You Want to Know a Secret","A Taste of Honey","There's a Place","It Won't Be Long","All I've Got to Do","Not a Second Time","Don't Bother Me","Hold Me Tight","Little Child","Till There Was You","Roll Over Beethoven","Money (That's What I Want)","Please Mr. Postman","I'll Follow the Sun","Every Little Thing","I Don't Want to Spoil the Party","What You're Doing","I'll Be Back","Any Time at All","When I Get Home","You Can't Do That","Tell Me Why","I'll Cry Instead","I'm Happy Just to Dance with You","Mr. Moonlight","Honey Don't","Everybody's Trying to Be My Baby","Words of Love","Kansas City","Act Naturally","Dizzy Miss Lizzy","Tell Me What You See","You Like Me Too Much","It's Only Love","I Need You","Yes It Is","I'm Down","This Boy","Thank You Girl","I Call Your Name","Slow Down","Matchbox","Long Tall Sally","Bad Boy","Blue Jay Way","Flying","Your Mother Should Know","Baby, You're a Rich Man","Free as a Bird","Real Love","Now and Then","The Inner Light","Only a Northern Song","It's All Too Much","Old Brown Shoe","You Know My Name (Look Up the Number)","Yer Blues","Mother Nature's Son","Sexy Sadie","Long, Long, Long","Honey Pie","The Continuing Story of Bungalow Bill|Bungalow Bill","Wild Honey Pie","Why Don't We Do It in the Road?","I Will","Birthday","Everybody's Got Something to Hide Except Me and My Monkey","Good Night","Revolution 1"
+]},
+{ id:"elements", em:"⚗️", cat:"Science", prompt:"Name a chemical element", strip:["element"], a:[
 "Oxygen","Hydrogen","Carbon","Gold","Iron","Nitrogen","Helium","Silver","Copper","Sodium","Calcium","Lead","Uranium","Zinc","Aluminium|Aluminum","Chlorine","Neon","Potassium","Magnesium","Mercury","Platinum","Sulfur|Sulphur","Tin","Lithium","Nickel","Iodine","Plutonium","Titanium","Fluorine","Phosphorus","Silicon","Argon","Radon","Cobalt","Chromium","Tungsten","Manganese","Radium","Krypton","Xenon","Boron","Arsenic","Barium","Caesium|Cesium","Bismuth","Beryllium","Cadmium","Bromine","Palladium","Strontium","Americium","Thorium","Polonium","Einsteinium","Francium","Osmium","Iridium","Gallium","Germanium","Selenium","Rubidium","Zirconium","Molybdenum","Vanadium","Scandium","Antimony","Tellurium","Indium","Tantalum","Rhodium","Ruthenium","Neodymium","Lanthanum","Cerium","Yttrium","Niobium","Hafnium","Rhenium","Thallium","Astatine","Actinium","Protactinium","Neptunium","Curium","Berkelium","Californium","Fermium","Mendelevium","Nobelium","Lawrencium","Technetium","Praseodymium","Promethium","Samarium","Europium","Gadolinium","Terbium","Dysprosium","Holmium","Erbium","Thulium","Ytterbium","Lutetium","Rutherfordium","Dubnium","Seaborgium","Bohrium","Hassium","Meitnerium","Darmstadtium","Roentgenium","Copernicium","Nihonium","Flerovium","Moscovium","Livermorium","Tennessine","Oganesson"
 ]},
-{ id:"beatles", cat:"Music", prompt:"Name a Beatles song", a:[
-"Hey Jude","Let It Be","Yesterday","Here Comes the Sun","Yellow Submarine","Come Together","Help!","All You Need Is Love","Twist and Shout","A Hard Day's Night","I Want to Hold Your Hand","Penny Lane","Strawberry Fields Forever|Strawberry Fields","Eleanor Rigby","Blackbird","Love Me Do","She Loves You","Can't Buy Me Love","Something","Lucy in the Sky with Diamonds","Ob-La-Di, Ob-La-Da|Obladi Oblada","Get Back","Revolution","Day Tripper","While My Guitar Gently Weeps","In My Life","Michelle","Norwegian Wood (This Bird Has Flown)","The Long and Winding Road","Hello, Goodbye","Paperback Writer","Ticket to Ride","Drive My Car","With a Little Help from My Friends","Sgt. Pepper's Lonely Hearts Club Band|Sgt Pepper|Sergeant Pepper","Across the Universe","Helter Skelter","I Saw Her Standing There","Eight Days a Week","Nowhere Man","Back in the U.S.S.R.|Back in the USSR","All My Loving","Taxman","A Day in the Life","Got to Get You into My Life","I Am the Walrus","Here, There and Everywhere","Octopus's Garden","Dear Prudence","Magical Mystery Tour","Golden Slumbers","Carry That Weight","The End","Because","Oh! Darling","Maxwell's Silver Hammer","I Want You (She's So Heavy)","Sun King","Polythene Pam","Mean Mr. Mustard","Her Majesty","Rain","The Ballad of John and Yoko","Lady Madonna","Hey Bulldog","Tomorrow Never Knows","I'm Only Sleeping","And Your Bird Can Sing","Doctor Robert","For No One","Good Day Sunshine","Love You To","Within You Without You","Being for the Benefit of Mr. Kite!|Mr Kite","Fixing a Hole","Getting Better","She's Leaving Home","Lovely Rita","Good Morning Good Morning","When I'm Sixty-Four|When I'm 64","Martha My Dear","Glass Onion","Rocky Raccoon","Julia","Piggies","Savoy Truffle","Cry Baby Cry","Revolution 9","Happiness Is a Warm Gun","Don't Let Me Down","Two of Us","Dig a Pony","I've Got a Feeling","One After 909","For You Blue","Dig It","Maggie Mae","I Me Mine","I Should Have Known Better","If I Fell","And I Love Her","Things We Said Today","No Reply","I'm a Loser","Baby's in Black","Rock and Roll Music","I Feel Fine","She's a Woman","You've Got to Hide Your Love Away","The Night Before","Another Girl","I've Just Seen a Face","Run for Your Life","Think for Yourself","The Word","What Goes On","Girl","Wait","If I Needed Someone","You Won't See Me","We Can Work It Out","From Me to You","Please Please Me","P.S. I Love You","Misery","Anna (Go to Him)","Chains","Boys","Ask Me Why","Baby It's You","Do You Want to Know a Secret","A Taste of Honey","There's a Place","It Won't Be Long","All I've Got to Do","Not a Second Time","Don't Bother Me","Hold Me Tight","Little Child","Till There Was You","Roll Over Beethoven","Money (That's What I Want)","Please Mr. Postman","Free as a Bird","Real Love","Now and Then","The Inner Light","Only a Northern Song","It's All Too Much","Old Brown Shoe","You Know My Name (Look Up the Number)","Yer Blues","Mother Nature's Son","Sexy Sadie","Long, Long, Long","Honey Pie","The Continuing Story of Bungalow Bill|Bungalow Bill","Wild Honey Pie","Why Don't We Do It in the Road?","I Will","Birthday","Everybody's Got Something to Hide Except Me and My Monkey","Good Night"
+{ id:"space", em:"🪐", cat:"Science", prompt:"Name something in our solar system: a planet, moon, asteroid or comet", strip:["planet","dwarf planet","moon","asteroid","comet","the planet"], a:[
+"Earth","Mars","Jupiter","Saturn","The Sun|Sun","Venus","Mercury","Neptune","Uranus","Pluto","The Moon|Moon|Luna","Titan","Europa","Halley's Comet|Halley|Halleys","Io","Ganymede","Callisto","Ceres","Phobos","Deimos","Asteroid belt","Triton","Enceladus","Charon","Kuiper Belt","Oort Cloud","Eris","Vesta","Makemake","Haumea","Miranda","Titania","Oberon","Hale-Bopp","Ariel","Umbriel","Rhea","Iapetus","Dione","Tethys","Mimas","Pallas","Juno","Shoemaker-Levy 9","Hyperion","Phoebe","Nereid","Proteus","Bennu","Ryugu","Eros","Apophis","Psyche","Comet 67P|67P|Churyumov-Gerasimenko","Amalthea","Himalia","Puck","Janus","Epimetheus","Pandora","Prometheus","Atlas","Pan","Sedna","Quaoar","Orcus","Gonggong","Arrokoth","Dysnomia","Hydra","Nix","Kerberos","Styx","Thebe","Metis","Adrastea","Larissa","Galatea","Despina","Thalassa","Naiad","Hygiea","Ida","Dactyl","Gaspra","Mathilde","Itokawa","Didymos","Dimorphos","Lutetia","Kleopatra","Encke|Comet Encke","Swift-Tuttle","Tempel 1","Wild 2","Sycorax","Caliban","Cordelia","Ophelia","Bianca","Cressida","Desdemona","Juliet","Portia","Rosalind","Belinda","Perdita","Cupid","Mab","Prospero","Setebos","Stephano","Trinculo","Daphnis","Calypso","Telesto","Helene","Polydeuces","Methone","Pallene","Anthe","Ymir","Kiviuq","Tarvos","Albiorix","Elara","Pasiphae","Sinope","Carme","Ananke","Lysithea","Leda","Themisto","Callirrhoe","Hippocamp","Halimede","Sao","Laomedeia","Psamathe","Neso","Hiʻiaka|Hiiaka","Namaka","Vanth","Weywot"
 ]},
-{ id:"dogs", cat:"Animals", prompt:"Name a dog breed", a:[
-"Labrador Retriever|Labrador|Lab","Golden Retriever","German Shepherd|Alsatian","Poodle","Bulldog|English Bulldog","Beagle","Chihuahua","Siberian Husky|Husky","Pug","Dachshund|Sausage dog","Rottweiler","Boxer","Border Collie","French Bulldog|Frenchie","Great Dane","Yorkshire Terrier|Yorkie","Shih Tzu","Dalmatian","Pit Bull|Pitbull|American Pit Bull Terrier","Dobermann|Doberman|Doberman Pinscher","Corgi|Welsh Corgi|Pembroke Welsh Corgi","Cocker Spaniel","Jack Russell Terrier|Jack Russell","Greyhound","Pomeranian","Maltese","Rough Collie|Collie","Saint Bernard|St Bernard","Bernese Mountain Dog","Shiba Inu","Australian Shepherd|Aussie","Cavalier King Charles Spaniel|Cavalier|King Charles Spaniel","Bichon Frise","Labradoodle","Cockapoo","Akita","Samoyed","Alaskan Malamute|Malamute","Staffordshire Bull Terrier|Staffy|Staffie","Whippet","Basset Hound","Bloodhound","Schnauzer|Miniature Schnauzer","Newfoundland","Mastiff","Weimaraner","Vizsla","Boston Terrier","West Highland Terrier|Westie|West Highland White Terrier","Scottish Terrier|Scottie","Irish Setter","Springer Spaniel|English Springer Spaniel","Papillon","Chow Chow|Chow","Shar Pei","Afghan Hound","Borzoi","Saluki","Basenji","Rhodesian Ridgeback","Bull Terrier","Airedale Terrier|Airedale","Cane Corso","Belgian Malinois|Malinois","Lhasa Apso","Pekingese","Havanese","Italian Greyhound","Bedlington Terrier","Dandie Dinmont Terrier","Komondor","Puli","Xoloitzcuintli|Xolo|Mexican Hairless","Otterhound","Lagotto Romagnolo","Norwegian Lundehund","Azawakh","Mudi","Kooikerhondje","Sloughi","Cesky Terrier","Glen of Imaal Terrier","Sealyham Terrier","Skye Terrier","Stabyhoun","Thai Ridgeback","Chinook","Leonberger","Kuvasz","Briard","Bergamasco"
+{ id:"dinos", em:"🦖", cat:"Science", prompt:"Name a dinosaur or other prehistoric creature", strip:["dinosaur","the"], a:[
+"Tyrannosaurus rex|T rex|T-rex|Trex|Tyrannosaurus","Triceratops","Velociraptor|Raptor","Stegosaurus","Brachiosaurus","Pterodactyl|Pterodactylus","Spinosaurus","Diplodocus","Ankylosaurus","Brontosaurus","Woolly mammoth|Mammoth","Sabre-toothed cat|Saber-toothed tiger|Sabre-toothed tiger|Smilodon|Sabertooth","Megalodon","Allosaurus","Iguanodon","Parasaurolophus","Pachycephalosaurus","Dilophosaurus","Archaeopteryx","Plesiosaurus|Plesiosaur","Mosasaurus","Pteranodon","Pterosaur","Carnotaurus","Giganotosaurus","Dire wolf","Apatosaurus","Compsognathus","Gallimimus","Deinonychus","Therizinosaurus","Argentinosaurus","Utahraptor","Quetzalcoatlus","Dimetrodon","Oviraptor","Mastodon","Woolly rhinoceros|Woolly rhino","Maiasaura","Protoceratops","Styracosaurus","Baryonyx","Ceratosaurus","Edmontosaurus","Albertosaurus","Microraptor","Troodon","Ichthyosaurus","Trilobite","Carcharodontosaurus","Coelophysis","Herrerasaurus","Eoraptor","Plateosaurus","Mamenchisaurus","Amargasaurus","Kentrosaurus","Nodosaurus","Euoplocephalus","Corythosaurus","Lambeosaurus","Hadrosaurus","Megalosaurus","Cryolophosaurus","Suchomimus","Yutyrannus","Dreadnoughtus","Patagotitan","Elasmosaurus","Liopleurodon","Dunkleosteus","Titanoboa","Megatherium","Glyptodon","Cave bear","Irish elk|Megaloceros","Terror bird|Phorusrhacos","Moa","Haast's eagle","Elephant bird|Aepyornis","Tarbosaurus","Daspletosaurus","Gorgosaurus","Acrocanthosaurus","Mapusaurus","Torvosaurus","Majungasaurus","Abelisaurus","Concavenator","Sinosauropteryx","Citipati","Gigantoraptor","Ornithomimus","Struthiomimus","Deinocheirus","Shuvuuia","Mononykus","Psittacosaurus","Leptoceratops","Chasmosaurus","Centrosaurus","Pentaceratops","Torosaurus","Einiosaurus","Kosmoceratops","Nasutoceratops","Pachyrhinosaurus","Saichania","Minmi","Scelidosaurus","Gastonia","Polacanthus","Huayangosaurus","Tuojiangosaurus","Dacentrurus","Hypsilophodon","Leaellynasaura","Muttaburrasaurus","Ouranosaurus","Shantungosaurus","Saurolophus","Tsintaosaurus","Olorotitan","Camarasaurus","Supersaurus","Sauroposeidon","Giraffatitan","Camptosaurus","Nigersaurus","Saltasaurus","Barosaurus","Europasaurus","Shunosaurus","Rhamphorhynchus","Dimorphodon","Pterodaustro","Tupandactylus","Hatzegopteryx","Nothosaurus","Kronosaurus","Shonisaurus","Tylosaurus","Placodus","Archelon","Stupendemys","Megalania","Purussaurus","Deinosuchus","Sarcosuchus","Basilosaurus","Ambulocetus","Pakicetus","Livyatan","Doedicurus","Paraceratherium","Andrewsarchus","Gigantopithecus","Hyaenodon","Thylacosmilus","Thylacoleo","Diprotodon","Short-faced bear|Arctodus","Cave lion","Gastornis","Argentavis","Pelagornis","Lystrosaurus","Edaphosaurus","Inostrancevia","Gorgonops|Gorgonopsid","Estemmenosuchus","Moschops","Scutosaurus","Eryops","Ichthyostega","Acanthostega","Tiktaalik","Helicoprion","Anomalocaris","Hallucigenia","Opabinia","Arthropleura","Meganeura","Cameroceras","Jaekelopterus|Sea scorpion|Eurypterid","Pikaia","Dickinsonia","Charnia","Wiwaxia","Marrella","Haikouichthys","Xenacanthus","Cladoselache","Leedsichthys","Hybodus","Edestus"
 ]},
-{ id:"space", cat:"Science", prompt:"Name a planet, dwarf planet or moon in our solar system", a:[
-"Earth","Mars","Jupiter","Saturn","Venus","Mercury","Neptune","Uranus","Pluto","The Moon|Moon|Luna","Titan","Europa","Io","Ganymede","Callisto","Ceres","Phobos","Deimos","Triton","Enceladus","Charon","Eris","Makemake","Haumea","Miranda","Titania","Oberon","Ariel","Umbriel","Rhea","Iapetus","Dione","Tethys","Mimas","Hyperion","Phoebe","Nereid","Proteus","Amalthea","Himalia","Puck","Janus","Epimetheus","Pandora","Prometheus","Atlas","Pan","Dysnomia","Hydra","Nix","Kerberos","Styx","Thebe","Metis","Adrastea","Larissa","Galatea","Despina","Thalassa","Naiad","Sycorax","Caliban","Hiʻiaka|Hiiaka","Namaka","Sedna","Quaoar","Orcus","Gonggong","Vanth","Weywot"
+{ id:"ocean", em:"🐙", cat:"Animals", prompt:"Name an animal that lives in the sea", strip:["sea","ocean"], a:[
+"Shark","Whale","Dolphin","Octopus","Jellyfish","Starfish|Sea star","Crab","Sea turtle|Turtle","Seal","Squid","Lobster","Clownfish","Stingray|Ray","Orca|Killer whale","Shrimp|Prawn","Seahorse|Sea horse","Eel","Blue whale","Great white shark|Great white","Sea lion","Walrus","Manta ray","Tuna","Penguin","Cod","Salmon","Swordfish","Sea urchin|Urchin","Coral","Sea otter|Otter","Narwhal","Hammerhead shark|Hammerhead","Whale shark","Pufferfish|Puffer fish|Blowfish","Barracuda","Anglerfish","Lionfish","Blue tang|Tang","Plankton","Krill","Sea cucumber","Oyster","Clam","Mussel","Scallop","Sea anemone|Anemone","Manatee","Dugong","Beluga","Humpback whale|Humpback","Sperm whale","Tiger shark","Bull shark","Marlin","Sardine","Anchovy","Mackerel","Herring","Haddock","Halibut","Flounder","Plaice","Sole","Turbot","Monkfish","Sea bass","Snapper|Red snapper","Mahi-mahi|Dorado","Flying fish","Grouper","Parrotfish","Sea snake","Moray eel|Moray","Nautilus","Cuttlefish","Hermit crab","Barnacle","Nudibranch|Sea slug","Sea sponge|Sponge","Porpoise","Elephant seal","Leopard seal","Basking shark","Mako shark|Mako","Nurse shark","Sailfish","Ocean sunfish|Mola|Sunfish","Abalone","Conch","Limpet","Whelk","Portuguese man o' war|Man o' war|Man of war","Box jellyfish","Mantis shrimp","King crab","Spider crab","Sand dollar","Triggerfish","Damselfish","Remora","Wrasse","Boxfish","Stonefish","Scorpionfish","Frogfish","Pipefish","Goby","Blenny","Mandarinfish","Garden eel","Conger eel|Conger","Pollock","Hake","Whiting","Pilchard","Sprat","Bonito","Wahoo","Tarpon","Cobia","Amberjack","Yellowtail","Opah|Moonfish","John Dory","Sea bream","Thresher shark","Lemon shark","Blue shark","Greenland shark","Megamouth shark","Sawfish","Guitarfish","Electric ray|Torpedo ray","Eagle ray","Skate","Fin whale","Minke whale","Grey whale|Gray whale","Right whale","Bowhead whale","Pilot whale","Beaked whale","Fur seal","Harbour seal|Harbor seal","Leatherback turtle|Leatherback","Hawksbill turtle","Loggerhead turtle","Green sea turtle","Marine iguana","Saltwater crocodile","Moon jellyfish","Comb jelly|Ctenophore","Brittle star","Feather star|Crinoid","Sea squirt|Tunicate","Salp","Sea pen","Christmas tree worm","Bobbit worm","Fireworm","Giant clam","Cowrie","Cone snail","Sea hare","Blue dragon|Glaucus atlanticus","Argonaut|Paper nautilus","Blue-ringed octopus","Mimic octopus","Flamboyant cuttlefish","Humboldt squid","Colossal squid","Firefly squid","Pistol shrimp","Copepod","Oarfish","Coelacanth","Vampire squid","Giant squid","Sea spider","Hagfish","Lamprey","Sea butterfly|Pteropod","Siphonophore","Gulper eel","Blobfish","Frilled shark","Goblin shark","Cookiecutter shark","Dumbo octopus","Yeti crab","Sea pig","Tripod fish","Giant isopod|Isopod","Horseshoe crab","Leafy sea dragon|Sea dragon","Wobbegong","Barreleye","Fangtooth","Viperfish","Dragonfish","Lanternfish","Hatchetfish","Black swallower","Lumpsucker","Wolf eel","Ribbon eel","Snipe eel","Napoleon wrasse|Humphead wrasse","Garibaldi","Sea robin","Lancelet|Amphioxus","Chimaera|Ratfish"
 ]},
-{ id:"shakespeare", cat:"Literature", prompt:"Name a Shakespeare play", a:[
-"Romeo and Juliet","Hamlet","Macbeth","Othello","King Lear","A Midsummer Night's Dream|Midsummer Night's Dream","The Tempest","Julius Caesar","Much Ado About Nothing","Twelfth Night","The Merchant of Venice","The Taming of the Shrew","As You Like It","Richard III","Henry V","Antony and Cleopatra","The Comedy of Errors","The Winter's Tale","Measure for Measure","Henry IV, Part 1|Henry IV|Henry IV Part One","Henry IV, Part 2|Henry IV Part Two","Coriolanus","Titus Andronicus","The Merry Wives of Windsor","All's Well That Ends Well","Richard II","King John","Troilus and Cressida","Cymbeline","Pericles, Prince of Tyre|Pericles","Timon of Athens","The Two Gentlemen of Verona|Two Gentlemen of Verona","Love's Labour's Lost|Love's Labor's Lost","Henry VIII","Henry VI, Part 1|Henry VI|Henry VI Part One","Henry VI, Part 2|Henry VI Part Two","Henry VI, Part 3|Henry VI Part Three","The Two Noble Kinsmen","Edward III"
+{ id:"dogs", em:"🐕", cat:"Animals", prompt:"Name a dog breed", strip:["dog","breed","puppy"], a:[
+"Labrador Retriever|Labrador|Lab","Golden Retriever","German Shepherd|Alsatian","Poodle","Bulldog|English Bulldog","Beagle","Chihuahua","Siberian Husky|Husky","Pug","Dachshund|Sausage dog","Rottweiler","Boxer","Border Collie","French Bulldog|Frenchie","Great Dane","Yorkshire Terrier|Yorkie","Shih Tzu","Dalmatian","Pit Bull|Pitbull|American Pit Bull Terrier","Dobermann|Doberman|Doberman Pinscher","Corgi|Welsh Corgi|Pembroke Welsh Corgi","Cocker Spaniel","Jack Russell Terrier|Jack Russell","Greyhound","Pomeranian","Maltese","Rough Collie|Collie","Saint Bernard|St Bernard","Bernese Mountain Dog","Shiba Inu","Australian Shepherd|Aussie","Cavalier King Charles Spaniel|Cavalier|King Charles Spaniel","Bichon Frise|Bichon","Labradoodle","Goldendoodle","Cockapoo","Cavapoo","Maltipoo","Akita","Samoyed","Alaskan Malamute|Malamute","Staffordshire Bull Terrier|Staffy|Staffie","Whippet","Basset Hound","Bloodhound","Schnauzer|Miniature Schnauzer","Newfoundland","Mastiff","Old English Sheepdog|Sheepdog","Shetland Sheepdog|Sheltie","Irish Wolfhound|Wolfhound","Great Pyrenees|Pyrenean Mountain Dog","Australian Cattle Dog|Blue Heeler|Heeler","Weimaraner","Vizsla","Boston Terrier","West Highland Terrier|Westie|West Highland White Terrier","Scottish Terrier|Scottie","Irish Setter","Springer Spaniel|English Springer Spaniel","Pointer|English Pointer","German Shorthaired Pointer","Miniature Pinscher|Min Pin","Bullmastiff","Border Terrier","Cairn Terrier","Papillon","Chow Chow|Chow","Shar Pei","Afghan Hound","Borzoi","Saluki","Basenji","Rhodesian Ridgeback","Bull Terrier","Airedale Terrier|Airedale","Cane Corso","Belgian Malinois|Malinois","Lhasa Apso","Pekingese","Havanese","Italian Greyhound","Lurcher","Patterdale Terrier","Fox Terrier|Wire Fox Terrier","Kelpie|Australian Kelpie","Bearded Collie","Dogue de Bordeaux","Neapolitan Mastiff","Tibetan Mastiff","Anatolian Shepherd|Kangal","Portuguese Water Dog","Brittany","Gordon Setter","English Setter","Flat-Coated Retriever","Chesapeake Bay Retriever","Nova Scotia Duck Tolling Retriever|Toller","Clumber Spaniel","Sussex Spaniel","Field Spaniel","Welsh Springer Spaniel","Irish Water Spaniel","Beauceron","Bouvier des Flandres","Tibetan Terrier","Tibetan Spaniel","Japanese Chin","Affenpinscher","Brussels Griffon","Bolognese","Coton de Tulear","Löwchen|Lowchen","Chinese Crested","Pharaoh Hound","Ibizan Hound","Spanish Water Dog","Finnish Spitz","Norwegian Elkhound","Keeshond","Schipperke","Swedish Vallhund","Icelandic Sheepdog","Karelian Bear Dog","Catahoula Leopard Dog|Catahoula","Coonhound|Treeing Walker Coonhound","Redbone Coonhound","Bluetick Coonhound","Plott Hound","American Foxhound|Foxhound","Harrier","Petit Basset Griffon Vendéen|PBGV","Boerboel","Presa Canario","Dogo Argentino","Fila Brasileiro","Tosa","Jindo","Kai Ken","Shikoku","Hokkaido","Norfolk Terrier","Norwich Terrier","Lakeland Terrier","Welsh Terrier","Kerry Blue Terrier","Soft-coated Wheaten Terrier|Wheaten Terrier","Irish Terrier","Manchester Terrier","Rat Terrier","Parson Russell Terrier","Australian Terrier","Silky Terrier","Entlebucher Mountain Dog","Greater Swiss Mountain Dog","Spinone Italiano","Bracco Italiano","Volpino Italiano","Lancashire Heeler","Bedlington Terrier","Dandie Dinmont Terrier","Komondor","Puli","Pumi","Xoloitzcuintli|Xolo|Mexican Hairless","Peruvian Inca Orchid","Otterhound","Lagotto Romagnolo","Norwegian Lundehund","Azawakh","Mudi","Kooikerhondje","Sloughi","Cesky Terrier","Glen of Imaal Terrier","Sealyham Terrier","Skye Terrier","Stabyhoun","Thai Ridgeback","Chinook","Leonberger","Kuvasz","Briard","Bergamasco","Sapsali","Cirneco dell'Etna"
 ]},
-{ id:"fruit", cat:"Food", prompt:"Name a fruit", a:[
-"Apple","Banana","Orange","Strawberry","Grape","Mango","Pineapple","Watermelon","Pear","Peach","Cherry","Lemon","Kiwi|Kiwifruit","Blueberry","Raspberry","Plum","Lime","Coconut","Melon","Apricot","Pomegranate","Grapefruit","Papaya","Avocado","Tomato","Blackberry","Fig","Nectarine","Cantaloupe","Passion fruit","Honeydew","Tangerine","Clementine","Cranberry","Dragon fruit|Pitaya","Lychee|Litchi","Date","Guava","Persimmon","Star fruit|Starfruit|Carambola","Kumquat","Quince","Gooseberry","Elderberry","Mulberry","Durian","Jackfruit","Rambutan","Mangosteen","Plantain","Olive","Blackcurrant|Currant|Redcurrant","Satsuma","Yuzu","Physalis|Cape gooseberry","Feijoa","Loquat","Tamarind","Sapodilla","Soursop|Guanabana","Cherimoya|Custard apple","Ackee","Salak|Snake fruit","Jabuticaba","Cloudberry","Lingonberry","Huckleberry","Medlar","Longan","Pawpaw","Ugli fruit","Bilberry","Açaí|Acai","Kiwano|Horned melon","Miracle fruit","Breadfruit","Pitanga|Surinam cherry","Marula","Damson","Greengage","Boysenberry","Loganberry"
+{ id:"birds", em:"🦜", cat:"Animals", prompt:"Name a bird", strip:["bird"], a:[
+"Eagle","Robin","Pigeon","Owl","Parrot","Penguin","Crow","Sparrow","Seagull|Gull","Flamingo","Duck","Swan","Hawk","Falcon","Ostrich","Peacock|Peafowl|Peahen","Chicken|Hen|Rooster|Cockerel","Hummingbird","Blue jay","Pelican","Woodpecker","Cardinal","Goose","Turkey","Toucan","Emu","Vulture","Dove","Kiwi","Bald eagle","Raven","Magpie","Blackbird","Starling","Canary","Budgie|Budgerigar","Cockatoo","Macaw","Heron","Stork","Crane","Kingfisher","Puffin","Albatross","Wren","Finch","Swallow","Swift","Skylark|Lark","Nightingale","Thrush","Blue tit","Great tit","Goldfinch","Chaffinch","Bullfinch","Jay","Jackdaw","Rook","Kestrel","Buzzard","Osprey","Condor","Red kite|Kite","Barn owl","Snowy owl","Tawny owl","Pheasant","Quail","Partridge","Grouse","Mallard","Cormorant","Gannet","Blue-footed booby|Booby","Frigatebird","Tern","Kookaburra","Cassowary","Lyrebird","Roadrunner","Mockingbird","Cuckoo","Hornbill","Egret","Ibis","Spoonbill","Cockatiel","Lovebird","Lorikeet","Mynah|Myna","Oriole","Kea","Kakapo","Dodo","Hoopoe","Bee-eater","Nuthatch","Wagtail","Warbler","Tanager","Waxwing","Grosbeak","Crossbill","Siskin","Linnet","Redstart","Stonechat","Wheatear","Fieldfare","Redwing","Dunnock","Goldcrest","Firecrest","Chiffchaff","Treecreeper","Dipper","Pipit","Bunting","Shrike","Roller","Nightjar","Whip-poor-will","Moorhen","Coot","Grebe","Loon|Diver","Bittern","Rail","Sandpiper","Plover","Lapwing","Curlew","Godwit","Snipe","Woodcock","Avocet","Oystercatcher","Turnstone","Dunlin","Phalarope","Jacana","Guillemot","Razorbill","Kittiwake","Petrel","Shearwater","Auk","Ptarmigan","Capercaillie","Guineafowl","Rhea","Secretary bird","Shoebill","Marabou stork","Jabiru","Hammerkop","Hoatzin","Resplendent quetzal|Quetzal","Trogon","Motmot","Potoo","Oilbird","Sunbird","Bird-of-paradise|Bird of paradise","Bowerbird","Fairywren","Pitta","Broadbill","Weaver|Weaverbird","Honeyeater","Wattlebird","Tui","Takahē|Takahe","Weka","Kākā|Kaka","Morepork|Ruru","Great auk","Passenger pigeon","Turaco","Mousebird","Barbet","Aracari","Toucanet","Jacamar","Puffbird","Manakin","Cotinga","Umbrellabird","Antbird","Ovenbird","Tapaculo","Kagu","Sunbittern","Seriema","Bustard","Sandgrouse","Tinamou","Malleefowl|Megapode"
 ]},
-{ id:"olympics", cat:"Sport", prompt:"Name an Olympic sport (summer or winter)", a:[
-"Swimming","Athletics|Track and field","Gymnastics","Football|Soccer","Basketball","Tennis","Boxing","Cycling","Diving","Volleyball","Rowing","Alpine skiing|Skiing","Ice hockey","Figure skating","Snowboarding","Fencing","Archery","Wrestling","Judo","Sailing","Golf","Rugby sevens|Rugby","Triathlon","Weightlifting","Equestrian|Show jumping|Dressage|Eventing","Table tennis|Ping pong","Badminton","Handball","Water polo","Beach volleyball","Taekwondo","Canoeing|Kayaking|Canoe","Bobsleigh|Bobsled","Curling","Speed skating","Ski jumping","Luge","Skeleton","Biathlon","Cross-country skiing","Shooting","Modern pentathlon","Artistic swimming|Synchronized swimming|Synchronised swimming","Skateboarding","Surfing","Sport climbing|Climbing","Trampoline","Field hockey|Hockey","Baseball","Softball","Karate","Breaking|Breakdancing","BMX","Mountain biking","Nordic combined","Freestyle skiing","Short track speed skating|Short track","Marathon swimming","Rhythmic gymnastics","Ski mountaineering|Skimo"
+{ id:"fruit", em:"🍉", cat:"Food", prompt:"Name a fruit", strip:["fruit","fresh"], a:[
+"Apple","Banana","Orange","Strawberry","Grape","Mango","Pineapple","Watermelon","Pear","Peach","Cherry","Lemon","Kiwi|Kiwifruit","Blueberry","Raspberry","Plum","Lime","Coconut","Melon","Apricot","Pomegranate","Grapefruit","Papaya","Avocado","Tomato","Blackberry","Fig","Nectarine","Cantaloupe","Passion fruit","Honeydew","Tangerine","Mandarin","Clementine","Cranberry","Dragon fruit|Pitaya","Lychee|Litchi","Date","Guava","Blood orange","Persimmon","Star fruit|Starfruit|Carambola","Kumquat","Pomelo","Quince","Gooseberry","Elderberry","Mulberry","Durian","Jackfruit","Rambutan","Mangosteen","Plantain","Olive","Blackcurrant|Currant|Redcurrant","Satsuma","Nashi|Asian pear","Yuzu","Physalis|Cape gooseberry","Feijoa","Loquat","Tamarind","Sapodilla","Soursop|Guanabana","Cherimoya|Custard apple","Prickly pear|Cactus pear","Goji berry|Wolfberry","Crab apple","Sloe","Ackee","Salak|Snake fruit","Jabuticaba","Cloudberry","Lingonberry","Huckleberry","Medlar","Longan","Pawpaw","Ugli fruit","Bilberry","Açaí|Acai","Kiwano|Horned melon","Tamarillo|Tree tomato","Miracle fruit","Breadfruit","Pitanga|Surinam cherry","Marula","Damson","Greengage","Boysenberry","Loganberry","Bergamot","Citron","Finger lime","Calamansi","Buddha's hand","Etrog","Kiwiberry|Hardy kiwi","Galia melon","Rowan berry|Rowanberry","Haskap|Honeyberry","Aronia|Chokeberry","Chokecherry","Saskatoon berry|Serviceberry","Barberry","Sea buckthorn","Juniper berry","Salmonberry","Thimbleberry","Dewberry","Wineberry","Cupuaçu|Cupuacu","Camu camu","Pequi","Bael","Jamun","Santol","Langsat|Lanzones","Duku","Pulasan","Kepel","Mamey sapote|Mamey","Black sapote","White sapote","Canistel","Lucuma","Ilama","Atemoya","Sugar apple|Sweetsop","Monstera deliciosa","Noni","Mabolo|Velvet apple","Wax apple|Rose apple","Ambarella","Bignay","Mangaba","Naranjilla|Lulo","Pepino","Babaco"
 ]},
-{ id:"eurocaps", cat:"Geography", prompt:"Name a European capital city", a:[
-"Paris","London","Rome","Berlin","Madrid","Amsterdam","Dublin","Lisbon","Vienna","Athens","Brussels","Prague","Copenhagen","Stockholm","Oslo","Warsaw","Budapest","Helsinki","Moscow","Kyiv|Kiev","Reykjavík|Reykjavik","Bern|Berne","Bucharest","Belgrade","Sofia","Zagreb","Edinburgh","Cardiff","Bratislava","Ljubljana","Tallinn","Riga","Vilnius","Luxembourg","Monaco","Valletta","Minsk","Belfast","Tirana","Sarajevo","Skopje","Podgorica","Chișinău|Chisinau","Andorra la Vella","San Marino","Vaduz","Vatican City","Nicosia","Pristina","Ankara","Tbilisi","Yerevan","Baku","Tórshavn|Torshavn"
+{ id:"veg", em:"🥕", cat:"Food", prompt:"Name a vegetable", strip:["vegetable","veg"], a:[
+"Carrot","Broccoli","Potato","Lettuce","Onion","Cucumber","Spinach","Bell pepper|Pepper|Capsicum","Sweetcorn|Corn|Maize","Peas|Pea","Cabbage","Cauliflower","Celery","Tomato","Mushroom","Garlic","Green beans|Beans|String beans","Sweet potato","Courgette|Zucchini","Aubergine|Eggplant","Asparagus","Kale","Brussels sprouts|Sprouts","Beetroot|Beet","Radish","Pumpkin","Squash","Leek","Artichoke","Turnip","Parsnip","Okra","Chilli|Chili|Chili pepper","Butternut squash","Swede|Rutabaga","Bok choy|Pak choi","Spring onion|Scallion|Green onion","Shallot","Celeriac","Fennel","Rocket|Arugula","Watercress|Cress","Swiss chard|Chard","Collard greens|Collards","Yam","Cassava|Yuca|Manioc","Chickpeas|Chickpea","Lentils|Lentil","Broad beans|Fava beans","Runner beans","Lima beans|Butter beans","Edamame","Mangetout|Snow peas","Sugar snap peas","Rhubarb","Endive","Radicchio","Romaine|Cos","Iceberg lettuce","Chives","Kohlrabi","Jerusalem artichoke|Sunchoke","Daikon","Taro","Jicama","Lotus root","Bamboo shoots","Bean sprouts","Water chestnut","Romanesco","Broccolini|Tenderstem","Chinese broccoli|Gai lan|Kailan","Choy sum","Napa cabbage|Chinese cabbage","Mizuna","Tatsoi","Samphire","Salsify","Scorzonera","Cardoon","Fiddlehead|Fiddlehead fern","Wild garlic|Ramps","Nettles","Purslane","Sorrel","Lamb's lettuce|Corn salad|Mache","Frisée|Frisee","Escarole","Chayote","Bitter melon|Karela","Moringa|Drumstick","Tindora|Ivy gourd","Snake gourd","Bottle gourd|Calabash|Lauki","Luffa","Winter melon","Tomatillo","Nopales|Cactus paddles","Hearts of palm","Burdock|Gobo","Celtuce","Malanga","Oca","Ulluco","Mashua","Yacón|Yacon"
 ]},
-{ id:"colours", cat:"Art", prompt:"Name a colour", a:[
-"Red","Blue","Green","Yellow","Purple","Orange","Pink","Black","White","Brown","Grey|Gray","Violet","Turquoise","Indigo","Gold","Silver","Magenta","Cyan","Maroon","Beige","Navy","Teal","Lavender","Crimson","Scarlet","Burgundy","Lime","Olive","Coral","Aqua","Ivory","Tan","Peach","Mint","Cream","Khaki","Mauve","Lilac","Amber","Emerald","Ruby","Sapphire","Cerulean","Azure","Chartreuse","Vermilion|Vermillion","Ochre|Ocher","Burnt sienna|Sienna","Burnt umber|Umber","Taupe","Fuchsia","Periwinkle","Puce","Cobalt","Saffron","Sepia","Mahogany","Ultramarine","Viridian","Celadon","Cinnabar","Aubergine|Eggplant","Heliotrope","Gamboge","Falu red","Wenge","Glaucous","Coquelicot","Zaffre","Xanadu","Fulvous","Aureolin"
+{ id:"cheese", em:"🧀", cat:"Food", prompt:"Name a cheese", strip:["cheese","cheeses","fromage"], a:[
+"Cheddar","Mozzarella","Brie","Parmesan|Parmigiano Reggiano|Parmigiano","Swiss","Gouda","Feta","Camembert","Blue cheese|Blue","American","Stilton","Gorgonzola","Ricotta","Cream cheese","Cottage cheese","Goat's cheese|Goat cheese|Chèvre|Chevre","Halloumi","Emmental|Emmentaler","Gruyère|Gruyere","Mascarpone","String cheese","Roquefort","Manchego","Edam","Provolone","Monterey Jack","Pepper Jack","Colby","Pecorino|Pecorino Romano","Wensleydale","Red Leicester","Double Gloucester","Paneer","Havarti","Burrata","Jarlsberg","Comté|Comte","Raclette","Processed cheese|Cheese slices","Velveeta","Grana Padano","Taleggio","Fontina","Port Salut","Munster|Muenster","Limburger","Asiago","Reblochon","Boursin","Caerphilly","Lancashire","Cheshire","Saint Agur","Dolcelatte","Cambozola","Danish Blue|Danablu","Queso fresco","Queso blanco","Cotija","Oaxaca","Panela","Bocconcini","Stracciatella","Quark","Neufchâtel|Neufchatel","Leerdammer","Maasdam","Époisses|Epoisses","Vacherin Mont d'Or|Vacherin","Tomme","Morbier","Pont-l'Évêque|Pont l'Eveque","Livarot","Mimolette","Beaufort","Cantal","Saint-Nectaire|St Nectaire","Bleu d'Auvergne","Fourme d'Ambert","Brillat-Savarin","Saint-Marcellin","Crottin de Chavignol|Crottin","Valençay|Valencay","Sainte-Maure de Touraine","Banon","Chaource","Langres","Maroilles","Ossau-Iraty","Abondance","Bleu de Gex","Appenzeller","Tête de Moine|Tete de Moine","Sbrinz","Tilsit|Tilsiter","Butterkäse|Butterkase","Bergkäse|Bergkase","Harzer","Stinking Bishop","Cornish Yarg|Yarg","Shropshire Blue","Sage Derby","Red Windsor","Lincolnshire Poacher","Dorset Blue Vinny|Blue Vinny","Beenleigh Blue","Tunworth","Baron Bigod","Caboc","Dunlop","Cashel Blue","Gubbeen","Durrus","Ardrahan","Coolea","Brunost|Gjetost","Västerbotten|Vasterbotten","Prästost|Prastost","Esrom","Bread cheese|Leipäjuusto|Juustoleipa","Herve","Passendale","Leyden","Boerenkaas","Scamorza","Caciocavallo","Stracchino","Robiola","Bel Paese","Montasio","Piave","Castelmagno","Fiore Sardo","Ragusano","Casu marzu","Mizithra","Kefalotyri","Kefalograviera","Graviera","Kasseri","Manouri","Metsovone","Anari","Labneh","Akkawi","Nabulsi","Shanklish","Kashkaval","Sirene","Bryndza","Oscypek","Telemea","Lighvan","Chhena","Chhurpi","Bandel","Rubing","Rushan","Queijo coalho|Coalho","Queijo Minas|Minas","Requeijão|Requeijao","Serra da Estrela","São Jorge|Sao Jorge","Azeitão|Azeitao","Majorero","Mahón|Mahon","Zamorano","Roncal","Garrotxa","Idiazabal","Cabrales","Torta del Casar","Tetilla","Afuega'l Pitu","Brick cheese|Brick","Liederkranz","Teleme","Dry Jack","Cougar Gold","Hoop cheese"
 ]},
-{ id:"cheese", cat:"Food", prompt:"Name a cheese", a:[
-"Cheddar","Mozzarella","Brie","Parmesan|Parmigiano Reggiano|Parmigiano","Gouda","Feta","Swiss","Camembert","Stilton","Gorgonzola","Ricotta","Cream cheese","Cottage cheese","Emmental|Emmentaler","Gruyère|Gruyere","Halloumi","Mascarpone","Roquefort","Manchego","Edam","Provolone","Monterey Jack","Colby","Pecorino|Pecorino Romano","Wensleydale","Red Leicester","Double Gloucester","Paneer","Havarti","Burrata","Jarlsberg","Comté|Comte","Raclette","Taleggio","Fontina","Port Salut","Munster|Muenster","Limburger","Asiago","Reblochon","Boursin","Caerphilly","Lancashire","Cheshire","Saint Agur","Dolcelatte","Queso fresco","Cotija","Oaxaca","Époisses|Epoisses","Vacherin Mont d'Or|Vacherin","Tomme","Morbier","Pont-l'Évêque|Pont l'Eveque","Livarot","Mimolette","Beaufort","Appenzeller","Tête de Moine|Tete de Moine","Leerdammer","Stinking Bishop","Cornish Yarg|Yarg","Shropshire Blue","Cashel Blue","Brunost|Gjetost","Casu marzu","Mizithra","Kefalotyri","Graviera","Labneh","Scamorza","Stracchino","Robiola","Bel Paese","Castelmagno","Idiazabal","Mahón|Mahon","Cabrales","Torta del Casar","Tetilla"
+{ id:"pasta", em:"🍝", cat:"Food", prompt:"Name a type of pasta", strip:["pasta"], a:[
+"Spaghetti","Penne|Penne rigate","Macaroni|Elbow macaroni|Elbows|Mac and cheese","Lasagne|Lasagna","Fusilli","Ravioli","Linguine","Fettuccine|Fettuccini","Tortellini","Rigatoni","Farfalle|Bow tie|Bowtie","Tagliatelle","Orzo|Risoni","Cannelloni","Gnocchi","Conchiglie|Shells","Angel hair|Capellini","Vermicelli","Ziti","Pappardelle","Orecchiette","Bucatini","Cavatappi","Spaghettini","Ditalini","Manicotti","Rotini","Gemelli","Conchiglioni|Jumbo shells","Rotelle|Wagon wheels|Ruote","Alphabet pasta|Alfabeto","Campanelle","Radiatori","Paccheri","Tortiglioni","Mezze maniche","Strozzapreti","Trofie","Mafaldine|Mafalde","Casarecce","Tortelloni","Agnolotti","Cappelletti","Tagliolini|Taglierini","Pastina","Anelli","Stelline","Acini di pepe","Fregola","Pici","Bigoli","Garganelli","Lumache","Lumaconi","Calamarata","Cavatelli","Malloreddus","Corzetti","Culurgiones","Scialatielli","Mezzelune","Spätzle|Spaetzle","Pennette","Candele","Fusilli bucati","Reginette|Reginelle","Lasagnette","Ditali","Tubetti","Sedani","Gramigna","Farfalline","Conchigliette","Quadrucci","Cappellacci","Caramelle","Fagottini","Sacchetti","Pansotti","Casoncelli","Tortelli","Anolini","Marubini","Plin","Strangozzi|Stringozzi","Umbricelli","Spaghetti alla chitarra|Chitarra","Lagane","Fileja","Maccheroncini","Passatelli","Gigli","Cencioni","Lorighittas","Su filindeu","Busiate","Testaroli","Tajarin","Maltagliati","Fideo|Fideos"
 ]},
-{ id:"code", cat:"Tech", prompt:"Name a programming language", a:[
-"Python","JavaScript|JS","Java","C++|CPP","C","C#|C Sharp|CSharp","SQL","Ruby","PHP","Swift","Go|Golang","Rust","Kotlin","TypeScript|TS","R","Perl","Scala","MATLAB","Lua","Dart","Haskell","Assembly|ASM","Objective-C|ObjC","Visual Basic|VB|VB.NET","Fortran","COBOL","Pascal","BASIC","Lisp","Bash|Shell","Julia","Elixir","Erlang","Clojure","Groovy","F#|F Sharp","OCaml","Prolog","Scratch","Delphi","Ada","Zig","Nim","Crystal","Smalltalk","Scheme","Racket","Elm","CoffeeScript","Solidity","VHDL","Verilog","Haxe","D","AWK","Tcl","Logo","Simula","ALGOL","APL","Forth","Rexx","RPG","MUMPS","ABAP","Eiffel","Idris","Agda","Coq|Rocq"
+{ id:"spices", em:"🌶️", cat:"Food", prompt:"Name a herb or spice", strip:["powder","seeds","seed","leaves","leaf","ground","dried","fresh"], a:[
+"Black pepper|Pepper","Basil","Oregano","Cinnamon","Garlic","Parsley","Thyme","Rosemary","Mint","Paprika","Cumin","Ginger","Chilli|Chili|Chilli powder","Turmeric","Nutmeg","Coriander|Cilantro","Dill","Sage","Bay leaf|Bay","Cloves|Clove","Curry powder|Curry","Saffron","Vanilla","Cardamom","Chives","Cayenne pepper|Cayenne","Allspice","Fennel","Star anise","Anise|Aniseed","Mustard","Tarragon","Lemongrass","Marjoram","Garam masala","Chinese five spice|Five spice","Smoked paprika","White pepper","Za'atar|Zaatar","Sumac","Fenugreek","Caraway","Celery seed|Celery salt","Juniper|Juniper berries","Lavender","Chervil","Lovage","Borage","Savory|Summer savory","Mace","Asafoetida|Hing","Ajwain|Carom","Nigella|Black seed|Kalonji","Sichuan pepper|Szechuan pepper","Galangal","Makrut lime leaves|Kaffir lime leaves|Lime leaves","Curry leaves","Pandan","Shiso|Perilla","Wasabi","Horseradish","Pink peppercorns","Black cardamom","Long pepper","Grains of paradise","Cubeb","Sansho","Epazote","Annatto|Achiote","Mahleb|Mahlab","Amchur|Mango powder","Kokum","Ras el hanout","Baharat","Berbere","Dukkah","Shichimi togarashi|Shichimi","Herbes de Provence","Lemon balm","Lemon verbena","Hyssop","Rue","Sweet woodruff|Woodruff","Angelica","Costmary","Filé powder|File","Culantro","Vietnamese coriander|Rau ram","Fingerroot","Zedoary","Sweet cicely"
 ]},
-{ id:"pasta", cat:"Food", prompt:"Name a type of pasta", a:[
-"Spaghetti","Penne","Macaroni","Lasagne|Lasagna","Fusilli","Ravioli","Linguine","Fettuccine","Tortellini","Rigatoni","Farfalle|Bow tie|Bowtie","Tagliatelle","Orzo","Cannelloni","Gnocchi","Conchiglie|Shells","Angel hair|Capellini","Vermicelli","Ziti","Pappardelle","Orecchiette","Bucatini","Cavatappi","Ditalini","Manicotti","Rotini","Gemelli","Campanelle","Radiatori","Paccheri","Strozzapreti","Trofie","Mafaldine|Mafalde","Casarecce","Tortelloni","Agnolotti","Cappelletti","Anelli","Stelline","Acini di pepe","Fregola","Pici","Bigoli","Garganelli","Lumache","Calamarata","Cavatelli","Malloreddus","Corzetti","Culurgiones","Scialatielli","Mezzelune","Lorighittas","Su filindeu","Busiate","Testaroli","Tajarin","Maltagliati","Fideo|Fideos","Sedani","Tubetti"
+{ id:"cars", em:"🏎️", cat:"Things", prompt:"Name a car brand", strip:["cars","motors","motor company","automobiles"], a:[
+"Toyota","Ford","BMW","Mercedes-Benz|Mercedes","Honda","Audi","Volkswagen|VW","Tesla","Ferrari","Lamborghini","Chevrolet|Chevy","Nissan","Porsche","Hyundai","Kia","Mazda","Jeep","Subaru","Volvo","Fiat","Jaguar","Land Rover","Range Rover","Bentley","Rolls-Royce","Aston Martin","Maserati","Bugatti","McLaren","Lexus","Peugeot","Renault","Citroën|Citroen","Mini","Dodge","Cadillac","Buick","Chrysler","GMC","Mitsubishi","Suzuki","Škoda|Skoda","SEAT","Alfa Romeo","Lotus","Infiniti","Acura","Lincoln","Ram","Genesis","Polestar","Rivian","Lucid","BYD","Opel","Vauxhall","Dacia","MG","Smart","Saab","Pontiac","Hummer","DeLorean","Koenigsegg","Pagani","Maybach","Shelby","Scion","Alpine","Lancia","Tata","Mahindra","Maruti Suzuki|Maruti","Proton","Perodua","Geely","Chery","Great Wall","Haval","Nio","Xpeng","Zeekr","Lynk & Co","Hongqi","Wuling","Li Auto","VinFast","Togg","Lada","Cupra","DS","Rimac","Morgan","TVR","Caterham","Noble","Ariel","Ginetta","Radical","Bristol","Jensen","AC Cars|AC","Spyker","Zenvo","Hennessey","SSC","Saleen","Fisker","Isuzu","Daihatsu","SsangYong|KGM","Daewoo","Holden","Oldsmobile","Plymouth","Studebaker","Packard","AMC","Nash","Hudson","Kaiser","Willys","Tucker","Cord","Duesenberg","Auburn","Pierce-Arrow","Stutz","Checker","DeSoto","Imperial","Edsel","Geo","Eagle","Mosler","Panoz","Vector","Austin","Morris","Triumph","Rover","Hillman","Sunbeam","Riley","Wolseley","Humber","Talbot","Reliant","Bond","Allard","Elva","Lister","Marcos","Ascari","Simca","Panhard","Facel Vega","Venturi","Matra","Borgward","Wanderer","Horch","NSU","Wiesmann","Artega","Melkus","Iso","De Tomaso","Bizzarrini","Autobianchi","Innocenti","Dallara","Hispano-Suiza","Tatra","Trabant","Wartburg","Zastava","Yugo","FSO","Aro","Moskvitch","GAZ|Volga","UAZ","ZiL","ZAZ|Zaporozhets","Hindustan","Iran Khodro","Saipa","Abarth","BAC","Arash"
 ]},
-{ id:"gods", cat:"Myth", prompt:"Name a Greek god or goddess", a:[
-"Zeus","Poseidon","Hades","Athena","Aphrodite","Apollo","Ares","Hermes","Hera","Artemis","Demeter","Dionysus","Hephaestus","Persephone","Hestia","Eros","Nike","Gaia|Gaea","Cronus|Kronos|Cronos","Nemesis","Hecate","Pan","Helios","Selene","Eos","Iris","Hypnos","Thanatos","Tyche","Morpheus","Uranus|Ouranos","Rhea","Hebe","Asclepius","Eris","Nyx","Chaos","Erebus","Phobos","Deimos","Triton","Oceanus","Tethys","Themis","Mnemosyne","Hyperion","Prometheus","Atlas","Harmonia","Peitho","Aeolus","Boreas","Zephyrus","Notus","Eurus","Plutus","Hymenaeus|Hymen","Priapus","Enyo","Ananke","Chronos","Pontus","Tartarus","Eileithyia","Hemera","Aether","Metis","Leto","Dione","Styx","Nereus","Proteus","Phorcys","Ceto","Hesperus","Phosphorus|Eosphorus","Palaemon","Achelous"
+{ id:"code", em:"💻", cat:"Tech", prompt:"Name a programming language", strip:["language","programming language","lang"], a:[
+"Python","JavaScript|JS","Java","C++|CPP","C","C#|C Sharp|CSharp","HTML","SQL","CSS","Ruby","PHP","Swift","Go|Golang","Rust","Kotlin","TypeScript|TS","R","Perl","Scala","MATLAB","Lua","Dart","Haskell","Assembly|ASM","Objective-C|ObjC","Visual Basic|VB|VB.NET","Bash|Shell","PowerShell","Fortran","COBOL","Pascal","BASIC","Lisp","Julia","Scratch","Elixir","Erlang","Clojure","Groovy","F#|F Sharp","OCaml","Prolog","Delphi","VBA","Ada","Zig","Solidity","Nim","Crystal","Smalltalk","Scheme","Racket","Elm","CoffeeScript","ActionScript","VBScript","AppleScript","Batch|Batch file","Zsh","Common Lisp","Emacs Lisp|Elisp","Mojo","Carbon","V|Vlang","Odin","Gleam","Hack","Raku|Perl 6","PureScript","ReasonML|Reason","ReScript","Wolfram Language|Mathematica","SAS","Stata","LabVIEW","CUDA","GLSL","HLSL","WGSL","OpenCL","Q#","Apex","GDScript","VHDL","Verilog","Haxe","D","AWK","Tcl","Logo","Simula","ALGOL","APL","Forth","Rexx","RPG","MUMPS","ABAP","ColdFusion","Eiffel","Standard ML|SML","ML","Miranda","Clean","Curry","Mercury","Oz","Lean","Idris","Agda","Coq|Rocq","Isabelle","Dafny","TLA+","Ballerina","Chapel","Pony","Red","Rebol","Io","Factor","Joy","Modula-2","Oberon","BCPL","B","PL/I","JOVIAL","CLU","Icon","SNOBOL","Self","Dylan","Hope","Wren","Janet","Fennel","Hy","Squirrel","AngelScript","UnrealScript","Papyrus","Vyper","Move","Cairo","Ceylon","Fantom","Xtend","Gosu","Boo","Nemerle","HyperTalk","Lingo","Befunge","Malbolge","Whitespace","INTERCAL","LOLCODE","Piet"
 ]},
-{ id:"cars", cat:"Things", prompt:"Name a car brand", a:[
-"Toyota","Ford","BMW","Mercedes-Benz|Mercedes","Honda","Audi","Volkswagen|VW","Tesla","Ferrari","Lamborghini","Chevrolet|Chevy","Nissan","Porsche","Hyundai","Kia","Mazda","Jeep","Subaru","Volvo","Fiat","Jaguar","Land Rover","Bentley","Rolls-Royce","Aston Martin","Maserati","Bugatti","McLaren","Lexus","Peugeot","Renault","Citroën|Citroen","Mini","Dodge","Cadillac","Buick","Chrysler","GMC","Mitsubishi","Suzuki","Škoda|Skoda","SEAT","Alfa Romeo","Lotus","Infiniti","Acura","Lincoln","Ram","Genesis","Polestar","Rivian","Lucid","BYD","Opel","Vauxhall","Dacia","Smart","Saab","Pontiac","Hummer","DeLorean","Koenigsegg","Pagani","Lancia","Tata","Mahindra","Proton","Perodua","Geely","Chery","Nio","Xpeng","Lada","Cupra","DS","Rimac","Morgan","TVR","Caterham","Noble","Spyker","Hispano-Suiza","Isuzu","Daihatsu","Holden","Oldsmobile","Plymouth","Studebaker","Packard","Trabant","Wartburg","Zastava","Abarth"
+{ id:"olympics", em:"🏅", cat:"Sport", prompt:"Name an Olympic sport or event", strip:["olympic","event","sport"], a:[
+"Swimming","Athletics|Track and field","Gymnastics","Football|Soccer","Basketball","Tennis","Boxing","Cycling","Diving","Volleyball","100 metres|100m|Sprint|Sprinting","Marathon","Rowing","Alpine skiing|Skiing","Ice hockey","Figure skating","Snowboarding","Fencing","Archery","Wrestling","Judo","Long jump","High jump","Pole vault","Javelin","Hurdles","Relay","Shot put","Discus","Sailing","Golf","Rugby sevens|Rugby","Triathlon","Weightlifting","Equestrian|Show jumping|Dressage|Eventing","Table tennis|Ping pong","Badminton","Handball","Water polo","Beach volleyball","Taekwondo","Canoeing|Kayaking|Canoe","Bobsleigh|Bobsled","Curling","Speed skating","Ski jumping","Luge","Skeleton","Biathlon","Decathlon","Heptathlon","Triple jump","Hammer throw","Steeplechase","Race walking|Racewalking","Butterfly","Backstroke","Breaststroke","Freestyle swimming|Freestyle","Cross-country skiing","Shooting","Modern pentathlon","Artistic swimming|Synchronized swimming|Synchronised swimming","Synchronised diving|Synchronized diving","Skateboarding","Surfing","Sport climbing|Climbing","Trampoline","Field hockey|Hockey","Baseball","Softball","Karate","Breaking|Breakdancing","BMX","Mountain biking","3x3 basketball","Pommel horse","Vault","Uneven bars","Balance beam|Beam","Floor exercise|Floor","Rings|Still rings","Parallel bars","High bar|Horizontal bar","Rhythmic gymnastics","Slalom","Giant slalom","Super-G","Downhill","Halfpipe","Slopestyle","Big air","Moguls","Aerials","Ski cross","Snowboard cross","Freestyle skiing","Nordic combined","Short track speed skating|Short track","Team pursuit","Mass start","Monobob","Keirin","Omnium","Madison","Team sprint","Time trial","Road race","Canoe slalom","Canoe sprint","Kitesurfing|Kiteboarding|Formula Kite","Windsurfing|iQFoil","Marathon swimming","Ski mountaineering|Skimo","Squash","Flag football","Lacrosse","Cricket","Tug of war","Polo","Croquet","Rackets","Jeu de paume","Basque pelota|Pelota","Roque","Motorboating","Rope climbing","Standing long jump","Plunge for distance","Club swinging","Military patrol"
 ]},
-{ id:"ocean", cat:"Animals", prompt:"Name an animal that lives in the sea", a:[
-"Shark","Whale","Dolphin","Octopus","Jellyfish","Starfish|Sea star","Crab","Sea turtle|Turtle","Seal","Squid","Lobster","Clownfish","Stingray|Ray","Orca|Killer whale","Shrimp|Prawn","Seahorse|Sea horse","Eel","Blue whale","Sea lion","Walrus","Manta ray","Tuna","Cod","Salmon","Swordfish","Sea urchin|Urchin","Coral","Sea otter|Otter","Narwhal","Hammerhead shark|Hammerhead","Great white shark|Great white","Pufferfish|Puffer fish|Blowfish","Barracuda","Anglerfish","Lionfish","Blue tang|Tang","Parrotfish","Sea snake","Triggerfish","Damselfish","Remora","Wrasse","Sea cucumber","Oyster","Clam","Mussel","Scallop","Sea anemone|Anemone","Manatee","Dugong","Beluga","Humpback whale|Humpback","Sperm whale","Marlin","Sardine","Anchovy","Mackerel","Herring","Halibut","Flounder","Grouper","Moray eel|Moray","Nautilus","Cuttlefish","Hermit crab","Barnacle","Nudibranch|Sea slug","Sea sponge|Sponge","Sailfish","Ocean sunfish|Mola|Sunfish","Oarfish","Coelacanth","Vampire squid","Giant squid","Sea spider","Hagfish","Lamprey","Sea butterfly|Pteropod","Siphonophore","Gulper eel","Blobfish","Frilled shark","Goblin shark","Cookiecutter shark","Dumbo octopus","Yeti crab","Sea pig","Tripod fish","Giant isopod|Isopod","Horseshoe crab","Leafy sea dragon|Sea dragon","Wobbegong"
+{ id:"games", em:"♟️", cat:"Play", prompt:"Name a board game", strip:["game","board game","the game"], a:[
+"Chess","Monopoly","Scrabble","Checkers|Draughts","Cluedo|Clue","Risk","Snakes and Ladders|Chutes and Ladders","Connect Four|Connect 4","Backgammon","Go","Trivial Pursuit","Jenga","Battleship|Battleships","Catan|Settlers of Catan","Ticket to Ride","Pictionary","Operation","Mouse Trap","Sorry!","Guess Who?","Mahjong","Dominoes","Ludo","The Game of Life|Game of Life|Life","Candy Land","Tic-tac-toe|Noughts and crosses","Stratego","Mastermind","Othello|Reversi","Boggle","Yahtzee","Twister","Rummikub","Sequence","Trouble|Frustration","Carcassonne","Pandemic","Codenames","Cranium","Taboo","Balderdash","Hungry Hungry Hippos","KerPlunk","Buckaroo!","Mancala|Kalah","Chinese Checkers","Shogi","Xiangqi|Chinese chess","Nine Men's Morris","Scotland Yard","HeroQuest","Talisman","Azul","Splendor","Gloomhaven","Wingspan","Terraforming Mars","7 Wonders|Seven Wonders","Dominion","Agricola","Puerto Rico","Power Grid","Twilight Struggle","Diplomacy","Axis & Allies","Blokus","Qwirkle","Dixit","King of Tokyo","Root","Scythe","Brass","Everdell","Hive","Onitama","Arkham Horror","Betrayal at House on the Hill|Betrayal","Mansions of Madness","Eldritch Horror","Twilight Imperium","War of the Ring","Through the Ages","Ark Nova","Dune: Imperium|Dune Imperium","Spirit Island","Mysterium","Hanabi","Kingdomino","Tsuro","Sagrada","Viticulture","Cascadia","Patchwork","Santorini","Quoridor","Abalone","Camel Up","Machi Koro","Small World","Lords of Waterdeep","Dead of Winter","Quacks of Quedlinburg|Quacks","Clank!","Heat: Pedal to the Metal|Heat","Flamme Rouge","Takenoko","Tokaido","Photosynthesis","Castles of Burgundy","Istanbul","Concordia","Great Western Trail","Orléans|Orleans","Le Havre","Caverna","Tzolk'in|Tzolkin","Terra Mystica","Gaia Project","Mage Knight","Eclipse","Dominant Species","Food Chain Magnate","Tigris & Euphrates","El Grande","Ra","Modern Art","Acquire","Tikal","Torres","Samurai","Medici","Taj Mahal","Robinson Crusoe","Halma","Pente","Gomoku","Renju","Hex","Fox and Geese","Game of the Goose","Payday","Careers","Masterpiece","Downfall","Perfection","Crokinole","Carrom","Pachisi","Parcheesi","Arimaa","Hnefatafl","Tablut","Senet","Royal Game of Ur","Mehen","Patolli","Liubo","Janggi","Makruk","Sittuyin","Chaturanga","Shatranj","Alquerque","Konane","Fanorona","Bao","Oware","Surakarta"
 ]},
-{ id:"games", cat:"Play", prompt:"Name a board game", a:[
-"Chess","Monopoly","Scrabble","Checkers|Draughts","Cluedo|Clue","Risk","Snakes and Ladders|Chutes and Ladders","Connect Four|Connect 4","Backgammon","Go","Trivial Pursuit","Jenga","Battleship|Battleships","Catan|Settlers of Catan","Ticket to Ride","Pictionary","Operation","Mouse Trap","Sorry!","Guess Who?","Mahjong","Dominoes","Ludo","The Game of Life|Game of Life|Life","Stratego","Mastermind","Othello|Reversi","Boggle","Yahtzee","Twister","Carcassonne","Pandemic","Codenames","Cranium","Taboo","Balderdash","Hungry Hungry Hippos","KerPlunk","Buckaroo!","Mancala","Chinese Checkers","Shogi","Xiangqi|Chinese chess","Nine Men's Morris","Azul","Splendor","Gloomhaven","Wingspan","Terraforming Mars","7 Wonders|Seven Wonders","Dominion","Agricola","Puerto Rico","Power Grid","Twilight Struggle","Diplomacy","Axis & Allies","Blokus","Qwirkle","Dixit","King of Tokyo","Root","Scythe","Brass","Everdell","Hive","Onitama","Hnefatafl","Senet","Royal Game of Ur","Pachisi","Parcheesi","Carrom","Crokinole","Arimaa","Abalone","Quoridor","Santorini","Patchwork","Cascadia","Spirit Island","Mysterium","Hanabi","Kingdomino","Tsuro","Sagrada","Viticulture"
+{ id:"shakespeare", em:"🎭", cat:"Literature", prompt:"Name a Shakespeare play or character", strip:["play"], a:[
+"Romeo and Juliet","Hamlet","Macbeth","Romeo","Juliet","Othello","King Lear","A Midsummer Night's Dream|Midsummer Night's Dream","Lady Macbeth","The Tempest","Julius Caesar","Much Ado About Nothing","Twelfth Night","Ophelia","Iago","Puck","The Merchant of Venice","Shylock","Prospero","The Taming of the Shrew","Falstaff","Desdemona","As You Like It","Richard III","Henry V","Mercutio","Tybalt","Antony and Cleopatra","Cleopatra","Mark Antony","Brutus","Bottom|Nick Bottom","Oberon","Titania","Polonius","Horatio","Laertes","Gertrude","Claudius","Yorick","Banquo","Macduff","Portia","Malvolio","Viola","Cordelia","The Comedy of Errors","The Winter's Tale","Measure for Measure","Caliban","Ariel","Miranda","Rosencrantz","Guildenstern","Friar Laurence","The Nurse|Nurse","Benedick","Beatrice","Rosalind","Orlando","Jaques","Touchstone","Petruchio","Katherina|Kate|Katherine","Cassius","Lysander","Hermia","Helena","Demetrius","Goneril","Regan","Edmund","Edgar","Olivia","Feste","Sir Toby Belch|Toby Belch","Henry IV, Part 1|Henry IV|Henry IV Part One","Henry IV, Part 2|Henry IV Part Two","Prince Hal","Hotspur","Coriolanus","Titus Andronicus","Lavinia","Aaron","Tamora","The Merry Wives of Windsor","All's Well That Ends Well","Richard II","Bolingbroke","King John","Troilus and Cressida","Cymbeline","Imogen","Pericles, Prince of Tyre|Pericles","Timon of Athens","The Two Gentlemen of Verona|Two Gentlemen of Verona","Love's Labour's Lost|Love's Labor's Lost","Henry VIII","Henry VI, Part 1|Henry VI|Henry VI Part One","Henry VI, Part 2|Henry VI Part Two","Henry VI, Part 3|Henry VI Part Three","Leontes","Hermione","Perdita","Autolycus","Paulina","Volumnia","Posthumus","Sir Andrew Aguecheek|Aguecheek","Dogberry","Bassanio","Antonio","Jessica","Nerissa","Duncan","Fleance","Hecate","Fortinbras","Osric","Emilia","Roderigo","Cassio","Kent","Gloucester","Mistress Quickly","Pistol","Bardolph","Nym","Lady Anne","Queen Margaret","Lancelot Gobbo","Sebastian","Trinculo","Stephano","Ferdinand","Gonzalo","Philostrate","Quince|Peter Quince","Flute","Snout","Snug","Starveling","Moth","Costard","Holofernes","Armado|Don Armado","Thersites","Pandarus","Apemantus","The Two Noble Kinsmen","Edward III"
 ]},
-{ id:"dinos", cat:"Science", prompt:"Name a dinosaur or other prehistoric creature", a:[
-"Tyrannosaurus rex|T rex|T-rex|Trex|Tyrannosaurus","Triceratops","Velociraptor|Raptor","Stegosaurus","Brachiosaurus","Pterodactyl|Pterodactylus","Spinosaurus","Diplodocus","Ankylosaurus","Brontosaurus","Woolly mammoth|Mammoth","Sabre-toothed cat|Saber-toothed tiger|Sabre-toothed tiger|Smilodon","Megalodon","Allosaurus","Iguanodon","Parasaurolophus","Pachycephalosaurus","Dilophosaurus","Archaeopteryx","Plesiosaurus|Plesiosaur","Mosasaurus","Pteranodon","Carnotaurus","Giganotosaurus","Apatosaurus","Compsognathus","Gallimimus","Deinonychus","Therizinosaurus","Argentinosaurus","Utahraptor","Quetzalcoatlus","Dimetrodon","Oviraptor","Maiasaura","Protoceratops","Styracosaurus","Baryonyx","Ceratosaurus","Edmontosaurus","Microraptor","Troodon","Mastodon","Woolly rhinoceros|Woolly rhino","Coelophysis","Herrerasaurus","Eoraptor","Plateosaurus","Mamenchisaurus","Amargasaurus","Kentrosaurus","Nodosaurus","Euoplocephalus","Corythosaurus","Lambeosaurus","Hadrosaurus","Megalosaurus","Cryolophosaurus","Suchomimus","Yutyrannus","Dreadnoughtus","Patagotitan","Ichthyosaurus","Elasmosaurus","Liopleurodon","Dunkleosteus","Trilobite","Anomalocaris","Hallucigenia","Opabinia","Arthropleura","Meganeura","Titanoboa","Deinosuchus","Sarcosuchus","Megatherium","Glyptodon","Paraceratherium","Andrewsarchus","Gigantopithecus","Thylacoleo","Diprotodon","Cave bear","Irish elk|Megaloceros","Terror bird|Phorusrhacos","Gastornis","Argentavis","Pelagornis","Helicoprion","Tiktaalik"
+{ id:"gods", em:"⚡", cat:"Myth", prompt:"Name a Greek god, goddess or Titan", strip:["god","goddess","titan","the god","the goddess"], a:[
+"Zeus","Poseidon","Hades","Athena","Aphrodite","Apollo","Ares","Hermes","Hera","Artemis","Demeter","Dionysus","Hephaestus","Persephone","Hestia","Eros","Nike","Gaia|Gaea","Cronus|Kronos|Cronos","Hercules|Heracles","Nemesis","Hecate","Pan","Helios","Atlas","Prometheus","Selene","Eos","Iris","Hypnos","Thanatos","Tyche","Morpheus","Uranus|Ouranos","Rhea","Hebe","Asclepius","Eris","Nyx","Chaos","Psyche","The Fates|Moirai","The Muses|Muses","Erebus","Phobos","Deimos","Triton","Oceanus","Tethys","Themis","Mnemosyne","Hyperion","Harmonia","Calliope","Clio","Erato","Euterpe","Melpomene","Polyhymnia","Terpsichore","Thalia","Urania","Clotho","Lachesis","Atropos","The Furies|Erinyes","Alecto","Megaera","Tisiphone","The Graces|Charites","Aglaea","Euphrosyne","Peitho","Aeolus","Boreas","Zephyrus","Notus","Eurus","Plutus|Ploutos","Hymenaeus|Hymen","Priapus","Enyo","Ananke","Chronos","Pontus","Tartarus","Eileithyia","Hemera","Aether","Metis","Leto","Dione","Styx","Amphitrite","Thetis","Nereus","Proteus","Phorcys","Ceto","Hesperus","Phosphorus|Eosphorus","Asteria","Astraeus","Perses","Pallas","Crius","Coeus","Phoebe","Theia","Epimetheus","Menoetius","Clymene","Eurynome","Dike","Eirene","Eunomia","The Horae|Horae","Bia","Kratos","Zelus","Elpis","Momus","Geras","Oizys","Apate","Philotes","Lethe","Ourea","Thalassa","Galene","Doris","Glaucus","Eurybia","Thaumas","Anteros","Himeros","Pothos","Comus","Iacchus","Despoina","Zagreus","Aristaeus","Silenus","Hygieia","Panacea","Iaso","Aceso","Telesphorus","Palaemon","Achelous"
 ]},
-{ id:"painters", cat:"Art", prompt:"Name a famous painter", a:[
-"Vincent van Gogh|Van Gogh","Pablo Picasso|Picasso","Leonardo da Vinci|Da Vinci|Leonardo","Michelangelo","Claude Monet|Monet","Rembrandt","Frida Kahlo|Kahlo","Salvador Dalí|Dali|Salvador Dali","Andy Warhol|Warhol","Raphael","Johannes Vermeer|Vermeer","Henri Matisse|Matisse","Pierre-Auguste Renoir|Renoir","Paul Cézanne|Cezanne","Edgar Degas|Degas","Sandro Botticelli|Botticelli","Gustav Klimt|Klimt","Edvard Munch|Munch","Jackson Pollock|Pollock","Caravaggio","Banksy","J. M. W. Turner|Turner|JMW Turner","John Constable|Constable","Francisco Goya|Goya","René Magritte|Magritte","Georgia O'Keeffe|O'Keeffe|Okeeffe","Mark Rothko|Rothko","Edward Hopper|Hopper","Paul Gauguin|Gauguin","Édouard Manet|Manet","Georges Seurat|Seurat","Wassily Kandinsky|Kandinsky","Piet Mondrian|Mondrian","Jean-Michel Basquiat|Basquiat","Bob Ross","Titian","Hieronymus Bosch|Bosch","Pieter Bruegel|Bruegel|Brueghel","Diego Velázquez|Velazquez","El Greco","Peter Paul Rubens|Rubens","Katsushika Hokusai|Hokusai","Henri de Toulouse-Lautrec|Toulouse-Lautrec|Toulouse Lautrec","Marc Chagall|Chagall","Joan Miró|Miro","Roy Lichtenstein|Lichtenstein","David Hockney|Hockney","Francis Bacon","Lucian Freud","Paul Klee|Klee","Amedeo Modigliani|Modigliani","Mary Cassatt|Cassatt","James McNeill Whistler|Whistler","John Singer Sargent|Sargent","Albrecht Dürer|Durer|Dürer","Hans Holbein|Holbein","Jan van Eyck|Van Eyck","Giotto","Tintoretto","Canaletto","Caspar David Friedrich","Eugène Delacroix|Delacroix","Gustave Courbet|Courbet","Jean-Auguste-Dominique Ingres|Ingres","Jacques-Louis David","Egon Schiele|Schiele","Hilma af Klint","Artemisia Gentileschi|Gentileschi","Diego Rivera|Rivera","Yayoi Kusama|Kusama","Cy Twombly|Twombly","Willem de Kooning|De Kooning","Camille Pissarro|Pissarro","Alfred Sisley|Sisley","Berthe Morisot|Morisot","Pierre Bonnard|Bonnard","Édouard Vuillard|Vuillard","Jean-Honoré Fragonard|Fragonard","Antoine Watteau|Watteau","François Boucher|Boucher","Nicolas Poussin|Poussin","Claude Lorrain|Lorrain","Albert Bierstadt|Bierstadt","Winslow Homer","Andrew Wyeth|Wyeth","Norman Rockwell|Rockwell","Vilhelm Hammershøi|Hammershoi","Joaquín Sorolla|Sorolla","Ilya Repin|Repin","Francisco de Zurbarán|Zurbaran","Bartolomé Esteban Murillo|Murillo","Paolo Uccello|Uccello","Piero della Francesca","Andrea Mantegna|Mantegna","Fra Angelico","Giuseppe Arcimboldo|Arcimboldo"
+{ id:"colours", em:"🎨", cat:"Art", prompt:"Name a colour", strip:["colour","color","light","dark","pale","bright","deep","shade of"], a:[
+"Red","Blue","Green","Yellow","Purple","Orange","Pink","Black","White","Brown","Grey|Gray","Violet","Turquoise","Indigo","Gold","Silver","Magenta","Cyan","Maroon","Beige","Navy|Navy blue","Teal","Lavender","Crimson","Scarlet","Burgundy","Lime","Olive","Coral","Aqua","Sky blue","Baby blue","Royal blue","Hot pink","Ivory","Tan","Peach","Mint","Cream","Khaki","Mauve","Lilac","Amber","Emerald","Ruby","Sapphire","Salmon","Rose","Plum","Mustard","Bronze","Copper","Charcoal","Rust","Jade","Forest green","Sage","Lemon","Cherry","Wine","Tangerine","Burnt orange","Cerulean","Azure","Chartreuse","Vermilion|Vermillion","Ochre|Ocher","Burnt sienna|Sienna","Burnt umber|Umber","Taupe","Fuchsia","Periwinkle","Puce","Cobalt|Cobalt blue","Saffron","Sepia","Mahogany","Ultramarine","Electric blue","Neon green","Midnight blue","Powder blue","Steel blue","Cornflower blue|Cornflower","Denim","Slate","Pewter","Gunmetal","Ash","Champagne","Pearl","Platinum","Sand","Ecru","Off-white","Eggshell","Bone","Chocolate","Coffee","Caramel","Honey","Butterscotch","Buff","Fawn","Russet","Auburn","Chestnut","Cinnamon","Terracotta","Brick red","Blush","Flamingo","Bubblegum pink","Millennial pink","Cerise","Carmine","Claret","Oxblood","Wisteria","Orchid","Thistle","Mulberry","Hunter green","Kelly green","Pistachio","Seafoam","Duck egg blue|Duck egg","Eau de Nil","Viridian","Celadon","Cinnabar","Aubergine|Eggplant","Prussian blue","Lapis lazuli","Payne's grey","Hooker's green","Alizarin crimson|Alizarin","Cadmium red","Cadmium yellow","Naples yellow","Titanium white","Ivory black","Lamp black","Raw umber","Raw sienna","Yellow ochre","Byzantium","Tyrian purple","Amaranth","Fandango","International Klein Blue|IKB|Klein blue","Vantablack","Razzmatazz","Atomic tangerine","Heliotrope","Gamboge","Bistre","Drab","Isabelline","Feldgrau","Smalt","Verdigris","Malachite","Lincoln green","Falu red","Wenge","Glaucous","Coquelicot","Zaffre","Xanadu","Fulvous","Aureolin"
+]},
+{ id:"painters", em:"🖼️", cat:"Art", prompt:"Name a famous painter", strip:["painter","artist"], a:[
+"Vincent van Gogh|Van Gogh","Pablo Picasso|Picasso","Leonardo da Vinci|Da Vinci|Leonardo","Michelangelo","Claude Monet|Monet","Rembrandt","Frida Kahlo|Kahlo","Salvador Dalí|Dali|Salvador Dali","Andy Warhol|Warhol","Raphael","Johannes Vermeer|Vermeer","Henri Matisse|Matisse","Pierre-Auguste Renoir|Renoir","Paul Cézanne|Cezanne","Edgar Degas|Degas","Sandro Botticelli|Botticelli","Gustav Klimt|Klimt","Edvard Munch|Munch","Jackson Pollock|Pollock","Caravaggio","Banksy","Bob Ross","J. M. W. Turner|Turner|JMW Turner","John Constable|Constable","Francisco Goya|Goya","René Magritte|Magritte","Georgia O'Keeffe|O'Keeffe|Okeeffe","Mark Rothko|Rothko","Edward Hopper|Hopper","Paul Gauguin|Gauguin","Édouard Manet|Manet","Georges Seurat|Seurat","Wassily Kandinsky|Kandinsky","Piet Mondrian|Mondrian","Jean-Michel Basquiat|Basquiat","Keith Haring|Haring","Titian","Hieronymus Bosch|Bosch","Pieter Bruegel|Bruegel|Brueghel","Diego Velázquez|Velazquez","El Greco","Peter Paul Rubens|Rubens","Katsushika Hokusai|Hokusai","Henri de Toulouse-Lautrec|Toulouse-Lautrec|Toulouse Lautrec","Marc Chagall|Chagall","Joan Miró|Miro","Roy Lichtenstein|Lichtenstein","David Hockney|Hockney","Francis Bacon","Lucian Freud","Paul Klee|Klee","Amedeo Modigliani|Modigliani","Norman Rockwell|Rockwell","Thomas Kinkade|Kinkade","Mary Cassatt|Cassatt","James McNeill Whistler|Whistler","John Singer Sargent|Sargent","Albrecht Dürer|Durer|Dürer","Hans Holbein|Holbein","Jan van Eyck|Van Eyck","Giotto","Tintoretto","Canaletto","Caspar David Friedrich","Eugène Delacroix|Delacroix","Gustave Courbet|Courbet","Jean-Auguste-Dominique Ingres|Ingres","Jacques-Louis David","Egon Schiele|Schiele","Hilma af Klint","Artemisia Gentileschi|Gentileschi","Diego Rivera|Rivera","Yayoi Kusama|Kusama","Georges Braque|Braque","Kazimir Malevich|Malevich","Gerhard Richter|Richter","Thomas Gainsborough|Gainsborough","Joshua Reynolds|Reynolds","William Hogarth|Hogarth","William Blake","L. S. Lowry|Lowry|LS Lowry","Grant Wood","Andrew Wyeth|Wyeth","Winslow Homer","Anthony van Dyck|Van Dyck","Frans Hals|Hals","Alphonse Mucha|Mucha","Tamara de Lempicka|Lempicka","Henri Rousseau|Rousseau","Paul Signac|Signac","Gustave Caillebotte|Caillebotte","Camille Pissarro|Pissarro","Alfred Sisley|Sisley","Berthe Morisot|Morisot","Pierre Bonnard|Bonnard","Édouard Vuillard|Vuillard","Max Ernst","Giorgio de Chirico|De Chirico","Fernand Léger|Leger","Juan Gris","Franz Marc","Ernst Ludwig Kirchner|Kirchner","Otto Dix","Max Beckmann|Beckmann","Jasper Johns","Robert Rauschenberg|Rauschenberg","Cy Twombly|Twombly","Willem de Kooning|De Kooning","Lee Krasner|Krasner","Helen Frankenthaler|Frankenthaler","Joan Mitchell","Franz Kline|Kline","Barnett Newman","Agnes Martin","Bridget Riley","Paula Rego","Peter Doig","Jenny Saville","Kehinde Wiley","Anselm Kiefer|Kiefer","Jean Dubuffet|Dubuffet","Dante Gabriel Rossetti|Rossetti","John Everett Millais|Millais","Edward Burne-Jones|Burne-Jones","John William Waterhouse|Waterhouse","Lawrence Alma-Tadema|Alma-Tadema","George Stubbs|Stubbs","Walter Sickert|Sickert","Stanley Spencer","Gwen John","Thomas Cole","Frederic Edwin Church|Frederic Church","Albert Bierstadt|Bierstadt","Gilbert Stuart","John Singleton Copley|Copley","Thomas Eakins|Eakins","Jacob Lawrence","Romare Bearden","Jan Steen","Pieter de Hooch","Jacob van Ruisdael|Ruisdael","Rachel Ruysch","Judith Leyster","Hans Memling|Memling","Rogier van der Weyden","Lucas Cranach|Cranach","Matthias Grünewald|Grunewald","Giorgione","Giovanni Bellini|Bellini","Paolo Veronese|Veronese","Correggio","Parmigianino","Bronzino","Pontormo","Masaccio","Filippo Lippi","Domenico Ghirlandaio|Ghirlandaio","Perugino","Duccio","Cimabue","Paolo Uccello|Uccello","Piero della Francesca","Andrea Mantegna|Mantegna","Fra Angelico","Giuseppe Arcimboldo|Arcimboldo","Guido Reni|Reni","Annibale Carracci|Carracci","Guercino","Giovanni Battista Tiepolo|Tiepolo","Elisabeth Vigée Le Brun|Vigee Le Brun","Angelica Kauffman","Jean-Honoré Fragonard|Fragonard","Antoine Watteau|Watteau","François Boucher|Boucher","Nicolas Poussin|Poussin","Claude Lorrain|Lorrain","Théodore Géricault|Gericault","Jean-François Millet|Millet","Camille Corot|Corot","Honoré Daumier|Daumier","Odilon Redon|Redon","Gustave Moreau","Félix Vallotton|Vallotton","Suzanne Valadon|Valadon","František Kupka|Kupka","Ivan Aivazovsky|Aivazovsky","Ilya Repin|Repin","Isaac Levitan|Levitan","Arkhip Kuindzhi|Kuindzhi","Akseli Gallen-Kallela","Anders Zorn|Zorn","Carl Larsson","P. S. Krøyer|Kroyer","Vilhelm Hammershøi|Hammershoi","Joaquín Sorolla|Sorolla","Francisco de Zurbarán|Zurbaran","Bartolomé Esteban Murillo|Murillo","Utagawa Hiroshige|Hiroshige","Kitagawa Utamaro|Utamaro","Sesshū|Sesshu","Qi Baishi","Zhang Daqian","Xu Beihong","Amrita Sher-Gil","Raja Ravi Varma","M. F. Husain|Husain","Tarsila do Amaral","Fernando Botero|Botero","Rufino Tamayo|Tamayo","José Clemente Orozco|Orozco","David Alfaro Siqueiros|Siqueiros","Wifredo Lam","Roberto Matta|Matta","Joaquín Torres-García","Remedios Varo|Varo","Leonora Carrington|Carrington","Dorothea Tanning","Albert Namatjira|Namatjira","Sidney Nolan","Emily Kame Kngwarreye","Tom Roberts","Colin McCahon"
 ]}
 ];
 
@@ -343,13 +466,13 @@ const CRATES = [
    TIERS
    ============================================================ */
 const TIERS = [
-  { name:"Chart Hit",   pts:10,  color:"var(--t-hit)",   sq:"⬜", time:1 },
-  { name:"Album Track", pts:30,  color:"var(--t-album)", sq:"🟦", time:2 },
-  { name:"B-Side",      pts:60,  color:"var(--t-bside)", sq:"🟨", time:3 },
-  { name:"White Label", pts:85,  color:"var(--t-white)", sq:"🟩", time:4 },
-  { name:"Dubplate",    pts:100, color:"var(--t-dub)",   sq:"🟪", time:6 }
+  { name:"Chart Hit",   pts:10,  color:"var(--t-hit)",   hex:"#8b97a8", sq:"⬜", time:1 },
+  { name:"Album Track", pts:30,  color:"var(--t-album)", hex:"#3fb8a8", sq:"🟦", time:2 },
+  { name:"B-Side",      pts:60,  color:"var(--t-bside)", hex:"#e8b23a", sq:"🟨", time:3 },
+  { name:"White Label", pts:85,  color:"var(--t-white)", hex:"#f4f1ec", sq:"🟩", time:4 },
+  { name:"Dubplate",    pts:100, color:"var(--t-dub)",   hex:"#b48cff", sq:"🟪", time:6 }
 ];
-const CUTS = [0.12, 0.35, 0.6, 0.85];   // share of each crate in the first four tiers
+const CUTS = [0.12, 0.35, 0.6, 0.85];
 const SEGUE = 15;
 const DAILY_ROUNDS = 7, DAILY_SECONDS = 25;
 const NIGHT_START = 60, NIGHT_MAX = 90, NIGHT_PER_CRATE = 3, NIGHT_MISS = 3, NIGHT_SKIP = 2;
@@ -386,9 +509,11 @@ function buildCrate(c) {
   });
   const map = new Map();
   entries.forEach(e => e.keys.forEach(k => { if (!map.has(k)) map.set(k, e); }));
-  return { ...c, entries, map };
+  const strip = (c.strip || []).map(norm).sort((a, b) => b.length - a.length);
+  return { ...c, entries, map, strip };
 }
 const CRATE_LIST = CRATES.map(buildCrate);
+const CRATE_BY_ID = Object.fromEntries(CRATE_LIST.map(c => [c.id, c]));
 
 function lev(a, b, max) {
   if (Math.abs(a.length - b.length) > max) return max + 1;
@@ -407,23 +532,48 @@ function lev(a, b, max) {
   return prev[b.length];
 }
 
-function findAnswer(crate, raw) {
-  const k = compact(raw);
-  if (!k) return null;
+/* Variants of what was typed: as-is, and with filler words ("cheese", "dog", "light") taken off either end. */
+function variants(crate, raw) {
+  const n = norm(raw);
+  const out = [n];
+  let changed = true, cur = n;
+  while (changed) {
+    changed = false;
+    for (const w of crate.strip) {
+      if (cur.endsWith(" " + w)) { cur = cur.slice(0, -w.length - 1).trim(); changed = true; }
+      else if (cur.startsWith(w + " ")) { cur = cur.slice(w.length + 1).trim(); changed = true; }
+      else if (cur.endsWith(" " + w + "s")) { cur = cur.slice(0, -w.length - 2).trim(); changed = true; }
+      if (changed) { cur = cur.replace(/^(the|a|an) /, ""); if (cur) out.push(cur); break; }
+    }
+  }
+  return [...new Set(out)].map(s => s.replace(/ /g, "")).filter(Boolean);
+}
+
+function exactFor(crate, k) {
   const tries = [k];
+  if (k.endsWith("ies")) tries.push(k.slice(0, -3) + "y");
   if (k.endsWith("es")) tries.push(k.slice(0, -2));
   if (k.endsWith("s")) tries.push(k.slice(0, -1));
   tries.push(k + "s");
   for (const t of tries) if (crate.map.has(t)) return crate.map.get(t);
-  if (k.length < 4) return null;
-  const max = k.length >= 9 ? 2 : 1;
-  let best = null, bestD = max + 1;
-  for (const [key, e] of crate.map) {
-    if (key.length < 4) continue;
-    const d = lev(k, key, max);
-    if (d < bestD) { bestD = d; best = e; }
+  return null;
+}
+
+function findAnswer(crate, raw) {
+  const vs = variants(crate, raw);
+  if (!vs.length) return null;
+  for (const k of vs) { const e = exactFor(crate, k); if (e) return e; }
+  let best = null, bestD = 99;
+  for (const k of vs) {
+    if (k.length < 4) continue;
+    const max = k.length >= 9 ? 2 : 1;
+    for (const [key, e] of crate.map) {
+      if (key.length < 4) continue;
+      const d = lev(k, key, max);
+      if (d <= max && d < bestD) { bestD = d; best = e; }
+    }
   }
-  return bestD <= max ? best : null;
+  return best;
 }
 
 /* ============================================================
@@ -433,7 +583,9 @@ function hash(str) { let h = 1779033703 ^ str.length; for (let i = 0; i < str.le
 function rng(seed) { return () => { seed |= 0; seed = (seed + 0x6D2B79F5) | 0; let t = Math.imul(seed ^ (seed >>> 15), 1 | seed); t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t; return ((t ^ (t >>> 14)) >>> 0) / 4294967296; }; }
 function shuffle(arr, r = Math.random) { const a = arr.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(r() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; }
 
-const todayKey = (() => { const d = new Date(); return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`; })();
+const dayKey = d => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+const todayKey = dayKey(new Date());
+const yesterdayKey = (() => { const y = new Date(todayKey + "T12:00:00"); y.setDate(y.getDate() - 1); return dayKey(y); })();
 const EPOCH = new Date(2026, 0, 1);
 const digNo = Math.floor((new Date(todayKey + "T12:00:00") - EPOCH) / 86400000) + 1;
 
@@ -443,7 +595,7 @@ const store = {
 };
 
 function dailyCrates() {
-  const r = rng(hash("crate-digger/" + todayKey));
+  const r = rng(hash("crate-digger/v2/" + todayKey));
   return shuffle(CRATE_LIST, r).slice(0, DAILY_ROUNDS);
 }
 
@@ -452,27 +604,40 @@ function dailyCrates() {
    ============================================================ */
 let soundOn = store.get("sound", true);
 let actx = null;
-function tone(freqs, dur = 0.12, type = "triangle", gap = 0.07) {
+function audio() { actx = actx || new (window.AudioContext || window.webkitAudioContext)(); return actx; }
+function tone(freqs, dur = 0.12, type = "triangle", gap = 0.07, vol = 0.18) {
   if (!soundOn) return;
   try {
-    actx = actx || new (window.AudioContext || window.webkitAudioContext)();
-    const t0 = actx.currentTime;
+    const a = audio(), t0 = a.currentTime;
     freqs.forEach((f, i) => {
-      const o = actx.createOscillator(), g = actx.createGain();
+      const o = a.createOscillator(), g = a.createGain();
       o.type = type; o.frequency.value = f;
       g.gain.setValueAtTime(0.0001, t0 + i * gap);
-      g.gain.exponentialRampToValueAtTime(0.18, t0 + i * gap + 0.01);
+      g.gain.exponentialRampToValueAtTime(vol, t0 + i * gap + 0.01);
       g.gain.exponentialRampToValueAtTime(0.0001, t0 + i * gap + dur);
-      o.connect(g).connect(actx.destination);
+      o.connect(g).connect(a.destination);
       o.start(t0 + i * gap); o.stop(t0 + i * gap + dur + 0.02);
     });
   } catch {}
 }
+function scratch() {
+  if (!soundOn) return;
+  try {
+    const a = audio(), len = Math.floor(a.sampleRate * 0.25), buf = a.createBuffer(1, len, a.sampleRate), d = buf.getChannelData(0);
+    for (let i = 0; i < len; i++) d[i] = (Math.random() * 2 - 1) * Math.sin(Math.PI * i / len);
+    const src = a.createBufferSource(), bp = a.createBiquadFilter(), g = a.createGain(), t = a.currentTime;
+    src.buffer = buf; bp.type = "bandpass"; bp.Q.value = 4;
+    bp.frequency.setValueAtTime(600, t); bp.frequency.exponentialRampToValueAtTime(2400, t + 0.12); bp.frequency.exponentialRampToValueAtTime(500, t + 0.25);
+    g.gain.value = 0.35;
+    src.connect(bp).connect(g).connect(a.destination); src.start();
+  } catch {}
+}
 const sfx = {
-  tier: t => tone([[392],[392,494],[392,494,587],[392,494,587,740],[392,494,587,740,988]][t], 0.18),
-  miss: () => tone([180, 140], 0.18, "sawtooth", 0.09),
-  tick: () => tone([880], 0.04, "square"),
-  end: () => tone([523, 659, 784, 1047], 0.25, "triangle", 0.1)
+  tier: t => tone([[392],[392,494],[392,494,587],[392,494,587,740],[392,494,587,740,988,1175]][t], 0.18),
+  miss: () => tone([180, 140], 0.18, "sawtooth", 0.09, 0.12),
+  tick: () => tone([880], 0.04, "square", 0.07, 0.08),
+  end: () => tone([523, 659, 784, 1047], 0.25, "triangle", 0.1),
+  start: scratch
 };
 
 /* ============================================================
@@ -483,6 +648,87 @@ const screens = { home: $("home"), play: $("play"), summary: $("summary") };
 function show(name) { for (const k in screens) screens[k].hidden = k !== name; window.scrollTo({ top: 0 }); }
 const esc = s => String(s).replace(/[&<>"']/g, c => ({ "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;", "'":"&#39;" }[c]));
 
+/* ============================================================
+   FX — confetti, flashes, shake, floaters
+   ============================================================ */
+const reduceMotion = !!(window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches);
+const fx = $("fx"), ctx = fx.getContext("2d");
+let parts = [], fxRaf = 0;
+function sizeFx() { const dpr = Math.min(2, window.devicePixelRatio || 1); fx.width = innerWidth * dpr; fx.height = innerHeight * dpr; ctx.setTransform(dpr, 0, 0, dpr, 0, 0); }
+sizeFx(); addEventListener("resize", sizeFx);
+function burst(x, y, colors, count, power = 1) {
+  if (reduceMotion) return;
+  for (let i = 0; i < count; i++) {
+    const a = Math.random() * Math.PI * 2, s = (3 + Math.random() * 7) * power;
+    parts.push({ x, y, vx: Math.cos(a) * s, vy: Math.sin(a) * s - 4 * power, g: .22, life: 70 + Math.random() * 50, age: 0,
+      w: 5 + Math.random() * 6, h: 3 + Math.random() * 5, r: Math.random() * 6, vr: (Math.random() - .5) * .4,
+      c: colors[i % colors.length], shape: Math.random() < .3 ? "disc" : "rect" });
+  }
+  if (!fxRaf) fxRaf = requestAnimationFrame(stepFx);
+}
+function stepFx() {
+  ctx.clearRect(0, 0, innerWidth, innerHeight);
+  parts = parts.filter(p => p.age < p.life);
+  for (const p of parts) {
+    p.age++; p.vy += p.g; p.vx *= .985; p.x += p.vx; p.y += p.vy; p.r += p.vr;
+    ctx.save(); ctx.globalAlpha = Math.max(0, 1 - p.age / p.life); ctx.translate(p.x, p.y); ctx.rotate(p.r); ctx.fillStyle = p.c;
+    if (p.shape === "disc") { ctx.beginPath(); ctx.arc(0, 0, p.w / 2, 0, Math.PI * 2); ctx.fill(); ctx.fillStyle = "#0d0a0f"; ctx.beginPath(); ctx.arc(0, 0, p.w / 6, 0, Math.PI * 2); ctx.fill(); }
+    else ctx.fillRect(-p.w / 2, -p.h / 2, p.w, p.h);
+    ctx.restore();
+  }
+  fxRaf = parts.length ? requestAnimationFrame(stepFx) : 0;
+}
+function centerOf(el) { const r = el.getBoundingClientRect(); return [r.left + r.width / 2, r.top + r.height / 2]; }
+function restart(el, cls) { el.classList.remove(cls); void el.offsetWidth; el.classList.add(cls); }
+function setGlow(c) { document.documentElement.style.setProperty("--glow", c); }
+function celebrate(tier, el) {
+  const [x, y] = centerOf(el || $("plinth"));
+  const pal = [["#8b97a8", "#c9d1dc"], ["#3fb8a8", "#9be7dc", "#e8b23a"], ["#e8b23a", "#ffd77a", "#3fb8a8", "#f4f1ec"], ["#f4f1ec", "#e8b23a", "#3fb8a8", "#b48cff"], ["#b48cff", "#ff9bd2", "#3fb8a8", "#e8b23a", "#f4f1ec"]][tier];
+  burst(x, y, pal, [8, 22, 45, 70, 130][tier], [.6, .8, 1, 1.15, 1.4][tier]);
+  setGlow(TIERS[tier].hex);
+  const L = $("lights"); restart(L, "pulse"); setTimeout(() => L.classList.remove("pulse"), 900);
+  if (tier === 4 && !reduceMotion) {
+    restart($("flashbang"), "on");
+    restart($("app"), "shake");
+    setTimeout(() => burst(innerWidth * .15, innerHeight * .3, pal, 50, 1.1), 180);
+    setTimeout(() => burst(innerWidth * .85, innerHeight * .3, pal, 50, 1.1), 320);
+  }
+}
+function floater(text, color) {
+  const f = document.createElement("span"); f.className = "floater"; f.textContent = text; f.style.setProperty("--c", color);
+  $("scoreBox").appendChild(f); setTimeout(() => f.remove(), 1200);
+}
+function timeBump(text, color) {
+  const f = document.createElement("span"); f.className = "timebump"; f.textContent = text; f.style.color = color;
+  $("plinth").appendChild(f); setTimeout(() => f.remove(), 1100);
+}
+let shownScore = 0, countRaf = 0;
+function countTo(target) {
+  cancelAnimationFrame(countRaf);
+  const from = shownScore, t0 = performance.now(), dur = 600;
+  const step = now => {
+    const k = Math.min(1, (now - t0) / dur), e = 1 - Math.pow(1 - k, 3);
+    shownScore = Math.round(from + (target - from) * e);
+    $("scoreNow").textContent = shownScore;
+    if (k < 1) countRaf = requestAnimationFrame(step);
+  };
+  countRaf = requestAnimationFrame(step);
+}
+function resetScore() { cancelAnimationFrame(countRaf); shownScore = 0; $("scoreNow").textContent = "0"; }
+
+// equaliser bars
+$("eq").innerHTML = Array.from({ length: 28 }, (_, i) => `<span style="--d:${(0.28 + ((i * 37) % 11) / 22).toFixed(2)}s;--h:${(0.35 + ((i * 53) % 13) / 20).toFixed(2)}"></span>`).join("");
+function setSpin(on) { $("turntable").classList.toggle("spinning", on); $("eq").classList.toggle("live", on); }
+
+// shelf of crates on the home screen
+(() => {
+  const cols = ["var(--t-hit)", "var(--t-album)", "var(--t-bside)", "var(--t-white)", "var(--t-dub)"];
+  const items = CRATE_LIST.map((c, i) => `<span class="shelf-item" style="--c:${cols[i % 5]}" title="${esc(c.prompt)}">${c.em}</span>`).join("");
+  $("shelf").innerHTML = items + items;
+  const total = CRATE_LIST.reduce((n, c) => n + c.entries.length, 0);
+  $("crateCount").textContent = `${CRATE_LIST.length} crates · ${total.toLocaleString()} records to dig through`;
+})();
+
 $("soundBtn").textContent = soundOn ? "Sound on" : "Sound off";
 $("soundBtn").setAttribute("aria-pressed", String(soundOn));
 $("soundBtn").onclick = () => {
@@ -490,52 +736,51 @@ $("soundBtn").onclick = () => {
   $("soundBtn").textContent = soundOn ? "Sound on" : "Sound off";
   $("soundBtn").setAttribute("aria-pressed", String(soundOn));
 };
-$("homeBtn").onclick = () => { stopClock(); renderHome(); };
+$("homeBtn").onclick = () => { stopClock(); G = null; renderHome(); };
 
 /* ============================================================
    HOME
    ============================================================ */
 function renderHome() {
+  setGlow("#e8b23a");
   const prettyDate = new Date(todayKey + "T12:00:00").toLocaleDateString(undefined, { weekday: "long", day: "numeric", month: "long" });
   $("dateLine").textContent = `Dig No. ${digNo} · ${prettyDate}`;
   const done = store.get("daily:" + todayKey, null);
   const modes = $("modes");
+  const night = `
+      <button class="mode" id="nightBtn" type="button">
+        <span class="m-art" aria-hidden="true">🌙</span>
+        <span class="m-meta">Endless</span><span class="m-title">Night Shift</span>
+        <span class="m-sub">Beat the clock across random crates. Rare answers buy you time.</span>
+      </button>`;
   if (done) {
     modes.innerHTML = `
       <div class="mode primary" style="cursor:default">
+        <span class="m-art" aria-hidden="true">💿</span>
         <span class="m-meta">Today's dig is in the bag</span>
         <span class="m-title">${done.score} points</span>
         <span class="m-sub">${done.rounds.map(r => r.tier == null ? "⬛" : TIERS[r.tier].sq).join("")}</span>
       </div>
       <div class="done-row">
-        <button class="btn" id="viewBtn" type="button">See today's tracklist</button>
+        <button class="btn" id="viewBtn" type="button">See today's sleeve wall</button>
         <button class="btn" id="practiceBtn" type="button">Practice run</button>
-      </div>
-      <button class="mode" id="nightBtn" type="button">
-        <span class="m-meta">Endless</span><span class="m-title">Night Shift</span>
-        <span class="m-sub">Beat the clock across random crates. Rare answers buy you time.</span>
-      </button>`;
+      </div>${night}`;
     $("viewBtn").onclick = () => renderSummary(done, "daily", false);
     $("practiceBtn").onclick = () => startDaily(true);
   } else {
     modes.innerHTML = `
       <button class="mode primary" id="dailyBtn" type="button">
+        <span class="m-art" aria-hidden="true">💿</span>
         <span class="m-meta">Dig No. ${digNo} · 7 prompts · 25s each</span>
         <span class="m-title">Start today's dig</span>
         <span class="m-sub">Same seven crates for everyone today.</span>
-      </button>
-      <button class="mode" id="nightBtn" type="button">
-        <span class="m-meta">Endless</span><span class="m-title">Night Shift</span>
-        <span class="m-sub">Beat the clock across random crates. Rare answers buy you time.</span>
-      </button>`;
+      </button>${night}`;
     $("dailyBtn").onclick = () => startDaily(false);
   }
   $("nightBtn").onclick = startNight;
 
   const streak = store.get("streak", { last: null, count: 0 });
-  const y = new Date(todayKey + "T12:00:00"); y.setDate(y.getDate() - 1);
-  const yKey = `${y.getFullYear()}-${String(y.getMonth() + 1).padStart(2, "0")}-${String(y.getDate()).padStart(2, "0")}`;
-  $("stStreak").textContent = (streak.last === todayKey || streak.last === yKey) ? streak.count : 0;
+  $("stStreak").textContent = (streak.last === todayKey || streak.last === yesterdayKey) ? streak.count : 0;
   const bd = store.get("best:daily", null), bn = store.get("best:night", null);
   $("stDaily").textContent = bd == null ? "–" : bd;
   $("stNight").textContent = bn == null ? "–" : bn;
@@ -545,15 +790,15 @@ function renderHome() {
 /* ============================================================
    CLOCK (shared by both modes)
    ============================================================ */
-let raf = 0, clockEnd = 0, clockTotal = 1, onExpire = null, lastWhole = -1, paused = false, pauseLeft = 0;
+let raf = 0, clockEnd = 0, clockTotal = 1, onExpire = null, lastWhole = -1;
 function startClock(seconds, totalForRing, expire) {
-  clockTotal = totalForRing; clockEnd = performance.now() + seconds * 1000; onExpire = expire; lastWhole = -1; paused = false;
-  $("turntable").classList.add("spinning");
+  clockTotal = totalForRing; clockEnd = performance.now() + seconds * 1000; onExpire = expire; lastWhole = -1;
+  setSpin(true);
   cancelAnimationFrame(raf); raf = requestAnimationFrame(tickClock);
 }
 function addClock(sec) { clockEnd = Math.min(clockEnd + sec * 1000, performance.now() + NIGHT_MAX * 1000); }
-function timeLeft() { return paused ? pauseLeft : Math.max(0, (clockEnd - performance.now()) / 1000); }
-function stopClock() { cancelAnimationFrame(raf); $("turntable").classList.remove("spinning"); paused = false; }
+function timeLeft() { return Math.max(0, (clockEnd - performance.now()) / 1000); }
+function stopClock() { cancelAnimationFrame(raf); onExpire = null; setSpin(false); $("turntable").classList.remove("fast"); }
 function tickClock() {
   const left = timeLeft();
   const whole = Math.ceil(left);
@@ -562,18 +807,26 @@ function tickClock() {
   const bar = $("ringBar");
   bar.setAttribute("stroke-dashoffset", String(100 - frac * 100));
   bar.classList.toggle("low", left <= 5);
+  $("turntable").classList.toggle("fast", left <= 5);
   if (whole !== lastWhole) { if (whole <= 5 && whole > 0 && lastWhole !== -1) sfx.tick(); lastWhole = whole; }
-  if (left <= 0) { stopClock(); const f = onExpire; onExpire = null; f && f(); return; }
+  if (left <= 0) { const f = onExpire; stopClock(); f && f(); return; }
   raf = requestAnimationFrame(tickClock);
 }
 
 /* ============================================================
    DAILY DIG
    ============================================================ */
-let G = null;   // current game state
+let G = null;
+
+function setPrompt(c, label) {
+  const badge = $("catBadge"); badge.textContent = c.em; badge.style.animation = "none"; void badge.offsetWidth; badge.style.animation = "";
+  const h = $("promptText"); h.textContent = c.prompt; h.style.animation = "none"; void h.offsetWidth; h.style.animation = "";
+  $("roundLabel").textContent = label;
+}
 
 function startDaily(practice) {
   G = { mode: "daily", practice, crates: dailyCrates(), round: 0, score: 0, rounds: [], streakRare: false, locked: false };
+  resetScore();
   $("pulled").hidden = true;
   $("passBtn").textContent = "Pass";
   $("hint").textContent = "Press Enter to lock it in.";
@@ -590,17 +843,16 @@ function renderPips() {
       return `<span class="pip ${cls}" title="Track ${i + 1}"></span>`;
     }).join("");
   } else {
-    p.innerHTML = `<span class="eyebrow">Night Shift · crate ${G.crateCount}</span>`;
+    p.innerHTML = `<span class="eyebrow">Night Shift · crate ${G.crateCount} · ${G.log.length} pulled</span>`;
   }
-  $("scoreNow").textContent = G.score;
 }
 
 function playRound() {
   const c = G.crates[G.round];
   G.locked = false;
   renderPips();
-  $("roundLabel").textContent = `Track ${G.round + 1} of ${DAILY_ROUNDS} · ${c.cat}`;
-  $("promptText").textContent = c.prompt;
+  setGlow("#e8b23a");
+  setPrompt(c, `Track ${G.round + 1} of ${DAILY_ROUNDS} · ${c.cat} · ${c.entries.length} records`);
   $("askArea").hidden = false;
   $("reveal").hidden = true;
   $("flash").textContent = ""; $("flash").className = "flash";
@@ -609,11 +861,12 @@ function playRound() {
   $("dropBtn").disabled = false;
   input.focus({ preventScroll: true });
   $("disc").style.setProperty("--label", "var(--accent)");
+  sfx.start();
   startClock(DAILY_SECONDS, DAILY_SECONDS, () => lockDaily($("answerInput").value, true));
 }
 
 function lockDaily(raw, timedOut) {
-  if (G.locked) return;
+  if (!G || G.mode !== "daily" || G.locked) return;
   G.locked = true;
   stopClock();
   const c = G.crates[G.round];
@@ -627,9 +880,32 @@ function lockDaily(raw, timedOut) {
   } else G.streakRare = false;
   G.score += pts + bonus;
   G.rounds.push({ crate: c.id, prompt: c.prompt, typed: raw.trim(), answer: hit ? hit.display : null, tier: hit ? hit.tier : null, pts: pts + bonus });
-  hit ? sfx.tier(hit.tier) : sfx.miss();
   renderPips();
   showReveal(c, hit, raw.trim(), pts, bonus, timedOut);
+  if (hit) {
+    sfx.tier(hit.tier);
+    floater(`+${pts + bonus}`, TIERS[hit.tier].color);
+    countTo(G.score);
+    requestAnimationFrame(() => celebrate(hit.tier, document.querySelector(".sticker")));
+  } else sfx.miss();
+}
+
+function gaugeHTML(c, hit) {
+  const n = c.entries.length;
+  const bars = c.entries.map((e, i) => {
+    const cls = hit && e === hit ? "me" : (hit && i <= hit.idx ? "lit" : "");
+    return `<i class="${cls}" style="--c:${TIERS[e.tier].color};--k:${i}"></i>`;
+  }).join("");
+  const pos = hit ? ((hit.idx + 0.5) / n) * 100 : 0;
+  const pin = hit ? `<span class="pin" style="left:${Math.min(94, Math.max(6, pos)).toFixed(1)}%;--c:${TIERS[hit.tier].color}">You</span>` : "";
+  const note = hit
+    ? `Record ${hit.idx + 1} of ${n}. ${hit.idx === 0 ? "The most obvious answer there is." : `${Math.round((hit.idx / n) * 100)}% of the crate sat above it.`}`
+    : `${n} records in this crate and none matched.`;
+  return `<div class="gauge">
+    <div class="lbl"><span>Top of the crate</span><span>Bottom</span></div>
+    <div class="strip-wrap">${pin}<div class="strip anim">${bars}</div></div>
+    <p class="note">${note}</p>
+  </div>`;
 }
 
 function showReveal(c, hit, typed, pts, bonus, timedOut) {
@@ -646,19 +922,19 @@ function showReveal(c, hit, typed, pts, bonus, timedOut) {
   else yours = timedOut ? "The needle ran out before you dropped anything." : "You passed on this one.";
   const last = G.round >= G.crates.length - 1;
   r.innerHTML = `
-    <div class="sticker ${hit ? "" : "miss"}" style="--c:${hit ? tier.color : "transparent"}">
+    <div class="sticker ${hit ? (hit.tier === 4 ? "t4" : "") : "miss"}" style="--c:${hit ? tier.color : "transparent"}">
       <span class="tier">${hit ? tier.name : "No record"}</span>
       <span class="pts">+${pts}${bonus ? ` · segue +${bonus}` : ""}</span>
     </div>
     <p class="yours">${yours}</p>
+    ${gaugeHTML(c, hit)}
     <div class="crate">
-      <div class="lbl">Top of the crate</div>
+      <div class="lbl">Most people say</div>
       <div class="list">${top.map(chip).join("")}</div>
-      <div class="lbl">Bottom of the crate</div>
+      <div class="lbl">Deepest in the crate</div>
       <div class="list">${deep.map(chip).join("")}</div>
-      <div class="lbl">${c.entries.length} records in this crate</div>
     </div>
-    <button class="btn go" id="nextBtn" type="button" style="width:100%">${last ? "See your tracklist" : "Next track"}</button>`;
+    <button class="btn go" id="nextBtn" type="button" style="width:100%">${last ? "See your sleeve wall" : "Next track"}</button>`;
   r.hidden = false;
   const next = $("nextBtn");
   next.focus({ preventScroll: true });
@@ -676,9 +952,7 @@ function finishDaily() {
     const best = store.get("best:daily", null);
     if (best == null || G.score > best) store.set("best:daily", G.score);
     const s = store.get("streak", { last: null, count: 0 });
-    const y = new Date(todayKey + "T12:00:00"); y.setDate(y.getDate() - 1);
-    const yKey = `${y.getFullYear()}-${String(y.getMonth() + 1).padStart(2, "0")}-${String(y.getDate()).padStart(2, "0")}`;
-    if (s.last !== todayKey) store.set("streak", { last: todayKey, count: s.last === yKey ? s.count + 1 : 1 });
+    if (s.last !== todayKey) store.set("streak", { last: todayKey, count: s.last === yesterdayKey ? s.count + 1 : 1 });
   }
   renderSummary(result, "daily", G.practice);
 }
@@ -688,13 +962,16 @@ function finishDaily() {
    ============================================================ */
 function startNight() {
   G = { mode: "night", queue: shuffle(CRATE_LIST), qi: -1, score: 0, crateCount: 0, pulledHere: [], log: [], over: false };
+  resetScore();
   $("pulled").hidden = false;
   $("passBtn").textContent = `Next crate (−${NIGHT_SKIP}s)`;
   $("hint").textContent = `Up to ${NIGHT_PER_CRATE} answers per crate.`;
   $("askArea").hidden = false;
   $("reveal").hidden = true;
+  $("flash").textContent = "";
   show("play");
   nextCrate();
+  sfx.start();
   startClock(NIGHT_START, NIGHT_MAX, endNight);
   $("answerInput").focus({ preventScroll: true });
 }
@@ -705,8 +982,7 @@ function nextCrate() {
   G.crateCount++;
   G.pulledHere = [];
   const c = G.queue[G.qi];
-  $("roundLabel").textContent = c.cat;
-  $("promptText").textContent = c.prompt;
+  setPrompt(c, `${c.cat} · ${c.entries.length} records`);
   $("answerInput").value = "";
   $("answerInput").disabled = false;
   $("dropBtn").disabled = false;
@@ -714,8 +990,8 @@ function nextCrate() {
   renderPips();
 }
 
-function renderPulled() {
-  const chips = G.pulledHere.map(e => `<span class="chip" style="--c:${TIERS[e.tier].color}"><i></i>${esc(e.display)}</span>`);
+function renderPulled(fresh) {
+  const chips = G.pulledHere.map(e => `<span class="chip ${e === fresh ? "new" : ""}" style="--c:${TIERS[e.tier].color}"><i></i>${esc(e.display)}</span>`);
   while (chips.length < NIGHT_PER_CRATE) chips.push(`<span class="chip empty">empty slot</span>`);
   $("pulled").innerHTML = chips.join("");
 }
@@ -723,14 +999,15 @@ function renderPulled() {
 function flash(msg, kind) { const f = $("flash"); f.textContent = msg; f.className = "flash " + (kind || ""); }
 
 function submitNight(raw) {
-  if (G.over) return;
+  if (!G || G.over) return;
   const c = G.queue[G.qi];
   const typed = raw.trim();
   if (!typed) return;
   const hit = findAnswer(c, typed);
   $("answerInput").value = "";
   if (!hit) {
-    addClock(-NIGHT_MISS); sfx.miss();
+    addClock(-NIGHT_MISS); sfx.miss(); restart($("answerForm"), "wrong");
+    timeBump(`−${NIGHT_MISS}s`, "var(--danger)");
     flash(`"${typed}" isn't in this crate. −${NIGHT_MISS}s`, "bad");
     return;
   }
@@ -738,20 +1015,27 @@ function submitNight(raw) {
   const t = TIERS[hit.tier];
   G.pulledHere.push(hit);
   G.score += t.pts;
-  G.log.push({ prompt: c.prompt, answer: hit.display, tier: hit.tier, pts: t.pts });
+  G.log.push({ crate: c.id, prompt: c.prompt, answer: hit.display, tier: hit.tier, pts: t.pts });
   addClock(t.time); sfx.tier(hit.tier);
+  floater(`+${t.pts}`, t.color); countTo(G.score);
+  timeBump(`+${t.time}s`, t.color);
   $("disc").style.setProperty("--label", t.color);
+  celebrate(hit.tier, $("pulled"));
   flash(`${hit.display}: ${t.name}, +${t.pts} pts, +${t.time}s`, "good");
-  renderPulled(); renderPips();
-  if (G.pulledHere.length >= NIGHT_PER_CRATE) setTimeout(() => { if (!G.over) nextCrate(); }, 350);
+  renderPulled(hit); renderPips();
+  if (G.pulledHere.length >= NIGHT_PER_CRATE) {
+    const game = G;
+    setTimeout(() => { if (G === game && !G.over) { nextCrate(); sfx.start(); } }, 450);
+  }
 }
 
 function endNight() {
+  if (!G || G.mode !== "night" || G.over) return;
   G.over = true;
   $("answerInput").disabled = true;
   sfx.end();
   const best = store.get("best:night", null);
-  const isBest = best == null || G.score > best;
+  const isBest = G.score > 0 && (best == null || G.score > best);
   if (isBest) store.set("best:night", G.score);
   renderSummary({ score: G.score, log: G.log, crates: G.crateCount, isBest }, "night", false);
 }
@@ -768,61 +1052,65 @@ $("answerForm").addEventListener("submit", e => {
 $("passBtn").onclick = () => {
   if (!G) return;
   if (G.mode === "daily") lockDaily("", false);
-  else if (!G.over) { addClock(-NIGHT_SKIP); flash(`Skipped. −${NIGHT_SKIP}s`, ""); nextCrate(); $("answerInput").focus({ preventScroll: true }); }
+  else if (!G.over) { addClock(-NIGHT_SKIP); timeBump(`−${NIGHT_SKIP}s`, "var(--muted)"); flash(`Skipped. −${NIGHT_SKIP}s`, ""); nextCrate(); sfx.start(); $("answerInput").focus({ preventScroll: true }); }
 };
 
 /* ============================================================
    SUMMARY
    ============================================================ */
+function coverHTML(r, i) {
+  const c = CRATE_BY_ID[r.crate];
+  const em = c ? c.em : "💿";
+  if (r.tier == null) return `<div class="cover miss" style="--c:var(--t-miss);--i:${i}">
+      <span class="em">${em}</span>
+      <span class="q">${esc(r.prompt)}</span>
+      <span><span class="ttl">${r.typed ? `<s>${esc(r.typed)}</s>` : "No record"}</span><br><span class="meta">0 PTS</span></span>
+    </div>`;
+  const t = TIERS[r.tier];
+  return `<div class="cover" style="--c:${t.color};--i:${i}">
+      <span class="em">${em}</span>
+      <span class="q">${esc(r.prompt)}</span>
+      <span><span class="ttl">${esc(r.answer)}</span><br><span class="meta">${t.name.toUpperCase()} · ${r.pts}</span></span>
+    </div>`;
+}
+
 function renderSummary(res, mode, practice) {
   stopClock();
   const s = $("summary");
+  let shareText;
   if (mode === "daily") {
     const squares = res.rounds.map(r => r.tier == null ? "⬛" : TIERS[r.tier].sq).join("");
-    const shareText = `Crate Digger No. ${res.dig}\n${squares}\n${res.score} pts`;
+    shareText = `Crate Digger No. ${res.dig}\n${squares}\n${res.score} pts`;
     const dubs = res.rounds.filter(r => r.tier === 4).length;
     s.innerHTML = `
       <div class="total">
         <span class="eyebrow">${practice ? "Practice run, not saved" : `Dig No. ${res.dig}`}</span>
-        <span class="big">${res.score}</span>
+        <span class="big" id="bigScore">0</span>
         <span class="sub">${verdict(res.score)}${dubs ? ` · ${dubs} dubplate${dubs > 1 ? "s" : ""}` : ""}</span>
       </div>
-      <ol class="tracklist">
-        ${res.rounds.map((r, i) => `
-          <li>
-            <span class="no">${String(i + 1).padStart(2, "0")}</span>
-            <span class="t"><small>${esc(r.prompt)}</small><span>${r.answer ? esc(r.answer) : (r.typed ? `<s>${esc(r.typed)}</s>` : "—")}</span></span>
-            ${r.tier == null ? `<span class="tag miss">0</span>` : `<span class="tag" style="--c:${TIERS[r.tier].color}">${TIERS[r.tier].name} · ${r.pts}</span>`}
-          </li>`).join("")}
-      </ol>
+      <span class="eyebrow">Your sleeve wall</span>
+      <div class="wall">${res.rounds.map(coverHTML).join("")}</div>
       <div class="share">
-        <span class="eyebrow">Share your sleeve</span>
-        <pre id="shareText">${esc(shareText)}</pre>
+        <span class="eyebrow">Share your result</span>
+        <pre>${esc(shareText)}</pre>
         <button class="btn" id="copyBtn" type="button">Copy result</button>
       </div>
       <div class="actions">
         <button class="btn go" id="sumNight" type="button">Play Night Shift</button>
         <button class="btn" id="sumHome" type="button">Back to start</button>
       </div>`;
-    $("copyBtn").onclick = () => copy(shareText);
   } else {
-    const shareText = `Crate Digger · Night Shift\n${res.log.length} records across ${res.crates} crates\n${res.score} pts`;
-    const best = res.log.slice().sort((a, b) => b.tier - a.tier || 0).slice(0, 8);
+    shareText = `Crate Digger · Night Shift\n${res.log.length} records across ${res.crates} crates\n${res.score} pts`;
+    const best = res.log.slice().sort((a, b) => b.tier - a.tier).slice(0, 8);
     s.innerHTML = `
       <div class="total">
         <span class="eyebrow">Night Shift over${res.isBest ? " · new best" : ""}</span>
-        <span class="big">${res.score}</span>
+        <span class="big" id="bigScore">0</span>
         <span class="sub">${res.log.length} records pulled from ${res.crates} crates</span>
       </div>
       ${best.length ? `<span class="eyebrow">Your deepest pulls</span>
-      <ol class="tracklist">
-        ${best.map((r, i) => `
-          <li>
-            <span class="no">${String(i + 1).padStart(2, "0")}</span>
-            <span class="t"><small>${esc(r.prompt)}</small><span>${esc(r.answer)}</span></span>
-            <span class="tag" style="--c:${TIERS[r.tier].color}">${TIERS[r.tier].name}</span>
-          </li>`).join("")}
-      </ol>` : `<p class="hint" style="text-align:center">No records pulled this shift. Type fast, the clock only stops at zero.</p>`}
+      <div class="wall">${best.map(coverHTML).join("")}</div>`
+      : `<p class="hint" style="text-align:center">No records pulled this shift. Type fast, the clock only stops at zero.</p>`}
       <div class="share">
         <span class="eyebrow">Share your shift</span>
         <pre>${esc(shareText)}</pre>
@@ -832,11 +1120,17 @@ function renderSummary(res, mode, practice) {
         <button class="btn go" id="sumNight" type="button">Another shift</button>
         <button class="btn" id="sumHome" type="button">Back to start</button>
       </div>`;
-    $("copyBtn").onclick = () => copy(shareText);
   }
+  $("copyBtn").onclick = () => copy(shareText);
   $("sumNight").onclick = startNight;
   $("sumHome").onclick = renderHome;
   show("summary");
+  const big = $("bigScore"), t0 = performance.now(), dur = 1100;
+  const step = now => { const k = Math.min(1, (now - t0) / dur), e = 1 - Math.pow(1 - k, 3); big.textContent = Math.round(res.score * e); if (k < 1) requestAnimationFrame(step); };
+  requestAnimationFrame(step);
+  const list = mode === "daily" ? res.rounds : res.log;
+  const bestTier = Math.max(-1, ...list.map(r => r.tier == null ? -1 : r.tier));
+  if (bestTier >= 0) setTimeout(() => { const [x, y] = centerOf(big); burst(x, y, ["#e8b23a", "#b48cff", "#3fb8a8", "#f4f1ec", "#ff9bd2"], 40 + bestTier * 25, 1.2); }, 300);
 }
 
 function verdict(score) {
