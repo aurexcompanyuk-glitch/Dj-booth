@@ -261,12 +261,13 @@ form.answer.wrong input { animation: nope .35s; border-color: var(--danger); }
 
     <div class="stats">
       <div class="stat"><b id="stStreak">0</b><span>Day streak</span></div>
-      <div class="stat"><b id="stDaily">–</b><span>Best daily</span></div>
+      <div class="stat"><b id="stDaily">–</b><span>Best dig</span></div>
       <div class="stat"><b id="stNight">–</b><span>Deepest shift</span></div>
     </div>
 
     <div class="howto">
-      <p><strong>The Daily Dig:</strong> seven prompts, one answer each, 25 seconds of fuel per prompt. Everyone gets the same seven today.</p>
+      <p><strong>Digs:</strong> seven prompts, one answer each, 25 seconds of fuel per prompt. Start as many digs as you like; the prompts change every time.</p>
+      <p><strong>Today's dig:</strong> the same seven prompts for everyone, once a day. Play it to keep your streak going.</p>
       <p><strong>How deep it goes:</strong> a Chart Hit stops in the clay, an Album Track in sandstone, a B-Side in the fossil bed and a White Label in granite. A Dubplate smashes into the vault.</p>
       <p><strong>Segue bonus:</strong> land a B-Side or rarer twice in a row and the second one earns +15.</p>
       <p><strong>Night Shift:</strong> one hole, 60 seconds of fuel, three answers per crate. Every answer drills further down and rare ones refuel you. Wrong answers jam the drill and cost 3 seconds.</p>
@@ -1518,39 +1519,37 @@ $("homeBtn").onclick = () => { stopClock(); G = null; renderHome(); };
 function renderHome() {
   setGlow("#e8b23a");
   const prettyDate = new Date(todayKey + "T12:00:00").toLocaleDateString(undefined, { weekday: "long", day: "numeric", month: "long" });
-  $("dateLine").textContent = `Dig No. ${digNo} · ${prettyDate}`;
+  $("dateLine").textContent = prettyDate;
   const done = store.get("daily:" + todayKey, null);
-  const modes = $("modes");
-  const night = `
+  const digs = store.get("digs", 0);
+  const daily = done
+    ? `<button class="mode" id="dailyBtn" type="button">
+        <span class="m-art" aria-hidden="true">📅</span>
+        <span class="m-meta">Today's dig · No. ${digNo} · done</span>
+        <span class="m-title">${done.score} points</span>
+        <span class="m-sub">${done.rounds.map(r => r.tier == null ? "⬛" : TIERS[r.tier].sq).join("")} · see your dig site</span>
+      </button>`
+    : `<button class="mode" id="dailyBtn" type="button">
+        <span class="m-art" aria-hidden="true">📅</span>
+        <span class="m-meta">No. ${digNo} · once a day</span>
+        <span class="m-title">Today's dig</span>
+        <span class="m-sub">The same seven prompts for everyone today. Play it to keep your streak.</span>
+      </button>`;
+  $("modes").innerHTML = `
+      <button class="mode primary" id="freeBtn" type="button">
+        <span class="m-art" aria-hidden="true">⛏️</span>
+        <span class="m-meta">Unlimited · 7 prompts · 25s each</span>
+        <span class="m-title">${digs ? "Dig again" : "Start digging"}</span>
+        <span class="m-sub">New prompts every dig. Play as many as you like.${digs ? ` You've dug ${fmt(digs)} time${digs === 1 ? "" : "s"}.` : ""}</span>
+      </button>
+      ${daily}
       <button class="mode" id="nightBtn" type="button">
         <span class="m-art" aria-hidden="true">🌙</span>
         <span class="m-meta">Endless</span><span class="m-title">Night Shift</span>
         <span class="m-sub">One hole, one tank of fuel. How deep can you get?</span>
       </button>`;
-  if (done) {
-    modes.innerHTML = `
-      <div class="mode primary" style="cursor:default">
-        <span class="m-art" aria-hidden="true">⛏️</span>
-        <span class="m-meta">Today's dig is in the bag</span>
-        <span class="m-title">${done.score} points</span>
-        <span class="m-sub">${done.rounds.map(r => r.tier == null ? "⬛" : TIERS[r.tier].sq).join("")}</span>
-      </div>
-      <div class="done-row">
-        <button class="btn" id="viewBtn" type="button">See today's dig site</button>
-        <button class="btn" id="practiceBtn" type="button">Practice run</button>
-      </div>${night}`;
-    $("viewBtn").onclick = () => renderSummary(done, "daily", false);
-    $("practiceBtn").onclick = () => startDaily(true);
-  } else {
-    modes.innerHTML = `
-      <button class="mode primary" id="dailyBtn" type="button">
-        <span class="m-art" aria-hidden="true">⛏️</span>
-        <span class="m-meta">Dig No. ${digNo} · 7 prompts · 25s each</span>
-        <span class="m-title">Start today's dig</span>
-        <span class="m-sub">Same seven crates for everyone today.</span>
-      </button>${night}`;
-    $("dailyBtn").onclick = () => startDaily(false);
-  }
+  $("freeBtn").onclick = () => startDig("free");
+  $("dailyBtn").onclick = done ? () => renderSummary(done, "daily") : () => startDig("daily");
   $("nightBtn").onclick = startNight;
 
   const streak = store.get("streak", { last: null, count: 0 });
@@ -1596,8 +1595,17 @@ function setPrompt(c, label) {
   $("roundLabel").textContent = label;
 }
 
-function startDaily(practice) {
-  G = { mode: "daily", practice, crates: dailyCrates(), round: 0, score: 0, rounds: [], streakRare: false, locked: false };
+/* Crates for an unlimited dig: every crate comes up once, in a shuffled order, before any repeats. */
+function freeCrates() {
+  let rot = store.get("rotation", []);
+  rot = Array.isArray(rot) ? rot.filter(id => CRATE_BY_ID[id]) : [];
+  if (rot.length < DAILY_ROUNDS) rot = rot.concat(shuffle(CRATE_LIST.map(c => c.id).filter(id => !rot.includes(id))));
+  store.set("rotation", rot.slice(DAILY_ROUNDS));
+  return rot.slice(0, DAILY_ROUNDS).map(id => CRATE_BY_ID[id]);
+}
+
+function startDig(kind) {
+  G = { mode: "daily", kind, crates: kind === "daily" ? dailyCrates() : freeCrates(), round: 0, score: 0, rounds: [], streakRare: false, locked: false };
   resetScore();
   $("pulled").hidden = true;
   $("passBtn").textContent = "Pass";
@@ -1729,15 +1737,17 @@ function showReveal(c, hit, typed, pts, bonus, timedOut) {
 
 function finishDaily() {
   sfx.end();
-  const result = { date: todayKey, dig: digNo, score: G.score, rounds: G.rounds };
-  if (!G.practice) {
+  const num = store.get("digs", 0) + 1;
+  store.set("digs", num);
+  const result = { date: todayKey, dig: digNo, num, kind: G.kind, score: G.score, rounds: G.rounds };
+  const best = store.get("best:daily", null);
+  if (best == null || G.score > best) store.set("best:daily", G.score);
+  if (G.kind === "daily") {
     store.set("daily:" + todayKey, result);
-    const best = store.get("best:daily", null);
-    if (best == null || G.score > best) store.set("best:daily", G.score);
     const s = store.get("streak", { last: null, count: 0 });
     if (s.last !== todayKey) store.set("streak", { last: todayKey, count: s.last === yesterdayKey ? s.count + 1 : 1 });
   }
-  renderSummary(result, "daily", G.practice);
+  renderSummary(result, "daily");
 }
 
 /* ============================================================
@@ -1870,7 +1880,7 @@ function coverHTML(r, i) {
     </div>`;
 }
 
-function renderSummary(res, mode, practice) {
+function renderSummary(res, mode) {
   stopClock();
   const s = $("summary");
   let shareText, holes, opts;
@@ -1878,13 +1888,15 @@ function renderSummary(res, mode, practice) {
     const squares = res.rounds.map(r => r.tier == null ? "⬛" : TIERS[r.tier].sq).join("");
     const drilled = res.rounds.reduce((m, r) => m + (r.tier == null ? 0 : TIER_DEPTH[r.tier]), 0);
     const deepest = Math.max(-1, ...res.rounds.map(r => r.tier == null ? -1 : r.tier));
-    shareText = `Crate Digger No. ${res.dig}\n${squares}\n${res.score} pts · ${fmt(drilled)} m drilled`;
+    const isDaily = (res.kind || "daily") === "daily";
+    const label = isDaily ? `Today's dig · No. ${res.dig}` : `Dig #${fmt(res.num || 1)}`;
+    shareText = `Crate Digger · ${label}\n${squares}\n${res.score} pts · ${fmt(drilled)} m drilled`;
     const dubs = res.rounds.filter(r => r.tier === 4).length;
     holes = res.rounds.map((r, i) => ({ slot: i, n: res.rounds.length, tier: r.tier, dud: r.tier == null, depth: r.tier == null ? 0 : TIER_DEPTH[r.tier] }));
     opts = { fit: 720, speed: 3 };
     s.innerHTML = `
       <div class="total">
-        <span class="eyebrow">${practice ? "Practice run, not saved" : `Dig No. ${res.dig}`}</span>
+        <span class="eyebrow">${esc(label)}</span>
         <span class="big" id="bigScore">0</span>
         <span class="sub">${verdict(res.score)}${dubs ? ` · ${dubs} dubplate${dubs > 1 ? "s" : ""}` : ""}</span>
       </div>
@@ -1900,8 +1912,9 @@ function renderSummary(res, mode, practice) {
         <button class="btn" id="copyBtn" type="button">Copy result</button>
       </div>
       <div class="actions">
-        <button class="btn go" id="sumNight" type="button">Play Night Shift</button>
-        <button class="btn" id="sumHome" type="button">Back to start</button>
+        <button class="btn go" id="sumAgain" type="button">Dig again</button>
+        <button class="btn" id="sumOther" type="button">Night Shift</button>
+        <button class="btn ghost" id="sumHome" type="button">Back to start</button>
       </div>`;
   } else {
     const depth = res.depth || 0, reached = LAYERS[layerIndexAt(depth)].name;
@@ -1927,14 +1940,17 @@ function renderSummary(res, mode, practice) {
         <button class="btn" id="copyBtn" type="button">Copy result</button>
       </div>
       <div class="actions">
-        <button class="btn go" id="sumNight" type="button">Another shift</button>
-        <button class="btn" id="sumHome" type="button">Back to start</button>
+        <button class="btn go" id="sumAgain" type="button">Another shift</button>
+        <button class="btn" id="sumOther" type="button">Start a dig</button>
+        <button class="btn ghost" id="sumHome" type="button">Back to start</button>
       </div>`;
   }
   $("copyBtn").onclick = () => copy(shareText);
-  $("sumNight").onclick = startNight;
+  $("sumAgain").onclick = mode === "night" ? startNight : () => startDig("free");
+  $("sumOther").onclick = mode === "night" ? () => startDig("free") : startNight;
   $("sumHome").onclick = renderHome;
   show("summary");
+  $("sumAgain").focus({ preventScroll: true });
   if (siteScene) { siteScene.stop(); SCENES.splice(SCENES.indexOf(siteScene), 1); }
   siteScene = createScene($("siteCanvas"), "summary");
   siteScene.start();
