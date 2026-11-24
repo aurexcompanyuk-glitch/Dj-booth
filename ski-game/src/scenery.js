@@ -1,8 +1,9 @@
-// Instanced trees and rocks (tiled, two LODs), run marker poles, start gates, base lodge, chairlift.
+// Instanced trees and rocks (tiled, two LODs), run marker poles, start and finish gates, lodges,
+// chairlift, collectible rings, soaring birds over the thermals and the ski-flying distance boards.
 import * as THREE from 'three';
 import { mulberry32, Simplex2 } from './noise.js';
 import { lerp, clamp } from './util.js';
-import { HALF, LIFT_X, LODGE, DIFF, ridgeZ } from './world.js';
+import { HALF, LIFT_X, LODGE, HUT, DIFF, ridgeZ, VALLEY_F } from './world.js';
 
 // ------------------------------------------------------------------ geometry helpers
 function pushTri(out, a, b, c, ca, cb, cc) {
@@ -201,9 +202,13 @@ export class Scenery {
 
     this.buildMarkers();
     this.buildParkMarkers();
+    this.buildPipeFlags();
     this.buildStartGates();
     this.buildLodge();
     this.buildLift();
+    this.buildRings();
+    this.buildBirds();
+    this.buildFlightBoards();
   }
 
   buildMarkers() {
@@ -282,47 +287,99 @@ export class Scenery {
     this.group.add(lines, cones);
   }
 
+  banner(text, sub, color, badge) {
+    const canvas = document.createElement('canvas');
+    canvas.width = 768; canvas.height = 120;
+    const ctx = canvas.getContext('2d');
+    ctx.fillStyle = '#0d1420'; ctx.fillRect(0, 0, 768, 120);
+    ctx.fillStyle = color; ctx.fillRect(0, 0, 120, 120);
+    ctx.fillStyle = '#fff';
+    ctx.font = 'bold 22px sans-serif'; ctx.textAlign = 'center';
+    ctx.fillText(badge, 60, 68);
+    ctx.textAlign = 'left';
+    ctx.font = 'italic 900 56px sans-serif';
+    ctx.fillText(text, 142, sub ? 76 : 82, 610);
+    if (sub) {
+      ctx.fillStyle = 'rgba(255,255,255,0.55)';
+      ctx.font = 'bold 20px sans-serif';
+      ctx.fillText(sub, 144, 106, 600);
+    }
+    const tex = new THREE.CanvasTexture(canvas);
+    tex.colorSpace = THREE.SRGBColorSpace;
+    tex.anisotropy = 4;
+    return new THREE.MeshBasicMaterial({ map: tex, side: THREE.DoubleSide, fog: true });
+  }
+
+  gate(run, s, halfW, mat, postMat) {
+    const w = this.world;
+    const c = w.runPoint(run, s, 0);
+    const left = w.runPoint(run, s, halfW), right = w.runPoint(run, s, -halfW);
+    const hl = w.height(left.x, left.z), hr = w.height(right.x, right.z);
+    const top = Math.max(hl, hr, w.height(c.x, c.z)) + 5.2;
+    for (const [pt, h] of [[left, hl], [right, hr]]) {
+      const post = new THREE.Mesh(new THREE.CylinderGeometry(0.12, 0.14, top - h + 0.6, 8), postMat);
+      post.position.set(pt.x, (top + h) / 2 - 0.3, pt.z);
+      post.castShadow = true;
+      this.group.add(post);
+    }
+    const banner = new THREE.Mesh(new THREE.PlaneGeometry(halfW * 2, halfW * 2 * (120 / 768)), mat);
+    banner.position.set(c.x, top - 0.6, c.z);
+    banner.rotation.y = Math.atan2(c.dx, c.dz) + Math.PI;
+    this.group.add(banner);
+  }
+
   buildStartGates() {
     const w = this.world;
     const postMat = new THREE.MeshStandardMaterial({ color: 0x2a2d33, roughness: 0.5, metalness: 0.6 });
-    w.runs.forEach((run, ri) => {
-      const p = w.runPoint(run, 16, 0);
-      const pose = w.startPose(ri);
-      const g = new THREE.Group();
-      const gx = p.x, gz = p.z;
-      const left = w.runPoint(run, 16, 7), right = w.runPoint(run, 16, -7);
-      const hl = w.height(left.x, left.z), hr = w.height(right.x, right.z);
-      const top = Math.max(hl, hr) + 5.2;
-      for (const [pt, h] of [[left, hl], [right, hr]]) {
-        const post = new THREE.Mesh(new THREE.CylinderGeometry(0.12, 0.14, top - h + 0.6, 8), postMat);
-        post.position.set(pt.x, (top + h) / 2 - 0.3, pt.z);
-        post.castShadow = true;
-        g.add(post);
-      }
-      const canvas = document.createElement('canvas');
-      canvas.width = 1024; canvas.height = 160;
-      const ctx = canvas.getContext('2d');
+    const finishMat = this.banner('FINISH', '', '#0d1420', '◼◻◼');
+    w.runs.forEach((run) => {
       const d = DIFF[run.diff];
-      ctx.fillStyle = '#0d1420'; ctx.fillRect(0, 0, 1024, 160);
-      ctx.fillStyle = d.color; ctx.fillRect(0, 0, 160, 160);
-      ctx.fillStyle = '#fff';
-      ctx.font = 'bold 30px sans-serif'; ctx.textAlign = 'center';
-      ctx.fillText(d.short, 80, 92);
-      ctx.textAlign = 'left';
-      ctx.font = 'italic 900 78px sans-serif';
-      ctx.fillText(run.name.toUpperCase(), 190, 108);
-      ctx.fillStyle = 'rgba(255,255,255,0.55)';
-      ctx.font = 'bold 26px sans-serif';
-      ctx.fillText(`${run.stats.length} m  ·  ${run.stats.vertical} m vertical  ·  max ${run.stats.maxDeg}°`, 192, 146);
-      const tex = new THREE.CanvasTexture(canvas);
-      tex.colorSpace = THREE.SRGBColorSpace;
-      tex.anisotropy = 4;
-      const banner = new THREE.Mesh(new THREE.PlaneGeometry(14, 2.2), new THREE.MeshBasicMaterial({ map: tex, side: THREE.DoubleSide, fog: true }));
-      banner.position.set(gx, top - 0.6, gz);
-      banner.rotation.y = pose.heading + Math.PI;
-      g.add(banner);
-      this.group.add(g);
+      const mat = this.banner(run.name.toUpperCase(), `${run.stats.length} m  ·  ${run.stats.vertical} m vertical  ·  max ${run.stats.maxDeg}°`, d.color, d.short);
+      this.gate(run, 16, 7, mat, postMat);
+      this.gate(run, run.length - 95, 11, finishMat, postMat);
     });
+  }
+
+  // Flags along both decks of the superpipe
+  buildPipeFlags() {
+    const w = this.world;
+    const pts = [];
+    for (const f of w.pipes) {
+      for (let u = 0; u <= f.len; u += 14) for (const side of [-1, 1]) {
+        const v = side * (f.lipV + 2.2);
+        pts.push([f.cx + f.dx * u - f.dz * v, f.cz + f.dz * u + f.dx * v]);
+      }
+    }
+    if (!pts.length) return;
+    // painted lip lines so the walls read clearly against white snow
+    const segs = [];
+    for (const f of w.pipes) {
+      for (let u = 3; u < f.len - 3; u += 6) for (const side of [-1, 1]) segs.push([f, u, side * (f.lipV - 0.35)]);
+    }
+    const lip = new THREE.InstancedMesh(new THREE.BoxGeometry(0.3, 0.07, 6.3), new THREE.MeshLambertMaterial({ color: 0x1c64ff, emissive: 0x0a2a80 }), segs.length);
+    const lm = new THREE.Matrix4(), lq = new THREE.Quaternion(), le = new THREE.Euler(0, 0, 0, 'YXZ'), lp = new THREE.Vector3(), ls = new THREE.Vector3(1, 1, 1);
+    segs.forEach(([f, u, v], i) => {
+      const at = (uu) => { const x = f.cx + f.dx * uu - f.dz * v, z = f.cz + f.dz * uu + f.dx * v; return [x, w.height(x, z), z]; };
+      const a = at(u - 3), b = at(u + 3), c = at(u);
+      le.set(Math.atan2(a[1] - b[1], 6), Math.atan2(f.dx, f.dz), 0);
+      lq.setFromEuler(le);
+      lp.set(c[0], (a[1] + b[1]) / 2 + 0.04, c[2]);
+      lm.compose(lp, lq, ls);
+      lip.setMatrixAt(i, lm);
+    });
+    lip.instanceMatrix.needsUpdate = true;
+    lip.computeBoundingSphere();
+    this.group.add(lip);
+    const out = { p: [], n: [], c: [] };
+    cylinder(out, 0.03, 0.03, 0, 1.6, 5, [0.1, 0.1, 0.12]);
+    pushTri(out, [0, 1.6, 0], [0.7, 1.4, 0], [0, 1.2, 0], [1, 0.45, 0.05], [1, 0.45, 0.05], [1, 0.45, 0.05]);
+    pushTri(out, [0, 1.6, 0], [0, 1.2, 0], [0.7, 1.4, 0], [1, 0.45, 0.05], [1, 0.45, 0.05], [1, 0.45, 0.05]);
+    const im = new THREE.InstancedMesh(toGeometry(out), new THREE.MeshLambertMaterial({ vertexColors: true }), pts.length);
+    const m = new THREE.Matrix4();
+    pts.forEach(([x, z], i) => { m.makeTranslation(x, w.height(x, z) - 0.1, z); im.setMatrixAt(i, m); });
+    im.instanceMatrix.needsUpdate = true;
+    im.computeBoundingSphere();
+    this.group.add(im);
   }
 
   buildLodge() {
@@ -362,12 +419,15 @@ export class Scenery {
     makeChalet(LODGE.x + 52, LODGE.z + 24, 14, 10, 5, -0.3);
     makeChalet(LODGE.x - 20, LODGE.z + 70, 10, 8, 4, 0.9);
     makeChalet(LODGE.x + 18, LODGE.z + 82, 11, 8, 4, -0.7);
+    makeChalet(HUT.x, HUT.z, 16, 10, 5, Math.PI);
+    makeChalet(HUT.x + 34, HUT.z - 22, 9, 7, 4, Math.PI + 0.5);
+    this.lodgeGlass = glass;
     this.group.add(g);
   }
 
   buildLift() {
     const w = this.world;
-    const z0 = 1500, z1 = ridgeZ(LIFT_X) + 140;
+    const z0 = VALLEY_F + 120, z1 = ridgeZ(LIFT_X) + 140;
     const towers = [];
     const steps = Math.ceil((z0 - z1) / 140);
     for (let i = 0; i <= steps; i++) {
@@ -463,9 +523,141 @@ export class Scenery {
     this.chairs.instanceMatrix.needsUpdate = true;
   }
 
+  // ---------------------------------------------------------------- collectible rings
+  buildRings() {
+    const rings = this.world.rings;
+    const geo = new THREE.TorusGeometry(1, 0.075, 8, 28);
+    const mat = new THREE.MeshBasicMaterial({ color: 0xffffff, fog: true });
+    this.ringMesh = new THREE.InstancedMesh(geo, mat, rings.length);
+    const disc = new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.16, side: THREE.DoubleSide, depthWrite: false, fog: true });
+    this.ringDisc = new THREE.InstancedMesh(new THREE.CircleGeometry(0.93, 24), disc, rings.length);
+    this.ringDisc.renderOrder = 3;
+    const gold = new THREE.Color(0xffc21a), cyan = new THREE.Color(0x35e0ff);
+    rings.forEach((r, i) => {
+      this.ringMesh.setColorAt(i, r.sky ? cyan : gold);
+      this.ringDisc.setColorAt(i, r.sky ? cyan : gold);
+    });
+    this.ringMesh.instanceColor.needsUpdate = true;
+    this.ringDisc.instanceColor.needsUpdate = true;
+    this.ringMesh.frustumCulled = false;
+    this.ringDisc.frustumCulled = false;
+    this.group.add(this.ringMesh, this.ringDisc);
+    this._rm = new THREE.Matrix4(); this._rq = new THREE.Quaternion(); this._rs = new THREE.Vector3(); this._rp = new THREE.Vector3();
+    this.refreshRings();
+  }
+
+  // Re-writes every ring's transform from world.rings (collected rings shrink away)
+  refreshRings() {
+    const rings = this.world.rings;
+    const up = this._yAxis || (this._yAxis = new THREE.Vector3(0, 1, 0));
+    rings.forEach((r, i) => {
+      this._rq.setFromAxisAngle(up, Math.atan2(r.dx, r.dz));
+      const sc = r.got ? 0.0001 : r.r;
+      this._rs.set(sc, sc, sc);
+      this._rp.set(r.x, r.y, r.z);
+      this._rm.compose(this._rp, this._rq, this._rs);
+      this.ringMesh.setMatrixAt(i, this._rm);
+      this.ringDisc.setMatrixAt(i, this._rm);
+    });
+    this.ringMesh.instanceMatrix.needsUpdate = true;
+    this.ringDisc.instanceMatrix.needsUpdate = true;
+  }
+
+  // ---------------------------------------------------------------- birds circling in the thermals
+  buildBirds() {
+    const th = this.world.thermals;
+    const per = 4;
+    const out = { p: [], n: [], c: [] };
+    const dark = [0.12, 0.1, 0.09], tipc = [0.2, 0.18, 0.16];
+    for (const sx of [1, -1]) {
+      pushTri(out, [0, 0, 0.35], [sx * 1.25, 0.28, -0.1], [0, 0, -0.3], dark, tipc, dark);
+      pushTri(out, [0, 0, 0.35], [0, 0, -0.3], [sx * 1.25, 0.28, -0.1], dark, dark, tipc);
+    }
+    this.birds = new THREE.InstancedMesh(toGeometry(out), new THREE.MeshLambertMaterial({ vertexColors: true }), th.length * per);
+    this.birds.frustumCulled = false;
+    this.birdData = [];
+    th.forEach((t, ti) => {
+      const base = this.world.heightBase(t.x, t.z);
+      for (let k = 0; k < per; k++) {
+        this.birdData.push({ t, base, r: 22 + ((ti * 7 + k * 13) % 30), w: 0.22 + ((ti + k * 3) % 5) * 0.035, ph: k * 1.7 + ti, h: 70 + k * 45 + ((ti * 11) % 40) });
+      }
+    });
+    this.group.add(this.birds);
+    this.birdT = 0;
+    this._be = new THREE.Euler(0, 0, 0, 'YXZ');
+  }
+
+  updateBirds(dt) {
+    this.birdT += dt;
+    const m = this._rm, q = this._rq, p = this._rp, s = this._rs.set(1, 1, 1), e = this._be;
+    this.birdData.forEach((b, i) => {
+      const a = b.ph + this.birdT * b.w;
+      const climb = (this.birdT * 1.6 + b.ph * 40) % 220;
+      p.set(b.t.x + Math.cos(a) * b.r, b.base + b.h + climb, b.t.z + Math.sin(a) * b.r);
+      // heading along the circle's tangent, banked into the turn
+      e.set(0, Math.atan2(-Math.sin(a), Math.cos(a)), 0.45);
+      q.setFromEuler(e);
+      m.compose(p, q, s);
+      this.birds.setMatrixAt(i, m);
+    });
+    this.birds.instanceMatrix.needsUpdate = true;
+  }
+
+  // ---------------------------------------------------------------- ski-flying distance boards
+  buildFlightBoards() {
+    const w = this.world, f = w.flightDeck;
+    if (!f) return;
+    const lip = new THREE.Vector3(f.cx, w.height(f.cx - f.dx * 0.5, f.cz - f.dz * 0.5), f.cz);
+    this.flightLip = lip;
+    const marks = [50, 100, 150, 200, 250, 300];
+    const lineMat = new THREE.MeshLambertMaterial({ color: 0xd8262c });
+    const lines = new THREE.InstancedMesh(new THREE.BoxGeometry(1, 0.08, 0.5), lineMat, marks.length);
+    const postMat = new THREE.MeshStandardMaterial({ color: 0x2a2d33, roughness: 0.5, metalness: 0.6 });
+    const m = new THREE.Matrix4(), q = new THREE.Quaternion(), sc = new THREE.Vector3(), p = new THREE.Vector3();
+    const yaw = Math.atan2(f.dx, f.dz);
+    q.setFromAxisAngle(new THREE.Vector3(0, 1, 0), yaw);
+    let li = 0;
+    for (const dist of marks) {
+      // march down the hill until the straight-line distance from the lip matches
+      let u = dist * 0.7, x = 0, z = 0, y = 0;
+      for (let it = 0; it < 60; it++) {
+        x = f.cx + f.dx * u; z = f.cz + f.dz * u; y = w.height(x, z);
+        const d = Math.hypot(u, y - lip.y);
+        if (d >= dist) break;
+        u += Math.max(0.5, (dist - d) * 0.7);
+      }
+      p.set(x, y + 0.03, z); sc.set(60, 1, 1);
+      m.compose(p, q, sc);
+      lines.setMatrixAt(li++, m);
+      for (const side of [-1, 1]) {
+        const v = side * 34;
+        const bx = x - f.dz * v, bz = z + f.dx * v, by = w.height(bx, bz);
+        const post = new THREE.Mesh(new THREE.CylinderGeometry(0.1, 0.1, 4, 6), postMat);
+        post.position.set(bx, by + 2, bz);
+        const canvas = document.createElement('canvas');
+        canvas.width = 192; canvas.height = 96;
+        const ctx = canvas.getContext('2d');
+        ctx.fillStyle = '#d8262c'; ctx.fillRect(0, 0, 192, 96);
+        ctx.fillStyle = '#fff'; ctx.font = 'italic 900 64px sans-serif'; ctx.textAlign = 'center';
+        ctx.fillText(`${dist}`, 96, 70);
+        const tex = new THREE.CanvasTexture(canvas);
+        tex.colorSpace = THREE.SRGBColorSpace;
+        const board = new THREE.Mesh(new THREE.PlaneGeometry(4.4, 2.2), new THREE.MeshBasicMaterial({ map: tex, side: THREE.DoubleSide, fog: true }));
+        board.position.set(bx, by + 4.4, bz);
+        board.rotation.y = yaw + Math.PI;
+        this.group.add(post, board);
+      }
+    }
+    lines.count = li;
+    lines.instanceMatrix.needsUpdate = true;
+    lines.computeBoundingSphere();
+    this.group.add(lines);
+  }
+
   update(dt, camPos) {
     this.trees.update(camPos);
     this.rocks.update(camPos);
     this.updateLift(dt);
+    this.updateBirds(dt);
   }
 }

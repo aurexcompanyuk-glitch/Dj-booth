@@ -1,4 +1,7 @@
 <div id="game" aria-label="Summit Freeride 3D view"></div>
+<div id="fx-vignette" aria-hidden="true"></div>
+<div id="fx-frost" aria-hidden="true"></div>
+<div id="fx-white" aria-hidden="true"></div>
 
 <div id="loading" class="screen">
   <div class="load-inner">
@@ -8,19 +11,32 @@
   </div>
 </div>
 
-<div id="menu" class="screen" hidden>
-  <div class="menu-inner">
-    <header class="menu-head">
+<div id="hub" class="screen" hidden>
+  <div class="hub-inner">
+    <header class="hub-head">
       <div class="logo logo-sm"><span class="logo-a">SUMMIT</span><span class="logo-b">FREERIDE</span></div>
-      <div class="menu-meta" id="menu-meta">8 slopes · 3,000 m of vertical madness</div>
-      <div class="menu-actions">
-        <button class="chip-btn" id="menu-controls" type="button">Controls</button>
-        <button class="chip-btn" id="menu-settings" type="button">Settings</button>
+      <div class="hub-meta" id="hub-meta">16 slopes on one mountain</div>
+      <div class="hub-actions">
+        <div class="weather" id="weather-row" role="group" aria-label="Weather"></div>
+        <button class="chip-btn" id="hub-controls" type="button">Controls</button>
+        <button class="chip-btn" id="hub-settings" type="button">Settings</button>
+        <button class="chip-btn chip-go" id="hub-close" type="button" hidden>Back to the slope</button>
       </div>
     </header>
-    <h1 class="menu-title">Pick a slope</h1>
-    <div id="run-grid" class="run-grid"></div>
-    <p class="menu-foot">Every slope is open terrain: leave the piste, hit the cliffs, or pull your paraglider anywhere.</p>
+    <div class="hub-body">
+      <div class="hub-map">
+        <div class="map-frame">
+          <canvas id="map-canvas" width="1024" height="1024"></canvas>
+          <span class="map-label map-n">BACK SIDE<i> · steep north face</i></span>
+          <span class="map-label map-s">FRONT SIDE<i> · sunny south face</i></span>
+        </div>
+        <div class="map-tip">Tap a numbered pin to pick a slope. Tap anywhere else on the mountain to drop in right there.</div>
+      </div>
+      <aside class="hub-side">
+        <div id="slope-card" class="slope-card"></div>
+        <div id="slope-list" class="slope-list"></div>
+      </aside>
+    </div>
   </div>
 </div>
 
@@ -28,12 +44,13 @@
   <div class="hud-top-left">
     <div id="hud-run" class="hud-run"><span id="hud-badge" class="badge">RED</span><span id="hud-run-name">Glacier Highway</span></div>
     <div class="hud-progress"><div id="hud-progress-fill"></div></div>
+    <div id="hud-rings" class="hud-rings" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8" fill="none" stroke="currentColor" stroke-width="3.2"/></svg><span id="hud-rings-n">0/12</span></div>
   </div>
   <div class="hud-top-right">
     <div class="hud-score"><span id="hud-score">0</span><small>pts</small></div>
     <div id="hud-combo" class="hud-combo" hidden>COMBO ×2</div>
     <div class="hud-btns">
-      <button id="hb-map" class="icon-btn" type="button" aria-label="Map and teleport (M)"><svg viewBox="0 0 24 24"><path d="M9 4 3 6v14l6-2 6 2 6-2V4l-6 2-6-2Zm0 2.2 6 2v11.6l-6-2V6.2Z" fill="currentColor"/></svg></button>
+      <button id="hb-map" class="icon-btn" type="button" aria-label="Mountain map (M)"><svg viewBox="0 0 24 24"><path d="M9 4 3 6v14l6-2 6 2 6-2V4l-6 2-6-2Zm0 2.2 6 2v11.6l-6-2V6.2Z" fill="currentColor"/></svg></button>
       <button id="hb-cam" class="icon-btn" type="button" aria-label="Change camera (C)"><svg viewBox="0 0 24 24"><path d="M4 7h3l2-2h6l2 2h3v12H4V7Zm8 2.5a4 4 0 1 0 0 8 4 4 0 0 0 0-8Z" fill="currentColor"/></svg></button>
       <button id="hb-pause" class="icon-btn" type="button" aria-label="Pause (Esc)"><svg viewBox="0 0 24 24"><path d="M7 5h3.5v14H7zM13.5 5H17v14h-3.5z" fill="currentColor"/></svg></button>
     </div>
@@ -44,10 +61,12 @@
   </div>
   <div id="hud-air" class="hud-air" hidden></div>
   <div id="hud-tricks" class="hud-tricks"></div>
-  <div id="hud-glide" class="hud-glide" hidden>
-    <div class="vario"><span id="hud-vario">+0.0</span><small>m/s</small></div>
-    <div class="glide-sub"><span id="hud-agl">0 m</span> above ground<span id="hud-thermal" class="thermal" hidden>THERMAL</span></div>
+  <div id="hud-fly" class="hud-fly" hidden>
+    <div class="fly-mode" id="hud-fly-mode">PARAGLIDER</div>
+    <div class="vario"><span id="hud-vario">+0.0</span><small id="hud-vario-unit">m/s</small></div>
+    <div class="fly-sub"><span id="hud-agl">0 m</span> above ground<span id="hud-flytag" class="flytag" hidden>THERMAL</span></div>
   </div>
+  <div id="hud-aval" class="hud-aval" hidden><span class="aval-label">AVALANCHE</span><span id="hud-aval-d">120 m</span><div class="aval-bar"><div id="hud-aval-fill"></div></div></div>
   <div id="hud-hint" class="hud-hint" hidden></div>
   <div id="hud-start" class="hud-start" hidden>
     <div class="start-name" id="start-name">Glacier Highway</div>
@@ -58,10 +77,10 @@
     <span><kbd>A</kbd><kbd>D</kbd> carve / spin</span>
     <span><kbd>W</kbd> tuck / front flip</span>
     <span><kbd>S</kbd> brake / back flip</span>
-    <span><kbd>Space</kbd> hold &amp; release to jump</span>
+    <span><kbd>Space</kbd> jump · in the air: wingsuit</span>
     <span><kbd>Shift</kbd> grab</span>
     <span><kbd>G</kbd> paraglider</span>
-    <span><kbd>M</kbd> teleport</span>
+    <span><kbd>M</kbd> map</span>
   </div>
 </div>
 
@@ -70,34 +89,26 @@
   <div class="touch-right">
     <button id="tb-glide" class="tbtn tbtn-glide" type="button" aria-label="Paraglider"><svg viewBox="0 0 24 24"><path d="M2.5 9.5C6 4.5 18 4.5 21.5 9.5l-2.2 1C16 6.8 8 6.8 4.7 10.5Z" fill="currentColor"/><path d="M4.8 10.4 12 19l7.2-8.6M9 8.6 12 19l3-10.4" stroke="currentColor" stroke-width="1.3" fill="none"/><circle cx="12" cy="19.6" r="1.7" fill="currentColor"/></svg><span>GLIDE</span></button>
     <button id="tb-grab" class="tbtn tbtn-grab" type="button">GRAB</button>
-    <button id="tb-jump" class="tbtn tbtn-jump" type="button">JUMP</button>
-  </div>
-</div>
-
-<div id="map" class="screen" hidden>
-  <div class="map-inner">
-    <div class="map-canvas-wrap"><canvas id="map-canvas" width="1024" height="1024"></canvas><div class="map-tip">Tap a slope start, or anywhere on the mountain, to teleport there.</div></div>
-    <div class="map-side">
-      <h2>Teleport</h2>
-      <div id="map-list" class="map-list"></div>
-      <button id="map-close" class="wide-btn" type="button">Back to the slope</button>
-    </div>
+    <button id="tb-jump" class="tbtn tbtn-jump" type="button"><span id="tb-jump-label">JUMP</span></button>
   </div>
 </div>
 
 <div id="pause" class="screen" hidden>
   <div class="panel pause-panel">
-    <h2>Paused</h2>
+    <h2 id="pause-title">Paused</h2>
     <div class="pause-actions">
       <button class="wide-btn primary" data-act="resume" type="button">Resume</button>
-      <button class="wide-btn" data-act="map" type="button">Teleport map</button>
+      <button class="wide-btn" data-act="map" type="button">Mountain map</button>
       <button class="wide-btn" data-act="restart" type="button">Restart this slope</button>
-      <button class="wide-btn" data-act="menu" type="button">All slopes</button>
+      <button class="wide-btn" data-act="lift" type="button">Back to the top</button>
     </div>
     <div class="settings" id="settings">
       <label class="set-row"><span>Graphics</span>
         <select id="set-quality"><option value="low">Low (phones)</option><option value="medium">Medium</option><option value="high">High</option></select></label>
+      <label class="set-row"><span>Weather</span>
+        <select id="set-weather"><option value="bluebird">Bluebird day</option><option value="golden">Golden hour</option><option value="night">Aurora night</option><option value="storm">Snowstorm</option></select></label>
       <label class="set-row"><span>Easy landings</span><input type="checkbox" id="set-assist" checked></label>
+      <label class="set-row"><span>Slow motion on big airs</span><input type="checkbox" id="set-slowmo" checked></label>
       <label class="set-row"><span>Sound</span><input type="checkbox" id="set-sound" checked></label>
       <label class="set-row"><span>Camera</span>
         <select id="set-camera"><option value="0">Chase</option><option value="1">Far chase</option><option value="2">Helmet cam</option><option value="3">Cinematic</option></select></label>
@@ -106,16 +117,16 @@
     <div class="controls-help" id="controls-help">
       <h3>Controls</h3>
       <table>
-        <tr><th></th><th>On snow</th><th>In the air</th><th>Paragliding</th></tr>
-        <tr><td><kbd>A</kbd><kbd>D</kbd> / <kbd>←</kbd><kbd>→</kbd></td><td>Carve</td><td>Spin</td><td>Turn</td></tr>
-        <tr><td><kbd>W</kbd> / <kbd>↑</kbd></td><td>Tuck (faster)</td><td>Front flip</td><td>Speed bar</td></tr>
-        <tr><td><kbd>S</kbd> / <kbd>↓</kbd></td><td>Brake</td><td>Back flip</td><td>Brakes</td></tr>
-        <tr><td><kbd>Space</kbd></td><td>Hold, release to jump</td><td></td><td></td></tr>
+        <tr><th></th><th>On snow</th><th>In the air</th><th>Wingsuit / paraglider</th></tr>
+        <tr><td><kbd>A</kbd><kbd>D</kbd> / <kbd>←</kbd><kbd>→</kbd></td><td>Carve</td><td>Spin</td><td>Bank and turn</td></tr>
+        <tr><td><kbd>W</kbd> / <kbd>↑</kbd></td><td>Tuck (faster)</td><td>Front flip</td><td>Dive / speed bar</td></tr>
+        <tr><td><kbd>S</kbd> / <kbd>↓</kbd></td><td>Brake</td><td>Back flip</td><td>Flare / brakes</td></tr>
+        <tr><td><kbd>Space</kbd></td><td>Hold, release to jump</td><td colspan="2">Press and hold to fly the wingsuit</td></tr>
         <tr><td><kbd>Shift</kbd></td><td></td><td>Grab</td><td></td></tr>
         <tr><td><kbd>G</kbd></td><td colspan="3">Open / stow the paraglider</td></tr>
-        <tr><td><kbd>M</kbd> <kbd>C</kbd> <kbd>R</kbd></td><td colspan="3">Teleport map · camera · restart slope</td></tr>
+        <tr><td><kbd>M</kbd> <kbd>C</kbd> <kbd>R</kbd></td><td colspan="3">Mountain map · camera · restart slope</td></tr>
       </table>
-      <p>Gamepad: left stick, A jump, X grab, Y paraglider, LB camera, Back map. Touch: left thumb steers, buttons on the right.</p>
+      <p>Gamepad: left stick, A jump / wingsuit, X grab, Y paraglider, LB camera, Back map. Touch: left thumb steers, buttons on the right.</p>
     </div>
   </div>
 </div>
@@ -129,12 +140,14 @@
       <div><span id="finish-score">0</span><small>points</small></div>
       <div><span id="finish-top">0</span><small>top speed km/h</small></div>
       <div><span id="finish-air">0.0</span><small>best air (s)</small></div>
+      <div><span id="finish-rings">0/0</span><small>rings</small></div>
+      <div><span id="finish-dist">0</span><small>longest flight (m)</small></div>
     </div>
     <div id="finish-best" class="finish-best"></div>
     <div class="finish-actions">
       <button class="wide-btn primary" data-fin="next" type="button">Next slope</button>
       <button class="wide-btn" data-fin="again" type="button">Ride it again</button>
-      <button class="wide-btn" data-fin="map" type="button">Teleport map</button>
+      <button class="wide-btn" data-fin="map" type="button">Mountain map</button>
     </div>
   </div>
 </div>

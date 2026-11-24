@@ -11,7 +11,7 @@ export class GameAudio {
   }
 
   init() {
-    if (this.ctx) { if (this.ctx.state === 'suspended') this.ctx.resume(); return; }
+    if (this.ctx) { if (this.ctx.state !== 'running' && !this.hidden) this.ctx.resume(); return; }
     const AC = window.AudioContext || window.webkitAudioContext;
     if (!AC) return;
     const ctx = (this.ctx = new AC());
@@ -46,6 +46,7 @@ export class GameAudio {
     this.scrape = chain('bandpass', 900, 1.4);
     this.powder = chain('lowpass', 700, 0.5);
     this.flutter = chain('bandpass', 260, 2.5);
+    this.rumble = chain('lowpass', 90, 0.8);
     this.vario = ctx.createOscillator();
     this.vario.type = 'triangle';
     this.varioGain = ctx.createGain(); this.varioGain.gain.value = 0;
@@ -53,21 +54,34 @@ export class GameAudio {
     this.vario.start();
   }
 
+  // Stop everything while the tab is in the background (the game loop is paused there)
+  setHidden(hidden) {
+    this.hidden = hidden;
+    if (!this.ctx) return;
+    if (hidden) this.ctx.suspend(); else this.ctx.resume();
+  }
+
   setMuted(m) {
     this.muted = m;
     if (this.master) this.master.gain.setTargetAtTime(m ? 0 : this.volume, this.ctx.currentTime, 0.05);
   }
 
-  update(dt, sk) {
+  // fx: { timeScale (slow motion), avalanche (0..1 closeness) }
+  update(dt, sk, fx) {
     const ctx = this.ctx;
     if (!ctx || ctx.state !== 'running') return;
     const t = ctx.currentTime, tc = 0.06;
     const sp = sk.speed;
     const ground = sk.state === 'ground';
     const glide = sk.state === 'glide';
-    const windAmt = clamp(sp / 38, 0, 1.3);
-    this.wind.g.gain.setTargetAtTime(0.04 + windAmt * windAmt * 0.32 + (glide ? 0.05 : 0), t, tc);
-    this.wind.f.frequency.setTargetAtTime(220 + sp * 26, t, tc);
+    const wing = sk.state === 'wing';
+    const ts = fx ? fx.timeScale : 1;
+    const windAmt = clamp(sp / 38, 0, 1.5);
+    this.wind.g.gain.setTargetAtTime(0.04 + windAmt * windAmt * 0.3 + (glide ? 0.05 : 0) + (wing ? 0.18 : 0), t, tc);
+    this.wind.f.frequency.setTargetAtTime((220 + sp * 26) * (0.55 + 0.45 * ts), t, tc);
+    this.wind.src.playbackRate.setTargetAtTime(0.5 + 0.5 * ts, t, 0.1);
+    this.rumble.g.gain.setTargetAtTime(fx ? fx.avalanche * fx.avalanche * 0.9 : 0, t, 0.1);
+    this.rumble.f.frequency.setTargetAtTime(70 + (fx ? fx.avalanche : 0) * 110, t, 0.1);
     const hissAmt = ground ? clamp(sp / 25, 0, 1) * (0.12 + 0.3 * sk.carve) * (1 - sk.powder * 0.6) : 0;
     this.hiss.g.gain.setTargetAtTime(hissAmt * 0.55, t, tc);
     this.hiss.f.frequency.setTargetAtTime(1500 + sp * 40 + sk.carve * 800, t, tc);
@@ -151,6 +165,25 @@ export class GameAudio {
       g.gain.exponentialRampToValueAtTime(0.0001, st + 0.5);
       o.connect(g).connect(this.master);
       o.start(st); o.stop(st + 0.55);
+    });
+  }
+
+  // Bright bell for ring pickups; pitch climbs with the streak
+  ring(streak = 0) {
+    const ctx = this.ctx;
+    if (!ctx || ctx.state !== 'running') return;
+    const t = ctx.currentTime;
+    const base = 1046 * Math.pow(2, Math.min(streak, 12) / 12);
+    [1, 1.5, 2].forEach((m, i) => {
+      const o = ctx.createOscillator();
+      o.type = 'sine';
+      o.frequency.value = base * m;
+      const g = ctx.createGain();
+      g.gain.setValueAtTime(0.0001, t);
+      g.gain.exponentialRampToValueAtTime(0.1 / (i + 1), t + 0.01);
+      g.gain.exponentialRampToValueAtTime(0.0001, t + 0.55);
+      o.connect(g).connect(this.master);
+      o.start(t); o.stop(t + 0.6);
     });
   }
 

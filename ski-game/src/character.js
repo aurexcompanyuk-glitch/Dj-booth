@@ -1,5 +1,6 @@
-// Articulated skier: IK legs and arms, poles with pole plants, procedural poses for
-// carving, tucking, hockey stops, air tricks and grabs, paragliding and tumbles.
+// Articulated skier: IK legs and arms, poles with pole plants, a body that floats on leg
+// suspension, a wind-blown scarf, wingsuit membranes, and procedural poses for carving,
+// tucking, hockey stops, air tricks and grabs, wingsuit flight, paragliding and tumbles.
 import * as THREE from 'three';
 import { clamp, damp, lerp, smoothstep, wrapAngle } from './util.js';
 
@@ -191,6 +192,7 @@ export class Character {
     this.p = {
       crouch: 0.2, hipZ: -0.06, pitch: 0.3, roll: 0, yaw: 0, lift: 0, liftZ: 0, spread: 0,
       seat: 0, tuck: 0, armsOut: 0, grabW: 0, crash: 0, skiPitch: 0, brake: 0, headYaw: 0, headPitch: 0.15,
+      wing: 0, edge: 0, susp: 0,
       handL: new THREE.Vector3(0.3, 0.95, 0.3), handR: new THREE.Vector3(-0.3, 0.95, 0.3),
       tipL: new THREE.Vector3(0, -1, -0.5), tipR: new THREE.Vector3(0, -1, -0.5),
     };
@@ -199,6 +201,33 @@ export class Character {
     this.plantCooldown = 0;
     this.onPolePlant = null;
     this.time = 0;
+    // leg suspension: the body rides a spring above the feet so bumps move the legs, not the head
+    this.bodyY = 0; this.bodyVy = 0; this.vySm = 0; this.suspReady = false;
+    // wingsuit membranes (arm wings + leg wing), rebuilt each frame from the joints
+    this.wingPos = new Float32Array(9 * 3);
+    const wg = new THREE.BufferGeometry();
+    wg.setAttribute('position', new THREE.BufferAttribute(this.wingPos, 3));
+    this.wingMesh = new THREE.Mesh(wg, new THREE.MeshStandardMaterial({ color: 0xffffff, side: THREE.DoubleSide, roughness: 0.6 }));
+    this.wingMesh.material.color = this.mats.accent.color;
+    this.wingMesh.castShadow = true;
+    this.wingMesh.frustumCulled = false;
+    this.wingMesh.visible = false;
+    this.root.add(this.wingMesh);
+    // scarf: a short chain trailing from the neck, simulated in world space
+    const SN = 9;
+    this.scarfN = SN;
+    this.scarfPts = [...Array(SN)].map(() => new THREE.Vector3());
+    this.scarfPos = new Float32Array(SN * 2 * 3);
+    const sIdx = [];
+    for (let k = 0; k < SN - 1; k++) { const a = k * 2; sIdx.push(a, a + 1, a + 2, a + 1, a + 3, a + 2); }
+    const sg = new THREE.BufferGeometry();
+    sg.setAttribute('position', new THREE.BufferAttribute(this.scarfPos, 3));
+    sg.setIndex(sIdx);
+    this.scarf = new THREE.Mesh(sg, new THREE.MeshStandardMaterial({ color: 0xffffff, side: THREE.DoubleSide, roughness: 0.8 }));
+    this.scarf.material.color = this.mats.accent.color;
+    this.scarf.castShadow = true;
+    this.scarf.frustumCulled = false;
+    this.scarfReady = false;
     this._v = [...Array(12)].map(() => new THREE.Vector3());
     this._m = new THREE.Matrix4();
     this._q = new THREE.Quaternion();
@@ -218,8 +247,24 @@ export class Character {
   update(dt, sk) {
     this.time += dt;
     const p = this.p, st = sk.state, t = this.time;
-    const air = st === 'air', glide = st === 'glide', crash = st === 'crash';
+    const air = st === 'air', glide = st === 'glide', crash = st === 'crash', wing = st === 'wing';
     const ground = st === 'ground' || st === 'ready';
+
+    // ---- leg suspension: a critically damped spring that follows the slope, not the bumps
+    if (st === 'ground' && this.suspReady && dt > 0) {
+      const y = sk.feet.y, W = 12;
+      this.vySm = damp(this.vySm, sk.vel.y, 6, dt);
+      const h = Math.min(dt, 1 / 30);
+      this.bodyVy += (W * W * (y - this.bodyY) + 2 * W * (this.vySm - this.bodyVy)) * h;
+      this.bodyY += this.bodyVy * h;
+      let off = this.bodyY - y;
+      if (off > 0.13) { off = 0.13; this.bodyY = y + off; this.bodyVy = Math.min(this.bodyVy, sk.vel.y); }
+      else if (off < -0.24) { off = -0.24; this.bodyY = y + off; this.bodyVy = Math.max(this.bodyVy, sk.vel.y); }
+      p.susp = off;
+    } else {
+      this.bodyY = sk.feet.y; this.bodyVy = sk.vel.y; this.vySm = sk.vel.y; this.suspReady = true;
+      p.susp = damp(p.susp, 0, 10, dt);
+    }
 
     // ---- root transform
     this.root.position.copy(sk.feet);
@@ -245,11 +290,15 @@ export class Character {
       if (a.grab === 'Tail') skiPitchT = 0.4;
     } else if (glide) {
       seatT = 1; pitchT = -0.12; crouchT = 0.3;
+    } else if (wing) {
+      pitchT = -0.14; crouchT = 0.04;
     } else if (crash) {
       spreadT = 1; pitchT = 0.4 + 0.4 * Math.sin(t * 7);
     }
-    p.crouch = damp(p.crouch, crouchT, 14, dt);
-    p.pitch = damp(p.pitch, pitchT, 9, dt);
+    p.crouch = damp(p.crouch, crouchT, 11, dt);
+    p.pitch = damp(p.pitch, pitchT, 8, dt);
+    p.wing = damp(p.wing, wing ? 1 : 0, wing ? 7 : 9, dt);
+    p.edge = damp(p.edge, ground ? Math.tan(clamp(sk.lean, -0.95, 0.95)) : 0, 14, dt);
     p.lift = damp(p.lift, liftT, 10, dt);
     p.liftZ = damp(p.liftZ, liftZT, 10, dt);
     p.seat = damp(p.seat, seatT, 5, dt);
@@ -277,16 +326,19 @@ export class Character {
     p.roll = damp(p.roll, rollT, 8, dt);
     p.yaw = damp(p.yaw, yawT, 7, dt);
     p.headYaw = damp(p.headYaw, clamp((ground ? travelYaw : air ? -a.spinVel * 0.12 : 0) - p.yaw, -1, 1), 6, dt);
-    p.headPitch = damp(p.headPitch, air ? 0.25 + 0.25 * smoothstep(1.2, 0.2, a.tHit) : glide ? 0.35 : 0.1 - p.pitch * 0.5, 6, dt);
+    p.headPitch = damp(p.headPitch, wing ? -0.85 : air ? 0.25 + 0.25 * smoothstep(1.2, 0.2, a.tHit) : glide ? 0.35 : 0.1 - p.pitch * 0.5, 6, dt);
 
     // ---- feet / skis
     const V = this._v;
     const ankleL = V[1], ankleR = V[2];
-    const stance = 0.115 + 0.18 * p.spread;
+    const stance = 0.115 + 0.18 * p.spread + 0.2 * p.wing;
     const seat = p.seat;
-    for (const [i, ank] of [[0, ankleL], [1, ankleR]]) {
+    for (let i = 0; i < 2; i++) {
+      const ank = i === 0 ? ankleL : ankleR;
       const s = i === 0 ? 1 : -1;
-      ank.set(s * stance, 0.15 + p.lift, -0.03 + p.liftZ);
+      // both skis stay on the snow while the body inclines: the inside leg shortens, the outside
+      // leg lengthens, and the inside ski leads a little
+      ank.set(s * stance, 0.15 + p.lift + s * stance * p.edge, -0.03 + p.liftZ + s * 0.07 * clamp(p.edge, -1, 1));
       if (seat > 0.001) {
         ank.x = lerp(ank.x, s * 0.13, seat);
         ank.y = lerp(ank.y, 0.5 + Math.sin(t * 1.3 + i) * 0.015, seat);
@@ -304,6 +356,8 @@ export class Character {
     if (air) hip.y = 0.95 - 0.06 * p.crouch, hip.z = -0.03;
     hip.y = lerp(hip.y, 0.96, seat);
     hip.z = lerp(hip.z, 0.02, seat);
+    if (ground) hip.y += p.susp;
+    if (p.wing > 0.01) { hip.y = lerp(hip.y, 0.98, p.wing); hip.z = lerp(hip.z, 0, p.wing); }
     this.torso.position.copy(hip);
     this._e.set(p.pitch + p.tuck * 0.15, p.yaw, p.roll, 'YXZ');
     this.torso.quaternion.setFromEuler(this._e);
@@ -379,6 +433,12 @@ export class Character {
         const cr = this._v[0].set(s * (0.5 + 0.2 * Math.sin(t * 9 + i)), 0.5 + 0.3 * Math.sin(t * 11 + i * 3), 0.2 * Math.sin(t * 7)).applyMatrix4(this.torso.matrix);
         tgt.lerp(cr, p.spread);
       }
+      if (p.wing > 0.01) {
+        // arms swept out and slightly back, tips trembling in the airflow
+        const wv = this._v[0].set(s * 0.56, 0.2 + Math.sin(t * 23 + i * 2) * 0.012, -0.06).applyMatrix4(this.torso.matrix);
+        tgt.lerp(wv, p.wing);
+        tipDir.lerp(_ab.set(0, -1, -0.2), p.wing);
+      }
       if (p.grabW > 0.01) this.applyGrab(i, tgt, tipDir, sk.air.grab, ankleL, ankleR);
       hands[i].lerp(tgt, 1 - Math.exp(-dt * 22));
       tips[i].lerp(tipDir, 1 - Math.exp(-dt * 14)).normalize();
@@ -398,7 +458,81 @@ export class Character {
       const pg = this.poles[i];
       pg.position.copy(end).addScaledVector(_d, 0.04);
       pg.quaternion.setFromUnitVectors(DOWN, tips[i]);
+      pg.visible = p.wing < 0.5;
     }
+    this.updateWings(hip, shoulder, hands, ankleL, ankleR);
+    this.updateScarf(dt, sk);
+  }
+
+  updateWings(hip, shoulder, hands, ankleL, ankleR) {
+    const w = this.p.wing;
+    this.wingMesh.visible = w > 0.03;
+    if (!this.wingMesh.visible) return;
+    const P = this.wingPos;
+    const put = (k, v, toward, f) => { P[k * 3] = lerp(toward.x, v.x, f); P[k * 3 + 1] = lerp(toward.y, v.y, f); P[k * 3 + 2] = lerp(toward.z, v.z, f); };
+    for (let i = 0; i < 2; i++) {
+      const s = i === 0 ? 1 : -1;
+      const hipSide = this._v[0].set(hip.x + s * 0.13, hip.y + 0.02, hip.z);
+      put(i * 3, shoulder[i], shoulder[i], 1);
+      put(i * 3 + 1, hands[i], shoulder[i], w);
+      put(i * 3 + 2, hipSide, hipSide, 1);
+    }
+    const crotch = this._v[0].set(hip.x, hip.y - 0.06, hip.z);
+    put(6, crotch, crotch, 1);
+    put(7, ankleL, crotch, w);
+    put(8, ankleR, crotch, w);
+    const g = this.wingMesh.geometry;
+    g.attributes.position.needsUpdate = true;
+    g.computeVertexNormals();
+  }
+
+  // Scarf: each link chases the one before it along the airflow, with a speed-driven flutter
+  updateScarf(dt, sk) {
+    const pts = this.scarfPts, n = this.scarfN, seg = 0.1;
+    this.root.updateMatrixWorld(true);
+    const anchor = this._v[0].set(0, 0.555, -0.085).applyMatrix4(this.torso.matrix).applyMatrix4(this.root.matrixWorld);
+    if (!this.scarfReady || anchor.distanceToSquared(pts[0]) > 25) {
+      for (let i = 0; i < n; i++) pts[i].copy(anchor).y -= i * seg;
+      this.scarfReady = true;
+    }
+    pts[0].copy(anchor);
+    const sp = sk.speed;
+    // airflow direction: opposite to travel, sagging when slow
+    const dir = _d.copy(sk.vel).multiplyScalar(-1);
+    dir.y -= 2.2 + 3 / (1 + sp * 0.4);
+    dir.normalize();
+    const left = _ab.set(1, 0, 0).applyQuaternion(sk.quat);
+    const flut = Math.min(1, sp / 14) * 0.5;
+    const t = this.time;
+    for (let i = 1; i < n; i++) {
+      const prev = pts[i - 1], cur = pts[i];
+      const wob = Math.sin(t * (17 + i) - i * 0.9) * flut * (i / n);
+      const wob2 = Math.cos(t * (13 + i * 0.7) - i * 1.3) * flut * 0.6 * (i / n);
+      _pp.copy(prev).addScaledVector(dir, seg).addScaledVector(left, wob * seg * 2).addScaledVector(UP, wob2 * seg * 2);
+      cur.lerp(_pp, 1 - Math.exp(-dt * (34 - i * 2.6)));
+      // keep the link length
+      _pp.copy(cur).sub(prev);
+      const l = _pp.length() || 1;
+      cur.copy(prev).addScaledVector(_pp, seg / l);
+    }
+    const P = this.scarfPos;
+    for (let i = 0; i < n; i++) {
+      const w = 0.05 - 0.012 * (i / n);
+      const q = pts[i];
+      P[i * 6] = q.x + left.x * w; P[i * 6 + 1] = q.y + left.y * w; P[i * 6 + 2] = q.z + left.z * w;
+      P[i * 6 + 3] = q.x - left.x * w; P[i * 6 + 4] = q.y - left.y * w; P[i * 6 + 5] = q.z - left.z * w;
+    }
+    const g = this.scarf.geometry;
+    g.attributes.position.needsUpdate = true;
+    g.computeVertexNormals();
+  }
+
+  // Call after a teleport so nothing streaks across the map
+  snap() {
+    this.suspReady = false;
+    this.scarfReady = false;
+    this.p.susp = 0; this.p.seat = 0; this.p.spread = 0; this.p.wing = 0; this.p.grabW = 0;
+    for (const pl of this.plant) pl.active = false;
   }
 
   applyGrab(i, tgt, tipDir, grab, ankleL, ankleR) {
